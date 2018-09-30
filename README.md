@@ -1,3 +1,7 @@
+![Python 3.5](https://img.shields.io/badge/python-3.5-blue.svg)
+![Python 3.6](https://img.shields.io/badge/python-3.6-blue.svg)
+
+
 # General
 The Protein Data Bank (PDB) is an archive of experimentally determined three-dimensional structures of biological macromolecules that serves a global community of researchers, educators, and students.
 The data contained in the archive include atomic coordinates, crystallographic structure factors, and NMR experimental data. Aside from coordinates, each deposition also includes the names of molecules, primary and secondary structure information, sequence database references, where appropriate, and ligand and biological assembly information, details about data collection and structure solution, and bibliographic citations.
