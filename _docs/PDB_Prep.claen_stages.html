@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html><head><title>Python: module PDB_Prep.claen_stages</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head><body bgcolor="#f0f0f8">
+
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+<tr bgcolor="#7799ee">
+<td valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="PDB_Prep.html"><font color="#ffffff">PDB_Prep</font></a>.claen_stages</strong></big></big></font></td
+><td align=right valign=bottom
+><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:h%3A%5Cchemistry%5C_versions%5Ccode%5Cpdb_prep%5Cclaen_stages.py">h:\chemistry\_versions\code\pdb_prep\claen_stages.py</a></font></td></tr></table>
+    <p></p>
+<p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#aa55cc">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="click.html">click</a><br>
+</td><td width="25%" valign=top><a href="os.html">os</a><br>
+</td><td width="25%" valign=top></td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+<tr bgcolor="#eeaa77">
+<td colspan=3 valign=bottom>&nbsp;<br>
+<font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font></td></tr>
+    
+<tr><td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
+<td width="100%"><dl><dt><a name="-clean_01_into_dir"><strong>clean_01_into_dir</strong></a>(informer, dest_path, data, with_hydrogens, cliutils)</dt><dd><tt>for&nbsp;&nbsp;each&nbsp;pdb:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;atom_hydrogen_siever<br>
+&nbsp;&nbsp;&nbsp;&nbsp;clean_alternate_location<br>
+&nbsp;&nbsp;&nbsp;&nbsp;copy&nbsp;&nbsp;into&nbsp;01_without_gaps_handling&nbsp;after<br>
+:param&nbsp;dest_path:<br>
+:param&nbsp;data:<br>
+:param&nbsp;cliutils:<br>
+:return:</tt></dd></dl>
+ <dl><dt><a name="-clean_02_missing_resseqs_found_in_remarks"><strong>clean_02_missing_resseqs_found_in_remarks</strong></a>(dest_path, data, cliutils)</dt><dd><tt>this&nbsp;function&nbsp;cleans&nbsp;the&nbsp;missing&nbsp;resseqs&nbsp;we&nbsp;found&nbsp;remark&nbsp;365</tt></dd></dl>
+ <dl><dt><a name="-clean_03_fix_resseqs"><strong>clean_03_fix_resseqs</strong></a>(dest_path, data, cliutils)</dt></dl>
+ <dl><dt><a name="-clean_04_missing_atoms_found_in_remarks"><strong>clean_04_missing_atoms_found_in_remarks</strong></a>(dest_path, data, cliutils)</dt><dd><tt>this&nbsp;function&nbsp;cleans&nbsp;the&nbsp;missing&nbsp;atoms&nbsp;we&nbsp;found&nbsp;remark&nbsp;365</tt></dd></dl>
+ <dl><dt><a name="-get_02_missing_resseqs_per_chain_id"><strong>get_02_missing_resseqs_per_chain_id</strong></a>(info)</dt></dl>
+ <dl><dt><a name="-get_04_missing_atoms_per_chain_id"><strong>get_04_missing_atoms_per_chain_id</strong></a>(info)</dt></dl>
+ <dl><dt><a name="-is_04_missing_atom"><strong>is_04_missing_atom</strong></a>(atom, missing_atoms_per_chain_id)</dt></dl>
+</td></tr></table>
+</body></html>
