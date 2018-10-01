@@ -111,8 +111,8 @@ def finish_outputs(mode_file_or_dir,informer,cliutils):
 @click.option('--pdb-file', help='input pdb file (use this or the --pdb-dir option!)', show_default=True)
 @click.option('--with-hydrogens/--no-hydrogens', default=False,
               help='sieve hydrogen atoms and hetatms from the files', show_default=True)
-@click.option('--is-homomer/--is-hetromer', default=True,
-              help='process the file as homomer or hetromer', show_default=True)
+@click.option('--is-homomer/--is-heteromer', default=True,
+              help='process the file as homomer or heteromer', show_default=True)
 @click.option('--output-dir', default='output.{time}', help='output dir', show_default=True)
 @click.option('--verbose', is_flag=True, default=False, help='verbose mode', show_default=True)
 def nmr (pdb_dir,pdb_file, with_hydrogens,is_homomer, output_dir, verbose):
@@ -189,8 +189,8 @@ def nmr (pdb_dir,pdb_file, with_hydrogens,is_homomer, output_dir, verbose):
               show_default=True)
 @click.option('--with-hydrogens/--no-hydrogens', default=False,
               help='sieve hydrogen atoms and hetatms from the files', show_default=True)
-@click.option('--is-homomer/--is-hetromer', default=True,
-              help='process the file as homomer or hetromer', show_default=True)
+@click.option('--is-homomer/--is-heteromer', default=True,
+              help='process the file as homomer or heteromer', show_default=True)
 @click.option('--output-dir', default='output.{time}', help='output dir', show_default=True)
 @click.option('--verbose', is_flag=True, default=False, help='verbose mode', show_default=True)
 def xray (pdb_dir,pdb_file, max_resolution, limit_r_free_grade, with_hydrogens,is_homomer, output_dir, verbose):
