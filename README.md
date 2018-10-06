@@ -4,7 +4,6 @@
 
 # General
 Symmetry of proteins, an important source of their elegant structures and unique functions, is not as perfect as it may seem.
-
 This program prepares protein files given in PDB format from either X-RAY or NMR measurements for a continuous symmetry measure (CSM) calculation. See http://wwpdb.org for more details on the PDB file format and the protein data bank. 
 See https://telem.openu.ac.il/csm/ for more information on the CSM methodology.
 
@@ -167,7 +166,7 @@ If you find a bug or have an idea for a program you'd like in this package, feel
 The code fails to process PDB files for which the residue sequence numbers of the different peptides is inconsistent. 
 
 
-#Project Owner
+# Project Owner
 * Dr. Inbal Tuvi-Arad (https://www.openu.ac.il/en/personalsites/InbalTuviArad.aspx)
 * Sagiv Barhoom (https://github.com/sagivba)
 
