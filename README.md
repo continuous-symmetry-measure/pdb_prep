@@ -3,10 +3,13 @@
 
 
 # General
-This program prepares protein files given in PDB format from either X-RAY or NMR measurements for a continuous symmetry measure (CSM) calculation. See http://wwpdb.org for more details on the PDB file format and the protein data bank. See https://telem.openu.ac.il/csm/ for more information on the CSM methodology.
-Many PDB files contain inconsistent errors in the forms of missing residues or missing atoms. In addition, they may report on low resolution or low level Rfree values as well as extra data not required for the symmetry evaluation (e.g., ligands). 
+Symmetry of proteins, an important source of their elegant structures and unique functions, is not as perfect as it may seem.
 
-Several steps are involved in the procedure: 
+This program prepares protein files given in PDB format from either X-RAY or NMR measurements for a continuous symmetry measure (CSM) calculation. See http://wwpdb.org for more details on the PDB file format and the protein data bank. 
+See https://telem.openu.ac.il/csm/ for more information on the CSM methodology.
+
+
+Many PDB files contain inconsistent errors in the forms of missing residues or missing atoms. In addition, they may report on low resolution or low level Rfree values as well as extra data not required for the symmetry evaluation (e.g., ligands). Several steps are involved in the preparation procedure:  
 1. The files are split into three categories according to their resolution and R_free grade as defined by FirstGlance in Jmol (https://bioinformatics.org/firstglance/fgij/notes.htm#grading):
     a.	Reliable  – PDB files with a resolution of up to 2.0 and an R_free grade of C (Average at this resolution). The user can change the thresholds.
     b.	Reliable_r_grade – PDB files with a resolution of up to 2.0 and no R_free data
@@ -157,11 +160,15 @@ Options:
 
 
 
+# Contributing
+If you find a bug or have an idea for a program you'd like in this package, feel free to open an issue. Even better: feel free to make a pull request!
 
-# Unknown Issues
+# Known Issues
 The code fails to process PDB files for which the residue sequence numbers of the different peptides is inconsistent. 
 
 
-
+#Project Owner
+* Dr. Inbal Tuvi-Arad (https://www.openu.ac.il/en/personalsites/InbalTuviArad.aspx)
+* Sagiv Barhoom (https://github.com/sagivba)
 
 
