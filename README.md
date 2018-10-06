@@ -166,7 +166,7 @@ If you find a bug or have an idea for a program you'd like in this package, feel
 The code fails to process PDB files for which the residue sequence numbers of the different peptides is inconsistent. 
 
 
-# Project Owners
+# Project Owners 
 * Dr. Inbal Tuvi-Arad (https://www.openu.ac.il/en/personalsites/InbalTuviArad.aspx)
 * Sagiv Barhoom (https://github.com/sagivba)
 
