@@ -10,45 +10,27 @@ See https://telem.openu.ac.il/csm/ for more information on the CSM methodology.
 
 Many PDB files contain inconsistent errors in the forms of missing residues or missing atoms. In addition, they may report on low resolution or low level Rfree values as well as extra data not required for the symmetry evaluation (e.g., ligands). Several steps are involved in the preparation procedure:  
 1. The files are split into three categories according to their resolution and R_free grade as defined by FirstGlance in Jmol (https://bioinformatics.org/firstglance/fgij/notes.htm#grading):
-    a.	Reliable  – PDB files with a resolution of up to 2.0 and an R_free grade of C (Average at this resolution). The user can change the thresholds.
-    b.	Reliable_r_grade – PDB files with a resolution of up to 2.0 and no R_free data
-    c.	Others – PDB files with bad resolution or R_free grade below the threshold.
+   
+   a.	Reliable  – PDB files with a resolution of up to 2.0 and an R_free grade of C (Average at this resolution). 
+        The user can change the thresholds.
+        
+   b.	Reliable_r_grade – PDB files with a resolution of up to 2.0 and no R_free data
+   
+   c.	Others – PDB files with bad resolution or R_free grade below the threshold.
     
 Reliable files are further processed according to the following stages:
      
-1.	Removing non-coordinates lines from the atom section. 
-2.	Removing ligands  and solvent lines at the end of peptides. HETATOM lines in the middle of a peptide are retained. 
-3.	Cleaning gaps in the sequence according to REMARK 470 (missing residues) and REMARK 465 (missing atoms):     
+2.	Removing non-coordinates lines from the atom section. 
+3.	Removing ligands  and solvent lines at the end of peptides. HETATOM lines in the middle of a peptide are retained. 
+4.	Cleaning gaps in the sequence according to REMARK 470 (missing residues) and REMARK 465 (missing atoms):     
     a.	If a   backbone atom is missing - the whole amino acid is deleted.     
     b.	If a   side chain atom is missing – the side chain is removed.     
     c.	For   homomers – gap on one peptide causes the removal of the related atoms from   all other peptides.     
-4.	Retaining the first location in cases of alternate locations. 
-5.	Removing hydrogen atoms (optional). 
-6.	Ignoring PDB files for which the asymmetric unit does not represent a biological structure  (e.g., when the matrix in REMARK 350 is different from the identity matrix). 
-7.	For homomers, checking that all peptides are of the same length.
+5.	Retaining the first location in cases of alternate locations. 
+6.	Removing hydrogen atoms (optional). 
+7.	Ignoring PDB files for which the asymmetric unit does not represent a biological structure  (e.g., when the matrix in REMARK 350 is different from the identity matrix). 
+8.	For homomers, checking that all peptides are of the same length.
 
-
-# PDB files structure
-Every PDB file is presented in a number of lines.
-Each line in the PDB entry file consists of 80 columns.
-The last character in each PDB entry should be an end-of- line (\n) indicator.
-Each line in the PDB file is self-identifying.
-The first six columns of every line contains a record name, that is left-justified and separated by a blank.
-The record name must be an exact match to one of the stated record names in the http://wwpdb.org formatting guide.
-The PDB file may also be viewed as a collection of record types.
-Each record type consists of one or more lines.
-Each record type is further divided into fields.
-
-In the **pdb_prep** tool we are using only the following record types:
-REMARK, MODEL, ATOM, HETATOM, TER
-
-
-
-##  The motivation to create this program
-TODO
-
-# The purpose of the program
-Sieve PDB files that are not suitable for calculating CSM and prepare PDB files that are appropriate by cleaning and handling gaps.
 
 # Usage:
 
@@ -67,7 +49,7 @@ Commands:
   xray  This procedure prepares protein files in...
 ```
 
-## nmr help:
+## NMR help:
 ```
 $ pdb_prep.py nmr  --help
 Usage: pdb_prep.py nmr [OPTIONS]
@@ -103,7 +85,7 @@ Options:
   --help                          Show this message and exit.
 ```
 
-## xray help
+## X-ray help
 ```
 $ pdb_prep.py xray --help
     This procedure prepares protein files in pdb format from X-RAY measurements for a CSM calculation according. 
@@ -120,7 +102,7 @@ $ pdb_prep.py xray --help
         a.  If a backbone atom is missing - the whole amino acid is deleted.
         b.  If a side chain atom is missing – the side chain is removed.
         c.  For homomers – gap on one peptide causes the removal of the related atoms from all other peptides.
-        4.  Retaining the first location in cases of alternate location.
+    4.  Retaining the first location in cases of alternate location.
     5.  Removing hydrogen atoms (optional).
     6.  Ignoring pdb files for which the asymmetric unit does not represent a biological structure
         (e.g., non unit matrix in REMARK 350).
