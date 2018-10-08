@@ -31,7 +31,7 @@ Reliable files are further processed according to the following stages:
 7.	Ignoring PDB files for which the asymmetric unit does not represent a biological structure  (e.g., when the matrix in REMARK 350 is different from the identity matrix). 
 8.	For homomers, checking that all peptides are of the same length.
 
-
+ 
 # Usage:
 
 ## Help:
