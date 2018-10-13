@@ -118,21 +118,22 @@ def finish_outputs(mode_file_or_dir,informer,cliutils):
 def nmr (pdb_dir,pdb_file, with_hydrogens,is_homomer, output_dir, verbose):
     """
     \b
-    This procedure prepares protein files in pdb format from NMR measurements for a CSM calculation according
-    to the following stage:
-        1.  Removing non-coordinates lines from the atom section.
-        2.  Removing ligands and solvent lines at the end of peptides. HETATOM lines in the middle of a peptide are
-            retained.
-        3.  Cleaning gaps in the sequence according to REMARK 470 (missing residues) and
-            REMARK 465 (missing atoms):
-            a.  If a backbone atom is missing - the whole amino acid is deleted.
-            b.  If a side chain atom is missing – the side chain is removed.
-            c.  For homomers – gap on one peptide causes the removal of the related atoms from all other peptides.
-        4.  Retaining the first location in cases of alternate location.
-        5.  Removing hydrogen atoms (optional).
-        6.  Ignoring pdb files for which the asymmetric unit does not represent a biological structure
-            (e.g., non unit matrix in REMARK 350).
-        7.  For homomers, checking that all peptides are of the same length.
+    This procedure prepares protein files in pdb format from NMR measurements for 
+    a CSM calculation according to the following stage:
+      1.  Removing non-coordinates lines from the atom section.
+      2.  Removing ligands and solvent lines at the end of peptides.
+          HETATOM lines in the middle of a peptide are retained.
+      3.  Cleaning gaps in the sequence according to REMARK 470 (missing residues) 
+          and REMARK 465 (missing atoms):
+          a.  If a backbone atom is missing - the whole amino acid is deleted.
+          b.  If a side chain atom is missing – the side chain is removed.
+          c.  For homomers – gap on one peptide causes the removal of the related 
+              atoms from all other peptides.
+      4.  Retaining the first location in cases of alternate location.
+      5.  Removing hydrogen atoms (optional).
+      6.  Ignoring pdb files for which the asymmetric unit does not represent a 
+          biological structure (e.g., non unit matrix in REMARK 350).
+      7.  For homomers, checking that all peptides are of the same length.
     """
     cliutils = nmr_validate_params(pdb_dir=pdb_dir,pdb_file=pdb_file, output_dir=output_dir, verbose=verbose)
     informer = nmr_inform(cliutils, is_verbose=verbose, include_hetatm=True)
@@ -196,25 +197,30 @@ def nmr (pdb_dir,pdb_file, with_hydrogens,is_homomer, output_dir, verbose):
 def xray (pdb_dir,pdb_file, max_resolution, limit_r_free_grade, with_hydrogens,is_homomer, output_dir, verbose):
     """
     \b
-    This procedure prepares protein files in pdb format from X-RAY measurements for a CSM calculation according. 
-    At first, the files are split into three categories according to their resolution and R_free grade:
-    a.  Reliable  – PDB files with a resolution of up to 2.0 and an R_free grade of C (Average at this resolution). 
-           Thresholds can be changed.
-    b.  Reliable_r_grade – PDB files with a resolution of up to 2.0 and no R_free data
-    c.  Others – PDB files with bad resolution or R_free grade
-    
+    This procedure prepares protein files in pdb format from X-RAY measurements for a 
+    CSM calculation according. 
+    At first, the files are split into three categories according to their resolution 
+    and R_free grade:
+        a.  Reliable  – PDB files with a resolution of up to 2.0 and an R_free grade of C 
+            (Average at this resolution). Thresholds can be changed.   
+        b.  Reliable_r_grade – PDB files with a resolution of up to 2.0 and no R_free data
+        c.  Others – PDB files with bad resolution or R_free grade
+            
     Reliable files are further processed according to the following stages:
-    1.  Removing non-coordinates lines from the atom section.
-    2.  Removing ligands and solvent lines at the end of peptides. HETATOM lines in the middle of a peptide are retained.
-    3.  Cleaning gaps in the sequence according to REMARK 470 (missing residues) and REMARK 465 (missing atoms):
-        a.  If a backbone atom is missing - the whole amino acid is deleted.
-        b.  If a side chain atom is missing – the side chain is removed.
-        c.  For homomers – gap on one peptide causes the removal of the related atoms from all other peptides.
+        1.  Removing non-coordinates lines from the atom section.
+        2.  Removing ligands and solvent lines at the end of peptides. HETATOM lines in the 
+            middle of a peptide are retained.
+        3.  Cleaning gaps in the sequence according to REMARK 470 (missing residues) and REMARK 
+            465 (missing atoms):
+            a.  If a backbone atom is missing - the whole amino acid is deleted.
+            b.  If a side chain atom is missing – the side chain is removed.
+            c.  For homomers – gap on one peptide causes the removal of the related atoms from 
+                all other peptides.
         4.  Retaining the first location in cases of alternate location.
-    5.  Removing hydrogen atoms (optional).
-    6.  Ignoring pdb files for which the asymmetric unit does not represent a biological structure
-        (e.g., non unit matrix in REMARK 350).
-    7.  For homomers, checking that all peptides are of the same length.
+        5.  Removing hydrogen atoms (optional).
+        6.  Ignoring pdb files for which the asymmetric unit does not represent a biological structure
+            (e.g., non unit matrix in REMARK 350).
+        7.  For homomers, checking that all peptides are of the same length.
     """
 
     cliutils = xray_validate_params(pdb_dir,pdb_file, max_resolution, limit_r_free_grade, output_dir, verbose)
