@@ -196,6 +196,7 @@ def nmr (pdb_dir,pdb_file, with_hydrogens,is_homomer, output_dir, verbose):
 @click.option('--verbose', is_flag=True, default=False, help='verbose mode', show_default=True)
 def xray (pdb_dir,pdb_file, max_resolution, limit_r_free_grade, with_hydrogens,is_homomer, output_dir, verbose):
     """
+    
     \b
     This procedure prepares protein files in pdb format from X-RAY measurements for a 
     CSM calculation according. 

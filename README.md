@@ -86,7 +86,7 @@ Options:
   --help                          Show this message and exit.
 ```
 
-## X-ray help
+## X-ray help 
 ```
 $ pdb_prep.py xray --help
 Usage: pdb_prep.py xray [OPTIONS]
