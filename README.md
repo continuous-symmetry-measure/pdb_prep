@@ -146,6 +146,10 @@ Options:
 ```
 
 
+# How to install?
+
+Installation instructions can be read in [this document](./install.md)
+
 
 
 
