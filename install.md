@@ -1,13 +1,14 @@
 # Installation instructions (on centos7):
 Those preparations are required:
-- fulfill installation prerequisites
-- creating the virtual environment for python (not mandatory)
+- Fulfill installation prerequisites
+- Create the virtual environment for python (not mandatory)
+- Install click 
 
 # Installation prerequisites
 1. Install git - As root:```yum install git```
-2. Install python3 - based on this [instructions] (https://linuxize.com/post/how-to-install-python-3-on-centos-7/)
-		- As root: ```yum install centos-release-scl```
-		- As root: ```yum install rh-python36```
+2. Install python3 - based on [those instructions](https://linuxize.com/post/how-to-install-python-3-on-centos-7/)
+   - As root: ```yum install centos-release-scl```
+   - As root: ```yum install rh-python36```
 		
 ## Creating virtual environment for python (not mandatory)
 This is a short bash script you can use to create python virtualenv.
@@ -24,13 +25,19 @@ export git_url="https://github.com/sagivba/pdb_prep.git"
 mkdir -p   "$venv_dir" 
 cd         "$venv_dir"
 virtualenv "$venv_dir" || exit 1;
+```
+## installing ```click```
+Click is a Python package for creating beautiful command line interfaces.
+if yo created virtualenv load it:
+``` bash 
 source     "$venv_dir/bin/activate" || exit 2
-# now the python virtual enviroment is ready
-# lets update pip and install click
-# (Click is a Python package for creating beautiful command line interfaces)
+```
+Update pip and install click:
+```bash
 pip install --upgrade pip
 pip install click
 ```
+
 # pdb_prep installation
 This is a short bash script you can use to insall the program:
 
