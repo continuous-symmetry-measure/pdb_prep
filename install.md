@@ -1,4 +1,4 @@
-#Installation instructions (on centos7):
+# Installation instructions (on centos7):
 Those preparations are required:
 - fulfill installation prerequisites
 - creating the virtual environment for python (not mandatory)
