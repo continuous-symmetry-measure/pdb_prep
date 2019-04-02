@@ -1,4 +1,5 @@
 from distutils.core import setup
+
 import setuptools
 
 setup(
@@ -11,10 +12,10 @@ setup(
     author_email='sagivba@gmail.com',
     description='pdb utils',
     test_suite='discover_tests',
-    license = 'BSD 2-Clause',
+    license='BSD 2-Clause',
     py_modules=['pdb_prep'],
     keywords='pdb-files chemistry RSCB proteins',
-	entry_points={
+    entry_points={
         'console_scripts': [
             'pdb_prep = pdb_prep:cli',
         ]
