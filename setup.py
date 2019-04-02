@@ -2,6 +2,7 @@ from distutils.core import setup
 
 import setuptools
 
+
 setup(
     name='pdb_prep',
     version='0.0.8.3',
