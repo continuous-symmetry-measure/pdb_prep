@@ -7,6 +7,7 @@ setup(
     name='pdb_prep',
     version='0.0.8.3',
     packages=setuptools.find_packages(),
+    include_package_data=True,
     install_requires=['click'],
     url='https://sagivba.github.io/pdb_prep/',
     author='Sagiv Barhoom',
