@@ -4,7 +4,7 @@ from Utils.inform import inform
 class xray_inform(inform):
     def __str__(self):
         s = ""
-        if len(self.reliable_data)>=1:
+        if len(self.reliable_data) >= 1:
             s += "\nreliable:\n"
             s += self._str_data(self.reliable_data)
         if len(self.reliable_R_grade_data) >= 1:
@@ -28,8 +28,6 @@ class xray_inform(inform):
         :param max_resolution:
         :param limit_r_free_grade:
         """
-        resolution_data = {}
-        #
         self.reliable_data, self.others_data, self.reliable_R_grade_data = {}, {}, {}
         #  output_data_config:
         #  this list will contain the info about the outputs directories
@@ -41,7 +39,6 @@ class xray_inform(inform):
             ("others", self.others_data, "copy"),
         ]
 
-        # with click.progressbar(length=len(self.data), label='filter_data:') as bar:
         for fi, k in enumerate(self.data):
             file, pdbinfo = k, self.data[k]
             try:
@@ -51,11 +48,15 @@ class xray_inform(inform):
                     self.verbose("file: '{}' - Resolution='NULL'".format(file))
                     self.others_data[file] = pdbinfo
                     continue
-
-                if not pdbinfo.bio_struct_identical_to_the_asymmetric_unit:
-                    self.verbose("file: '{}' - biological structure  IS NOT identical to the asymmetric unit".format(file))
-                    self.others_data[file] = pdbinfo
-                    continue
+                if 350 not in self.ignore_remarks:
+                    if not pdbinfo.bio_struct_identical_to_the_asymmetric_unit:
+                        self.verbose(
+                            "file: '{}' - biological structure  IS NOT identical to the asymmetric unit".format(file))
+                        self.others_data[file] = pdbinfo
+                        continue
+                else:
+                    msg="remark 350 was ignored so bio_struct_identical_to_the_asymmetric_unit was not checked"
+                    print("WARN:file: '{}' - {}".format(file,msg))
 
                 current_resolution = float(pdbinfo.Resolution)
                 min_r_free_key = float(min(pdbinfo.r_free_dict.keys()))
@@ -69,10 +70,16 @@ class xray_inform(inform):
                     elif pdbinfo.R_free_grade >= limit_r_free_grade:
                         self.reliable_data[file] = pdbinfo
                     else:
+                        self.verbose(
+                            "file: {} 'current_resolution <= max_resolution ({}<={})".format(
+                                file,current_resolution , max_resolution))
                         self.others_data[file] = pdbinfo
                     continue
 
                 if current_resolution > max_resolution:
+                    self.verbose(
+                        "file: {} 'current_resolution > max_resolution ({}>{})".format(
+                            file, current_resolution, max_resolution))
                     self.others_data[file] = pdbinfo
                     continue
 
@@ -99,12 +106,12 @@ class nmr_inform(inform):
             try:
                 bios = info.bio_struct_identical_to_the_asymmetric_unit
                 if bios is None:
-                    bios= "None"
+                    bios = "None"
                 elif bios:
-                    bios="True"
+                    bios = "True"
                 else:
-                    bios="False"
-                #                         0     1
+                    bios = "False"
+                # 0     1
                 s += format_string.format(file, bios)
             except:
                 s += "{}\n".format(file)
@@ -116,12 +123,12 @@ class nmr_inform(inform):
          for each file:
             if (is_nmr ) then                     file is nmr
         """
-        self.nmr_data, self.others_data =  {}, {}
+        self.nmr_data, self.others_data = {}, {}
         self.output_data_config = [
             ("NMR", self.nmr_data, "clean"),
             ("others", self.others_data, "copy"),
         ]
-        # with click.progressbar(length=len(self.data), label='filter_data:') as bar:
+
         for fi, k in enumerate(self.data):
             file, pdbinfo = k, self.data[k]
             try:

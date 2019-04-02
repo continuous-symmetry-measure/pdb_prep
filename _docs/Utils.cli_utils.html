@@ -1,85 +1,165 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<html><head><title>Python: module Utils.cli_utils</title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-</head><body bgcolor="#f0f0f8">
+<html>
+<head><title>Python: module Utils.cli_utils</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body bgcolor="#f0f0f8">
 
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
-<tr bgcolor="#7799ee">
-<td valign=bottom>&nbsp;<br>
-<font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="Utils.html"><font color="#ffffff">Utils</font></a>.cli_utils</strong></big></big></font></td
-><td align=right valign=bottom
-><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a href="file:h%3A%5Cchemistry%5C_versions%5Ccode%5Cutils%5Ccli_utils.py">h:\chemistry\_versions\code\utils\cli_utils.py</a></font></td></tr></table>
-    <p></p>
+    <tr bgcolor="#7799ee">
+        <td valign=bottom>&nbsp;<br>
+            <font color="#ffffff" face="helvetica, arial">&nbsp;<br><big><big><strong><a href="Utils.html"><font
+                    color="#ffffff">Utils</font></a>.cli_utils</strong></big></big></font></td
+        >
+        <td align=right valign=bottom
+        ><font color="#ffffff" face="helvetica, arial"><a href=".">index</a><br><a
+                href="file:h%3A%5Cchemistry%5C_versions%5Ccode%5Cutils%5Ccli_utils.py">h:\chemistry\_versions\code\utils\cli_utils.py</a></font>
+        </td>
+    </tr>
+</table>
+<p></p>
 <p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
-<tr bgcolor="#aa55cc">
-<td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td></tr>
-    
-<tr><td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><table width="100%" summary="list"><tr><td width="25%" valign=top><a href="click.html">click</a><br>
-<a href="os.html">os</a><br>
-</td><td width="25%" valign=top><a href="shutil.html">shutil</a><br>
-<a href="sys.html">sys</a><br>
-</td><td width="25%" valign=top><a href="time.html">time</a><br>
-</td><td width="25%" valign=top></td></tr></table></td></tr></table><p>
+    <tr bgcolor="#aa55cc">
+        <td colspan=3 valign=bottom>&nbsp;<br>
+            <font color="#ffffff" face="helvetica, arial"><big><strong>Modules</strong></big></font></td>
+    </tr>
+
+    <tr>
+        <td bgcolor="#aa55cc"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td>
+        <td>&nbsp;</td>
+        <td width="100%">
+            <table width="100%" summary="list">
+                <tr>
+                    <td width="25%" valign=top><a href="click.html">click</a><br>
+                        <a href="os.html">os</a><br>
+                    </td>
+                    <td width="25%" valign=top><a href="shutil.html">shutil</a><br>
+                        <a href="sys.html">sys</a><br>
+                    </td>
+                    <td width="25%" valign=top><a href="time.html">time</a><br>
+                    </td>
+                    <td width="25%" valign=top></td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+<p>
+    <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+        <tr bgcolor="#ee77aa">
+            <td colspan=3 valign=bottom>&nbsp;<br>
+                <font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td>
+        </tr>
+
+        <tr>
+            <td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td>
+            <td>&nbsp;</td>
+            <td width="100%">
+                <dl>
+                    <dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
+                    </font></dt>
+                    <dd>
+                        <dl>
+                            <dt><font face="helvetica, arial"><a href="Utils.cli_utils.html#cli_utils">cli_utils</a>
+                            </font></dt>
+                        </dl>
+                    </dd>
+                </dl>
+<p>
 <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
-<tr bgcolor="#ee77aa">
-<td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font></td></tr>
-    
-<tr><td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td><td>&nbsp;</td>
-<td width="100%"><dl>
-<dt><font face="helvetica, arial"><a href="builtins.html#object">builtins.object</a>
-</font></dt><dd>
-<dl>
-<dt><font face="helvetica, arial"><a href="Utils.cli_utils.html#cli_utils">cli_utils</a>
-</font></dt></dl>
-</dd>
-</dl>
- <p>
-<table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
-<tr bgcolor="#ffc8d8">
-<td colspan=3 valign=bottom>&nbsp;<br>
-<font color="#000000" face="helvetica, arial"><a name="cli_utils">class <strong>cli_utils</strong></a>(<a href="builtins.html#object">builtins.object</a>)</font></td></tr>
-    
-<tr bgcolor="#ffc8d8"><td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
-<td colspan=2><tt>this&nbsp;class&nbsp;is&nbsp;of&nbsp;easier&nbsp;cli&nbsp;apps&nbsp;usage.<br>&nbsp;</tt></td></tr>
-<tr><td>&nbsp;</td>
-<td width="100%">Methods defined here:<br>
-<dl><dt><a name="cli_utils-__init__"><strong>__init__</strong></a>(self, click, is_verbose=False, caller='')</dt><dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt></dd></dl>
+    <tr bgcolor="#ffc8d8">
+        <td colspan=3 valign=bottom>&nbsp;<br>
+            <font color="#000000" face="helvetica, arial"><a name="cli_utils">class <strong>cli_utils</strong></a>(<a
+                    href="builtins.html#object">builtins.object</a>)</font></td>
+    </tr>
 
-<dl><dt><a name="cli_utils-check_file"><strong>check_file</strong></a>(self, file, option_param_name=None)</dt></dl>
+    <tr bgcolor="#ffc8d8">
+        <td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+        <td colspan=2><tt>this&nbsp;class&nbsp;is&nbsp;of&nbsp;easier&nbsp;cli&nbsp;apps&nbsp;usage.<br>&nbsp;</tt></td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td width="100%">Methods defined here:<br>
+            <dl>
+                <dt><a name="cli_utils-__init__"><strong>__init__</strong></a>(self, click, is_verbose=False, caller='')
+                </dt>
+                <dd><tt>Initialize&nbsp;self.&nbsp;&nbsp;See&nbsp;help(type(self))&nbsp;for&nbsp;accurate&nbsp;signature.</tt>
+                </dd>
+            </dl>
 
-<dl><dt><a name="cli_utils-copy_file"><strong>copy_file</strong></a>(self, source, dest)</dt></dl>
+            <dl>
+                <dt><a name="cli_utils-check_file"><strong>check_file</strong></a>(self, file, option_param_name=None)
+                </dt>
+            </dl>
 
-<dl><dt><a name="cli_utils-copyfiles_to_dir"><strong>copyfiles_to_dir</strong></a>(self, source_path, dest_dir, files_list)</dt></dl>
+            <dl>
+                <dt><a name="cli_utils-copy_file"><strong>copy_file</strong></a>(self, source, dest)</dt>
+            </dl>
 
-<dl><dt><a name="cli_utils-error_msg"><strong>error_msg</strong></a>(self, message, caller='')</dt></dl>
+            <dl>
+                <dt><a name="cli_utils-copyfiles_to_dir"><strong>copyfiles_to_dir</strong></a>(self, source_path,
+                    dest_dir, files_list)
+                </dt>
+            </dl>
 
-<dl><dt><a name="cli_utils-exit"><strong>exit</strong></a>(self, exit_code, sevirity, msg)</dt></dl>
+            <dl>
+                <dt><a name="cli_utils-error_msg"><strong>error_msg</strong></a>(self, message, caller='')</dt>
+            </dl>
 
-<dl><dt><a name="cli_utils-header_1_msg"><strong>header_1_msg</strong></a>(self, message, caller=' ', sevirity='INFO', fg=None)</dt></dl>
+            <dl>
+                <dt><a name="cli_utils-exit"><strong>exit</strong></a>(self, exit_code, sevirity, msg)</dt>
+            </dl>
 
-<dl><dt><a name="cli_utils-make_output_dir"><strong>make_output_dir</strong></a>(self, dirname='output', with_timestamp=False)</dt></dl>
+            <dl>
+                <dt><a name="cli_utils-header_1_msg"><strong>header_1_msg</strong></a>(self, message, caller=' ',
+                    sevirity='INFO', fg=None)
+                </dt>
+            </dl>
 
-<dl><dt><a name="cli_utils-mkdir"><strong>mkdir</strong></a>(self, dirname, raise_error_if_exists=True)</dt></dl>
+            <dl>
+                <dt><a name="cli_utils-make_output_dir"><strong>make_output_dir</strong></a>(self, dirname='output',
+                    with_timestamp=False)
+                </dt>
+            </dl>
 
-<dl><dt><a name="cli_utils-msg"><strong>msg</strong></a>(self, message, caller=' ', sevirity='INFO', fg=None)</dt></dl>
+            <dl>
+                <dt><a name="cli_utils-mkdir"><strong>mkdir</strong></a>(self, dirname, raise_error_if_exists=True)</dt>
+            </dl>
 
-<dl><dt><a name="cli_utils-verbose"><strong>verbose</strong></a>(self, message, caller='', sevirity='INFO')</dt></dl>
+            <dl>
+                <dt><a name="cli_utils-msg"><strong>msg</strong></a>(self, message, caller=' ', sevirity='INFO',
+                    fg=None)
+                </dt>
+            </dl>
 
-<dl><dt><a name="cli_utils-warn_msg"><strong>warn_msg</strong></a>(self, message, caller='')</dt></dl>
+            <dl>
+                <dt><a name="cli_utils-verbose"><strong>verbose</strong></a>(self, message, caller='', sevirity='INFO')
+                </dt>
+            </dl>
 
-<dl><dt><a name="cli_utils-write_a_file"><strong>write_a_file</strong></a>(self, full_file_name, *args)</dt></dl>
+            <dl>
+                <dt><a name="cli_utils-warn_msg"><strong>warn_msg</strong></a>(self, message, caller='')</dt>
+            </dl>
 
-<hr>
-Data descriptors defined here:<br>
-<dl><dt><strong>__dict__</strong></dt>
-<dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
-</dl>
-<dl><dt><strong>__weakref__</strong></dt>
-<dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt></dd>
-</dl>
-</td></tr></table></td></tr></table>
-</body></html>
+            <dl>
+                <dt><a name="cli_utils-write_a_file"><strong>write_a_file</strong></a>(self, full_file_name, *args)</dt>
+            </dl>
+
+            <hr>
+            Data descriptors defined here:<br>
+            <dl>
+                <dt><strong>__dict__</strong></dt>
+                <dd><tt>dictionary&nbsp;for&nbsp;instance&nbsp;variables&nbsp;(if&nbsp;defined)</tt></dd>
+            </dl>
+            <dl>
+                <dt><strong>__weakref__</strong></dt>
+                <dd><tt>list&nbsp;of&nbsp;weak&nbsp;references&nbsp;to&nbsp;the&nbsp;object&nbsp;(if&nbsp;defined)</tt>
+                </dd>
+            </dl>
+        </td>
+    </tr>
+</table>
+</td></tr></table>
+</body>
+</html>

@@ -1,4 +1,3 @@
-from Chemistry.PDB import pdb_atom
 from Chemistry.PDB.pdb_constants import pdb_constants
 from Chemistry.PDB.pdb_model import pdb_model
 from Chemistry.PDB.pdb_remark import pdb_remarks_dict
@@ -61,7 +60,6 @@ class pdb_file_parser():
             self.model_lines = list(map(str.rstrip, filter(is_model_line, self.lines)))
             return self.model_lines
 
-
     def get_next_model_lines(self):
         global start, end
         models_lines = self.get_models_lines()
@@ -101,7 +99,8 @@ class pdb(list):
     def from_file(cls, pdb_file_name, include_hetatm=True):
         with open(pdb_file_name) as f:
             pdb_file_lines = f.readlines()
-            pdb = cls.from_file_lines(pdb_file_lines=pdb_file_lines, include_hetatm=include_hetatm, pdb_file_name=pdb_file_name)
+            pdb = cls.from_file_lines(pdb_file_lines=pdb_file_lines, include_hetatm=include_hetatm,
+                                      pdb_file_name=pdb_file_name)
             pdb.file_name = pdb_file_name
             return pdb
 
@@ -129,10 +128,10 @@ class pdb(list):
         # TODO prepare connects lines
         caveat_lines = parser.get_caveats_lines()
         extdta_lines = parser.get_expdta_lines()
-        if len(models)==1:
-            #we will not wrap MODEL 1 ... ENMMDL lines if the orig input  did not have them
-            models[0].wrap_with_header_and_footer=parser.wrap_with_header_and_footer
-        return cls(models, remarks=remarks, caveats=caveat_lines, extdta= extdta_lines ,include_hetatm=include_hetatm)
+        if len(models) == 1:
+            # we will not wrap MODEL 1 ... ENMMDL lines if the orig input  did not have them
+            models[0].wrap_with_header_and_footer = parser.wrap_with_header_and_footer
+        return cls(models, remarks=remarks, caveats=caveat_lines, extdta=extdta_lines, include_hetatm=include_hetatm)
 
     def __init__(self, pdb_models, remarks=None, caveats=None, extdta=None, **kwargs):
         super().__init__()

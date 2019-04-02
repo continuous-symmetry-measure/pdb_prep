@@ -2,6 +2,7 @@ class pdb_constants():
     """
     this class set constants for th pdb parsing
     """
+
     def __init__(self):
         self.MODEL = 'MODEL '
         self.ENDMDL = 'ENDMDL'

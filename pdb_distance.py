@@ -7,8 +7,8 @@ import click
 from Chemistry.PDB.Sievers import atom_names_siever
 from Chemistry.PDB.pdb_atom import eqvivalent_atoms
 from Chemistry.PDB.pdb_obj import pdb
-from  PDB_Distance import protein_dimer_distance, symetric_axis_distance
 from Geometry.distance import point_3d
+from  PDB_Distance import protein_dimer_distance, symetric_axis_distance
 from Utils.cli_utils import cli_utils as cu
 
 

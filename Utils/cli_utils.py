@@ -1,8 +1,8 @@
 import os
 import shutil
-import click
 import time
-import sys
+
+import click
 
 
 class cli_utils():
@@ -74,7 +74,7 @@ class cli_utils():
             self.output_path = None
             return ret_val
 
-    def mkdir(self, dirname, raise_error_if_exists = True):
+    def mkdir(self, dirname, raise_error_if_exists=True):
         full_dir_path = os.path.join(dirname)
         if os.path.isdir(full_dir_path) and not raise_error_if_exists:
             self.verbose("FYI - {} alresdy exists.".format(dirname), caller=self.mkdir.__name__)
@@ -96,18 +96,18 @@ class cli_utils():
             self.verbose("OK -  copy {}  to {}".format(source, dest), caller=self.copy_file.__name__)
             self._counter += 1
         except Exception as e:
-            self.warn_msg("   copy  {}  to {} : {}".format(source, dest,str(e)), caller=self.copy_file.__name__)
+            self.warn_msg("   copy  {}  to {} : {}".format(source, dest, str(e)), caller=self.copy_file.__name__)
 
-    def delete_file(self,file_name):
+    def delete_file(self, file_name):
         try:
             self.verbose("trying to delete {}  ".format(file_name), caller=self.delete_file.__name__)
             rv = os.remove(file_name)
             self.verbose("OK -  delete {}  to {}".format(file_name), caller=self.delete_file.__name__)
             self._counter += 1
         except Exception as e:
-            self.warn_msg("   delete  {}  : {}".format(file_name,str(e)), caller=self.delete_file.__name__)
+            self.warn_msg("   delete  {}  : {}".format(file_name, str(e)), caller=self.delete_file.__name__)
 
-    def rmtree(self,path):
+    def rmtree(self, path):
         try:
             self.verbose("trying to rmtree {}  ".format(path), caller=self.rmtree.__name__)
             shutil.rmtree(path)
@@ -129,4 +129,4 @@ class cli_utils():
                 file.writelines(*args)
                 self.verbose("file: {} was written".format(full_file_name), caller=self.write_file.__name__)
         except Exception as e:
-            self.exit(1,"ERROR","{} - Exeption:{} args={}".format(full_file_name,e,args))
+            self.exit(1, "ERROR", "{} - Exeption:{} args={}".format(full_file_name, e, args))

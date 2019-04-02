@@ -128,6 +128,7 @@ class chain_utils:
     """
     the chain utils is a clas which will help TODO
     """
+
     def __init__(self, chain):
         self.chain = chain
         self.atoms_gaps = self.get_atoms_gaps()

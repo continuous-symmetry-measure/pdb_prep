@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 
 import os
+
 import click
-from Utils.cli_utils import cli_utils as cu
-from Utils.inform import inform
-from Utils.inform import chains_comapre
+
 from Chemistry.PDB.pdb_obj import pdb
+from Utils.cli_utils import cli_utils as cu
+from Utils.inform import chains_comapre
+from Utils.inform import inform
 
 
 @click.group()
@@ -39,8 +41,9 @@ def dir_brief(pdb_dir, verbose):
 
 @cli.command()
 @click.option('-i', '--pdb-file', help='the input pdb file or a directory containing PDB files')
+@click.option('-T', '--output-type', help='text|json', type=click.Choice(['text', 'json']), default='text')
 @click.option('-v', '--verbose', is_flag=True, default=False, help='verbose mode')
-def brief(pdb_file, verbose):
+def brief(pdb_file, output_type, verbose):
     """
     get a brief info on the PDB file content
     """
@@ -54,7 +57,7 @@ def brief(pdb_file, verbose):
 
     file_name = os.path.basename(pdb_file)
     path = os.path.dirname(pdb_file)
-    pdbinfo=informer.create_pdb_info(file_name, path)
+    pdbinfo = informer.create_pdb_info(file_name, path,output_type)
     informer.one_file(pdbinfo)
     return 0
 

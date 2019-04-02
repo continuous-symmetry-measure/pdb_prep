@@ -50,7 +50,7 @@ class pdb_atom():
 
     @classmethod
     def parse_atom_name(cls, pdb_line):
-        return pdb_line[12:16] # atom name with type
+        return pdb_line[12:16]  # atom name with type
 
     @classmethod
     def parse_altloc(cls, pdb_line):
@@ -188,6 +188,7 @@ class eqvivalent_atoms():
     """
     this class  helps to  find the eqvivalent atoms iin dimers
     """
+
     def is_eqvivalent_atoms(self, atom1, atom2):
         ret_val = atom1.atom_name == atom2.atom_name and \
                   atom1.resname == atom2.resname and \

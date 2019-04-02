@@ -1,4 +1,5 @@
 import sys
+
 from Chemistry.PDB.pdb_atom import pdb_atom
 from Chemistry.PDB.pdb_chain import pdb_chain
 from Chemistry.PDB.pdb_constants import pdb_constants
@@ -94,10 +95,10 @@ class pdb_model(list):
             self.model_number = str(model_number)
         self.pdb_const_str = pdb_constants()
         self.extend(pdb_chains)
-        self.wrap_with_header_and_footer=True
+        self.wrap_with_header_and_footer = True
 
     def __str__(self):
-        model_str=""
+        model_str = ""
         if self.wrap_with_header_and_footer:
             model_str = "{} {}\n".format(self.pdb_const_str.MODEL, self.model_number)
         model_str += "\n".join(map(str, self))

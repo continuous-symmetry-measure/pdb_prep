@@ -1,67 +1,9 @@
+import decimal
 import json
 import re
 import sys
-import decimal
+
 from Chemistry.PDB.pdb_chain import chain_utils
-
-
-class r_free_grade_vlaues():
-    def __init__(self, text_value):
-        values = r_free_grade_vlaues.get_struct()
-
-        if text_value not in map(lambda v: v['text'], values):
-            raise ValueError("not valid value:{}".format(text_value))
-        for v in values:
-            if v['text'] == text_value:
-                self.val = v
-                break
-
-    def __str__(self):
-        return self.val["text"]
-
-    def _convert(self, other):
-        if type(other) is str:
-            return r_free_grade_vlaues(other)
-        return other
-
-    def __ge__(self, other):
-        """ A is better then B"""
-        return self.val["value"] <= self._convert(other).val["value"]
-
-    def __le__(self, other):
-        """ A is better then B"""
-        return self.val["value"] >= self._convert(other).val["value"]
-
-    def __eq__(self, other):
-        """ A is better then B"""
-        return self.val["value"] == self._convert(other).val["value"]
-
-    @classmethod
-    def get_struct(cls):
-        return [
-            {'text': "MUCH BETTER THAN AVERAGE at this resolution", "value": "A"},
-            {'text': "BETTER THAN AVERAGE at this resolution", "value": "B"},
-            {'text': "AVERAGE at this resolution", "value": "C"},
-            {'text': "WORSE THAN AVERAGE at this resolution", "value": "D"},
-            {'text': "UNRELIABLE", "value": "E"},
-        ]
-
-    @classmethod
-    def for_help_msg(cls):
-        lst = cls.get_struct()
-        values = []
-        s = ""
-        for x in sorted(lst, key=lambda d: d["value"]):
-            values.append(x["value"])
-            s += "\t\t{} - {}\n".format(x["value"], x["text"])
-        return s, values
-
-    @classmethod
-    def from_value(cls, value):
-        lst = cls.get_struct()
-        for x in sorted(lst, key=lambda d: d["value"]):
-            if x["value"] == value:
-                return cls(x["text"])
 
 
 class pdb_info():
@@ -77,8 +19,11 @@ class pdb_info():
 
     """
 
-    def __init__(self, pdb):
+    def __init__(self, pdb, ignore_remarks=[],output_type='text'):
         self._pdb = pdb
+        self.ignore_remarks = ignore_remarks
+        self.output_type=output_type
+        # self.models_table_data=[]
         self.R_value_list = []
         self.R_free_list = []
         self.R_free_grade = 'NULL'
@@ -87,8 +32,8 @@ class pdb_info():
         self.R_value = 'NULL'
         self.Resolution = None
         self.Resolution_Grade = None
-        self.bio_struct_identical_to_the_asymmetric_unit=None
-        self._is_nmr=None
+        self.bio_struct_identical_to_the_asymmetric_unit = None
+        self._is_nmr = None
         str_FREE_R = r"^FREE R VALUE(\s+|\s+\(.+\)\s+):\s*(\d+\.\d+|NULL)"
         str_R_value = r"R VALUE\s+\(.+\)\s+:\s*(\d+\.\d+|NULL)"
         str_B_factor = r"MEAN B VALUE\s+\(.+:\s+([-+]?\d*\.\d+|NULL)"
@@ -154,8 +99,8 @@ class pdb_info():
             deal_round("1.46", 0.1)=>
             deal_round("1.45", 0.1)=>
             deal_round("1.44", 0.1)=>
-        :param string_of_number: 
-        :param n: 
+        :param string_of_number:
+        :param n:
         :return: float
         """
 
@@ -375,9 +320,8 @@ class pdb_info():
         _pdb = self._pdb
 
         remarak_210 = _pdb.remarks[210]
-        if len(list(filter(lambda s: s.startswith("NMR."), remarak_210)))>0:
-            self._is_nmr=True
-
+        if len(list(filter(lambda s: s.startswith("NMR."), remarak_210))) > 0:
+            self._is_nmr = True
 
     def parse_remark_350(self):
         """
@@ -418,33 +362,33 @@ class pdb_info():
         self._check_remark_exists(350, self.parse_remark_350.__name__)
         _pdb = self._pdb
         remarak_350 = _pdb.remarks[350]
-        is_boilogical_struct_defined=False
+        is_boilogical_struct_defined = False
         for i, line in enumerate(remarak_350):
             if line.startswith('BIOMOLECULE'):
                 i = i + 1
-                is_boilogical_struct_defined=True
+                is_boilogical_struct_defined = True
                 continue
             if is_boilogical_struct_defined and line.startswith('APPLY THE FOLLOWING TO CHAINS'):
                 break
 
-            # BIOMT1   1  1.000000  0.000000  0.000000        0.00000
-            # BIOMT2   1  0.000000  1.000000  0.000000        0.00000
-            # BIOMT3   1  0.000000  0.000000  1.000000        0.00000
-        biomt_lines=[
+                # BIOMT1   1  1.000000  0.000000  0.000000        0.00000
+                # BIOMT2   1  0.000000  1.000000  0.000000        0.00000
+                # BIOMT3   1  0.000000  0.000000  1.000000        0.00000
+        biomt_lines = [
             'BIOMT1   1  1.000000  0.000000  0.000000        0.00000',
             'BIOMT2   1  0.000000  1.000000  0.000000        0.00000',
             'BIOMT3   1  0.000000  0.000000  1.000000        0.00000'
         ]
-        i+=1
-        is_last_index=lambda i : len(remarak_350)-1 ==i
-        is_identity_matrix = lambda m : biomt_lines[0] == m[0] and  biomt_lines[1] == m[1] and biomt_lines[2] == m[2]
+        i += 1
+        is_last_index = lambda i: len(remarak_350) - 1 == i
+        is_identity_matrix = lambda m: biomt_lines[0] == m[0] and biomt_lines[1] == m[1] and biomt_lines[2] == m[2]
         # will set to tru only if the lines are identity_matrix:
         #     we have only 3 BIOMT lines with  identity_matrix of 3X3
         #     the third line of thm identity_matrix: is the last or
         #      the forth line is not BIOMT line
-        if  is_identity_matrix(remarak_350[i:i+3]) and is_last_index(i+2):
+        if is_identity_matrix(remarak_350[i:i + 3]) and is_last_index(i + 2):
             self.bio_struct_identical_to_the_asymmetric_unit = True
-        elif  is_identity_matrix(remarak_350[i:i+3]) and not remarak_350[i+3].startswith('BIOMT'):
+        elif is_identity_matrix(remarak_350[i:i + 3]) and not remarak_350[i + 3].startswith('BIOMT'):
             self.bio_struct_identical_to_the_asymmetric_unit = True
         else:
             self.bio_struct_identical_to_the_asymmetric_unit = False
@@ -541,57 +485,194 @@ class pdb_info():
             return self._is_nmr
         _pdb = self._pdb
         strp_ends = lambda s, e: s.strip().endswith(e)
-        extdta_nmr=lambda s: strp_ends(s, 'NMR')
-        remark_2_nmr= lambda s: strp_ends(s, 'RESOLUTION. NOT APPLICABLE')
+        extdta_nmr = lambda s: strp_ends(s, 'NMR')
+        remark_2_nmr = lambda s: strp_ends(s, 'RESOLUTION. NOT APPLICABLE')
         if len(list(filter(extdta_nmr, _pdb.extdta))) > 0:
             return True
         # REMARK   2 RESOLUTION. NOT APPLICABLE
-        elif 2 in _pdb.remarks and len(list(filter(remark_2_nmr,  _pdb.remarks[2]))) > 0:
+        elif 2 in _pdb.remarks and len(list(filter(remark_2_nmr, _pdb.remarks[2]))) > 0:
             return True
         return False
 
     def gaps_report(self):
         pass
 
-    def info_report(self):
+    def info_report(self, models_table_data=[]):
         info = self._pdb.info()
-        report = ""
-        report += "file_name: {}\n".format(info["file_name"])
-        report += "\tnumber_fo_models: {}".format(info["number_of_models"])
-        report += "\t\tnumber_fo_remarks: {}\n".format(info["number_of_remarks"])
-        if self._pdb.has_caveats():
-            report += "\tCAVEATS:\n\t"
-            report += "\n\t".join(self._pdb.caveats)
-        report += "\n"
-        try:
-            self.parse_remark_2()
-            report += "\tremark 2:"
-            report += "\t\tResolution = {}".format(self.Resolution)
-            report += "\t Resolution_Grade = {}\n".format(self.Resolution_Grade)
-        except Exception as e:
-            report += "\t\tremark 2:\tno info :{}\n".format(e)
+        report = Report(self._pdb, models_table_data)
 
+        rem_header = lambda rn: "\tremark {:>4d}:".format(rn)
+        rem_ignore_msg = lambda rn: "\tremark {} will be ignore as you requested".format(rn)
+
+        remark_number = 2
         try:
+
+            if remark_number in self.ignore_remarks:
+                raise RuntimeWarning(rem_ignore_msg(remark_number))
+            self.parse_remark_2()
+            resolution = "Resolution = {}".format(self.Resolution)
+            resolution_grade = "Resolution_Grade = {}\n".format(self.Resolution_Grade)
+            remark_info = ""
+            remark_info += rem_header(remark_number)
+            remark_info += "\t\t" + resolution + "\t" + resolution_grade
+            report.add_remark_info(remark_number, remark_info)
+        except Exception as e:
+            remark_info = "\tremark {:>4d}:\tno info :{}".format(remark_number, e)
+            report.add_remark_info(remark_number, remark_info)
+
+        remark_number = 3
+        try:
+
+            if remark_number in self.ignore_remarks:
+                raise RuntimeWarning(rem_ignore_msg(remark_number))
             self.parse_remark_3()
-            report += "\tremark 3:"
-            report += "\t\tR_value = {}".format(self.R_value)
-            report += "\t\tR_free  = {}".format(self.R_free)
-            report += "\t\tR_free_grade = {}\n".format(self.R_free_grade)
+            remark_info = ""
+            remark_info += rem_header(remark_number)
+            remark_info += "\t\tR_value = {}".format(self.R_value)
+            remark_info += "\t\tR_free  = {}".format(self.R_free)
+            remark_info += "\t\tR_free_grade = {}".format(self.R_free_grade)
+            report.add_remark_info(remark_number, remark_info)
         except Exception as e:
-            report += "\tremark 3:\t\tno info - {}\n".format(e)
+            remark_info = "\tremark {}:\tno info :{}".format(remark_number, e)
+            report.add_remark_info(remark_number, remark_info)
+
+        remark_number = 350
         try:
+
+            if remark_number in self.ignore_remarks:
+                raise RuntimeWarning(rem_ignore_msg(remark_number))
             self.parse_remark_350()
-            report += "\tremark 350:"
-            report += "\t\tbio_struct_identical_to_the_asymmetric_unit = {}\n\n".format(self.bio_struct_identical_to_the_asymmetric_unit)
+            remark_info = ""
+            remark_info += rem_header(remark_number)
+            remark_info += "\t\tbio_struct_identical_to_the_asymmetric_unit = {}".format(
+                self.bio_struct_identical_to_the_asymmetric_unit)
+            report.add_remark_info(remark_number, remark_info)
         except Exception as e:
-            pass
+            remark_info = "\tremark {}:\tno info :{}".format(remark_number, e)
+            report.add_remark_info(remark_number, remark_info)
+
+        if self.output_type=='text': return str(report)
+        elif self.output_type == 'json': return report.to_json()
+        else: return str(report)
+
+class Report:
+    def __init__(self, pdb, models_table_data=[]):
+        self._pdb = pdb
+        info = self._pdb.info()
+        self.info = info
+        self.models_table_data=models_table_data
+        self._str_order = ["file_name", "number_of_models", "number_fo_remarks", "caveats"]
+        self.remarks_info = []
+
+
+    def add_remark_info(self, remark_number, remark_info):
+        self.remarks_info.append({"remark_number": remark_number, "remark_info": remark_info})
+
+    def __str__(self):
+        d = self.to_dict()
+        report = ""
+        report += "file_name: {}\n".format(d["file_name"])
+        report += "\tnumber_of_models: {}".format(d["number_of_models"])
+        report += "\t\tnumber_of_remarks: {}\n".format(d["number_of_remarks"])
+        if "caveats" in d:
+            report += "\tcaveats:\n\t"
+            report += "\n\t".join(d["caveats"])
+        report += "\tremarks_info:\n"
+        for ri in d["remarks_info"]:
+            report += "\t\t - " + ri["remark_info"] + "\n"
         report += "\tmodels_info:\n"
-        for mi in info["models_info"]:
+        for mi in d["models_info"]:
             report += "\t\tmodel_number: {}".format(mi["model_number"])
             report += "\t\tnumber_of_chains: {}\n".format(mi["number_of_chains"])
-            # report += "\t\tatoms_per_chain: {}".format(mi["atoms_per_chain"])
-
+        for line in self.models_table_data:
+            report +="\t  {:>10} {:>10} {:>10} {:>10}\n".format(line[0], line[1], line[2], line[3])
         return report
+
+    def to_dict(self):
+        data = {}
+        for k in ["file_name", "number_of_models"]:
+            data[k] = self.info[k]
+        try:
+            data["number_of_remarks"] = len(list(self.remarks_info))
+        except e as  Exception:
+            data["number_of_remarks"] = 0
+
+        data["models_info"] = []
+        for mi in self.info["models_info"]:
+            data["models_info"].append({
+                "model_number": mi["model_number"],
+                "number_of_chains": mi["number_of_chains"]
+            })
+
+        if self._pdb.has_caveats():
+            data["caveats"] = self._pdb.caveats
+        data["remarks_info"] = list(sorted(self.remarks_info, key=lambda rem: rem["remark_number"]))
+        if len(self.models_table_data)>0:
+            data["models_table_data"]=self.models_table_data
+        return data
+
+    def to_json(self):
+        ret_val = json.dumps(self.to_dict(), indent=2)
+        return ret_val
+
+
+class r_free_grade_vlaues():
+    def __init__(self, text_value):
+        values = r_free_grade_vlaues.get_struct()
+
+        if text_value not in map(lambda v: v['text'], values):
+            raise ValueError("not valid value:{}".format(text_value))
+        for v in values:
+            if v['text'] == text_value:
+                self.val = v
+                break
+
+    def __str__(self):
+        return self.val["text"]
+
+    def _convert(self, other):
+        if type(other) is str:
+            return r_free_grade_vlaues(other)
+        return other
+
+    def __ge__(self, other):
+        """ A is better then B"""
+        return self.val["value"] <= self._convert(other).val["value"]
+
+    def __le__(self, other):
+        """ A is better then B"""
+        return self.val["value"] >= self._convert(other).val["value"]
+
+    def __eq__(self, other):
+        """ A is better then B"""
+        return self.val["value"] == self._convert(other).val["value"]
+
+    @classmethod
+    def get_struct(cls):
+        return [
+            {'text': "MUCH BETTER THAN AVERAGE at this resolution", "value": "A"},
+            {'text': "BETTER THAN AVERAGE at this resolution", "value": "B"},
+            {'text': "AVERAGE at this resolution", "value": "C"},
+            {'text': "WORSE THAN AVERAGE at this resolution", "value": "D"},
+            {'text': "UNRELIABLE", "value": "E"},
+        ]
+
+    @classmethod
+    def for_help_msg(cls):
+        lst = cls.get_struct()
+        values = []
+        s = ""
+        for x in sorted(lst, key=lambda d: d["value"]):
+            values.append(x["value"])
+            s += "\t\t{} - {}\n".format(x["value"], x["text"])
+        return s, values
+
+    @classmethod
+    def from_value(cls, value):
+        lst = cls.get_struct()
+        for x in sorted(lst, key=lambda d: d["value"]):
+            if x["value"] == value:
+                return cls(x["text"])
 
 
 class pdb_utils():
