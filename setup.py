@@ -12,6 +12,7 @@ setup(
     description='pdb utils',
     test_suite='discover_tests',
     license = 'BSD 2-Clause',
+    py_modules=['pdb_prep'],
     keywords='pdb-files chemistry RSCB proteins',
 	entry_points={
         'console_scripts': [
