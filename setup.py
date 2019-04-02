@@ -4,7 +4,7 @@ import setuptools
 setup(
     name='pdb_prep',
     version='0.0.8.3',
-    packages=['_Tests', 'Chemistry', 'Chemistry.PDB', 'Geometry', 'PDB_Distance', 'PDB_Prep', 'Utils'],
+    packages=find_packages(),
     install_requires=['click'],
     url='https://sagivba.github.io/pdb_prep/',
     author='Sagiv Barhoom',
