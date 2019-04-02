@@ -17,7 +17,9 @@ setup(
     keywords='pdb-files chemistry RSCB proteins',
     entry_points={
         'console_scripts': [
-            'pdb_prep = pdb_prep:cli',
+            'pdb_prep.py = pdb_prep:cli',
+            'pdb_info.py = pdb_info:cli',
+            'pdb_distance.py = pdb_distance:cli',
         ]
     },
 )
