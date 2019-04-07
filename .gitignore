@@ -1,0 +1,7 @@
+dist/
+pdb_prep.egg-info/
+build/
+.idea/
+.vscode/
+__pycache__/
+.eggs/

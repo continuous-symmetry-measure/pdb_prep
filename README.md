@@ -36,8 +36,8 @@ Reliable files are further processed according to the following stages:
 
 ## Help:
 ```
-$ pdb_prep.py  --help
-Usage: pdb_prep.py [OPTIONS] COMMAND [ARGS]...
+$ pdb_prep  --help
+Usage: pdb_prep [OPTIONS] COMMAND [ARGS]...
 
   pdb preprations need help? try : pdb_prep COMMAND --help
 
@@ -52,8 +52,8 @@ Commands:
 
 ## NMR help:
 ```
-$ pdb_prep.py nmr  --help
-Usage: pdb_prep.py nmr [OPTIONS]
+$ pdb_prep nmr  --help
+Usage: pdb_prep nmr [OPTIONS]
 
   This procedure prepares protein files in pdb format from NMR measurements for 
   a CSM calculation according to the following stage:
@@ -89,8 +89,8 @@ Options:
 
 ## X-ray help 
 ```
-$ pdb_prep.py xray --help
-Usage: pdb_prep.py xray [OPTIONS]
+$ pdb_prep xray --help
+Usage: pdb_prep xray [OPTIONS]
 
   This procedure prepares protein files in pdb format from X-RAY measurements for a 
   CSM calculation according. 
