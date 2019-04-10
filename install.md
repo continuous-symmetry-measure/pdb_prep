@@ -26,7 +26,7 @@ mkdir -p   "$venv_dir"
 cd         "$venv_dir"
 virtualenv "$venv_dir" || exit 1;
 ```
-## installing ```click```
+## installing ```pdb_prep```
 Click is a Python package for creating beautiful command line interfaces.
 if yo created virtualenv load it:
 ``` bash 
