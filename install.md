@@ -32,34 +32,8 @@ if yo created virtualenv load it:
 ``` bash 
 source     "$venv_dir/bin/activate" || exit 2
 ```
-Update pip and install click:
+Update pip and install pdb_prep:
 ```bash
 pip install --upgrade pip
-pip install click
-```
-
-# pdb_prep installation
-This is a short bash script you can use to insall the program:
-
-```bash
-# ------------------------------------------------------
-# set enviroment variables
-# ------------------------------------------------------
-# pdb_prep current version can be found in the setup.py file
-export version="0.0.8.2" 
-# change $HOME to your installation path
-export installation_dir="$HOME/pdb_prep"  
-#  A directory for python virtual env
-export venv_dir="$installation_dir/$version/venv"
-# we wil put the  source code in this folder
-export source_dir="$installation_dir/src"
-export git_url="https://github.com/sagivba/pdb_prep.git"
-
-# ------------------------------------------------------
-# pdb_prep installation
-# ------------------------------------------------------
-# Now we have everything ready for the installation of pdb_prep
-mkdir     "$source_dir"
-cd        "$source_dir"
-git clone "$git_url"
+pip install pdb_prep
 ```
