@@ -20,6 +20,11 @@ def write_a_file(file_info, cliutils):
 
 
 def write_files(files_dict, is_verbose):
+    if len(files_dict) == 1:
+        cliutils = cli_utils(None, is_verbose, "write_files")
+        result = write_a_file(list(files_dict.items())[0], cliutils)
+        return [result]
+
     with multiprocessing.Pool() as p:
         start_time = time.time()
         cliutils = cli_utils(None, is_verbose, "write_files")
@@ -290,7 +295,7 @@ class stages():
                          caller=_caller)
         return _dest_path, _data
 
-    def clean_05_all_chains_has_same_number_of_atoms(self, dest_path, data, ignore_remarks=[]):
+    def clean_05_all_chains_has_same_number_of_atoms(self, dest_path, data, ignore_remarks=[],informer=None):
         """
         move to 05 dir only if each model chains has same number of atoms
         :param dest_path:
@@ -327,6 +332,7 @@ class stages():
                     for ci, chain in enumerate(model):
                         if len(chain) != first_chain_len:
                             is_ok = False
+                            informer.exluded_files[_pdb.file_name]="not hommomer"
                             break
                     if is_ok:
                         continue
@@ -348,7 +354,7 @@ class stages():
                          caller=_caller)
         return _dest_path, _data
 
-    def run_clean_stages(self, directory, dest_path, data, with_hydrogens, ignore_remarks=[]):
+    def run_clean_stages(self, directory, dest_path, data, with_hydrogens, ignore_remarks=[],informer=None):
         _caller = "run_clean_stages"
         _dest_path, _data = dest_path, data
         cliutils = self.cliutils
@@ -377,5 +383,5 @@ class stages():
             return _data
         # ------------------------------------------------------------
         # 05-missing_atoms-remarks"
-        _dest_path, _data = self.clean_05_all_chains_has_same_number_of_atoms(dest_path, _data, ignore_remarks)
+        _dest_path, _data = self.clean_05_all_chains_has_same_number_of_atoms(dest_path, _data, ignore_remarks,informer)
         return _data, total_report

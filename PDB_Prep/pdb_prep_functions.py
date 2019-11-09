@@ -1,3 +1,4 @@
+import json
 import os
 
 import click
@@ -23,6 +24,7 @@ def copy_data_into_dir(source_path, dest_path, data, cliutils):
 
 def clean_tmp_data(stager: stages, pdb_dir, short_file_name, informer, cliutils):
     if stager.last_stage_dir is None:
+        cliutils.error_msg("exluded_files:\n{}".format(informer.exluded_files))
         cliutils.error_msg("file is not valid - check the 'others' dir", caller=clean_tmp_data.__name__)
         exit(22)
     last_stage_full_file_name = os.path.join(stager.last_stage_dir, short_file_name)
@@ -40,6 +42,7 @@ def clean_tmp_data(stager: stages, pdb_dir, short_file_name, informer, cliutils)
         # for directory, data, copy_or_clean in sorted(informer.output_data_config):
         #     if os.path.isdir(directory):
         #         cliutils.rmtree(directory)
+    return
 
 
 def validate_input_dir_or_file(pdb_dir, pdb_file, cliutils):
@@ -91,6 +94,16 @@ def finish_outputs(mode_file_or_dir, informer, cliutils, report):
     if mode_file_or_dir == "file":
         print(str(informer))
 
+        report_file = "report-{}.txt".format(list(informer.data)[0])
+        report_file = os.path.join(report_file)
+        cliutils.write_file(report_file, str(informer))
+        print("report file:{}".format(report_file))
+        if len(informer.exluded_files) > 0:
+            ecxluded_file = "ecxluded-{}.json".format(list(informer.data)[0])
+            ecxluded_file = os.path.join(ecxluded_file)
+            cliutils.write_file(ecxluded_file, json.dumps(informer.exluded_files))
+            print("ecxluded file:{}".format(ecxluded_file))
+
     if mode_file_or_dir == 'dir':
         cliutils.msg("output dir is: '{}'".format(cliutils.output_dirname))
         report_file = os.path.join(cliutils.output_dirname, "report.txt")
@@ -100,4 +113,5 @@ def finish_outputs(mode_file_or_dir, informer, cliutils, report):
         print("---\n")
         print(report)
     cliutils.verbose("mode_file_or_dir={}".format(mode_file_or_dir))
+    cliutils.verbose("exluded_files:\n{}".format(informer.exluded_files))
     return

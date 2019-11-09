@@ -57,19 +57,20 @@ def nmr(pdb_dir, pdb_file, with_hydrogens, is_homomer, parse_rem350, output_dir,
     if not parse_rem350:
         ignore_remarks.append(350)
     cliutils = nmr_validate_params(pdb_dir=pdb_dir, pdb_file=pdb_file, output_dir=output_dir, verbose=verbose)
-    informer = nmr_inform(cliutils, is_verbose=verbose, include_hetatm=True,ignore_remarks=ignore_remarks)
+    informer = nmr_inform(cliutils, is_verbose=verbose, include_hetatm=True, ignore_remarks=ignore_remarks)
     mode_file_or_dir = None
     short_file_name = None
     if pdb_file:
         mode_file_or_dir = "file"
         pdb_dir, short_file_name = os.path.split(pdb_file)
         informer.process_one_file(pdb_dir, short_file_name, click)
+        # informer.ignore_remarks.append(2)  # remark 2 is resolution - ignore it
+        # informer.ignore_remarks.append(3)  # remark 3 is r_free - ignore it
     elif pdb_dir:
         mode_file_or_dir = "dir"
         informer.process_complete_dir(pdb_dir, click)
-
-    informer.filter_data(click=click)
-
+    limit_r_free_grade_text = r_free_grade_vlaues.from_value(limit_r_free_grade)
+    informer.filter_data(max_resolution=max_resolution, limit_r_free_grade=limit_r_free_grade_text, click=click)
 
     stager = stages(cliutils, informer, is_homomer=is_homomer)
     for directory, data, copy_or_clean in sorted(informer.output_data_config):
@@ -152,13 +153,15 @@ def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, 
     if not parse_rem350:
         ignore_remarks.append(350)
     cliutils = xray_validate_params(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, output_dir, verbose)
-    informer = xray_inform(cliutils, is_verbose=verbose, include_hetatm=True,ignore_remarks=ignore_remarks)
+    informer = xray_inform(cliutils, is_verbose=verbose, include_hetatm=True, ignore_remarks=ignore_remarks)
     mode_file_or_dir = None
     short_file_name = None
     if pdb_file:
         mode_file_or_dir = "file"
         pdb_dir, short_file_name = os.path.split(pdb_file)
         informer.process_one_file(pdb_dir, short_file_name, click)
+        # informer.ignore_remarks.append(2)  # remark 2 is resolution - ignore it
+        # informer.ignore_remarks.append(3)  # remark 3 is r_free - ignore it
     elif pdb_dir:
         mode_file_or_dir = "dir"
         informer.process_complete_dir(pdb_dir, click)
@@ -180,15 +183,14 @@ def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, 
         if copy_or_clean == 'copy':
             copy_data_into_dir(source_path=pdb_dir, dest_path=dest_path, data=data, cliutils=cliutils)
         else:
-            informer.data, report = stager.run_clean_stages(
+            informer.data, report  = stager.run_clean_stages(
                 directory=directory,
                 dest_path=dest_path,
                 data=data,
                 with_hydrogens=with_hydrogens,
-                ignore_remarks=ignore_remarks
+                ignore_remarks=ignore_remarks,
+                informer=informer
             )
-
-
 
             # clean_missing_residues(data)
     # missing rsidues

@@ -5,7 +5,7 @@ import setuptools
 
 setup(
     name='pdb_prep',
-    version='0.0.8.4',
+    version='0.0.8.5',
     packages=setuptools.find_packages(),
     include_package_data=True,
     install_requires=['click'],

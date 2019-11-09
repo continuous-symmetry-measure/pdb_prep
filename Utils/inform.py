@@ -9,31 +9,49 @@ from Chemistry.PDB.pdb_obj import pdb
 from Chemistry.PDB.pdb_utils import pdb_info
 
 
-def create_pdb_info(file, dir_path, include_hetatm,ignore_remarks=[],output_type='text'):
+def create_pdb_info(file, dir_path, include_hetatm, ignore_remarks=[], output_type='text', is_verbose=False):
+    start_time = time.time()
     _file_path = os.path.join(dir_path, file)
     _pdb = pdb.from_file(_file_path, include_hetatm=include_hetatm)
-    pdbinfo = pdb_info(_pdb,ignore_remarks=ignore_remarks,output_type=output_type)
+    pdbinfo = pdb_info(_pdb, ignore_remarks=ignore_remarks, output_type=output_type)
+    if is_verbose:
+        print(" create_pdb_info iter execution time = {0:.5f} ".format(time.time() - start_time))
+
     return pdbinfo
 
 
-def get_pdb_info_iter(dir_path, files_iter, include_hetatm,ignore_remarks=[], is_verbose=None):
+def get_pdb_info_iter(dir_path, files_iter, include_hetatm, ignore_remarks=[], is_verbose=None):
+    if len(list(files_iter)) <= 1:
+        if is_verbose: print(" one file mode - not parallel")
+
+        pdbinfo = create_pdb_info(file=files_iter[0], dir_path=dir_path, include_hetatm=include_hetatm,
+                                  ignore_remarks=ignore_remarks)
+        return [pdbinfo]
+
     with multiprocessing.Pool() as p:
         start_time = time.time()
-        pdbinfo_iter = list(
-            p.map(functools.partial(create_pdb_info, dir_path=dir_path, include_hetatm=include_hetatm,ignore_remarks=ignore_remarks), files_iter))
+        ft = functools.partial(create_pdb_info, dir_path=dir_path, include_hetatm=include_hetatm,
+                               ignore_remarks=ignore_remarks)
+        pdbinfo_iter = list(p.map(ft, files_iter))
+        # pdbinfo_iter = list(
+        #     p.map(functools.partial(create_pdb_info, dir_path=dir_path, include_hetatm=include_hetatm,
+        #                             ignore_remarks=ignore_remarks), files_iter))
         if is_verbose:
-            print("pdbinfo_iter execution time = {0:.5f}".format(time.time() - start_time))
+            print("pdbinfo_iter execution time = {0:.5f} ".format(time.time() - start_time))
+
         return pdbinfo_iter
 
 
 class inform():
-    def __init__(self, cliutils, is_verbose=True, include_hetatm=False,ignore_remarks=[]):
+    def __init__(self, cliutils, is_verbose=True, include_hetatm=False, ignore_remarks=[]):
         self.data = {}
         self.cliutils = cliutils
         self.is_verbose = is_verbose
         self.include_hetatm = include_hetatm
-        self.ignore_remarks=ignore_remarks
+        self.ignore_remarks = ignore_remarks
+        self.one_file_mode = False
         self.errors = {}
+        self.exluded_files = {}
         self.is_compare_atoms = False
         self.is_compare_resname = False
 
@@ -93,6 +111,7 @@ class inform():
         :param click:
         :return:
         """
+        self.one_file_mode = True
         files_iter = [file_name]
         self._process_files_iter(dir_path, files_iter, click)
 
@@ -106,7 +125,8 @@ class inform():
         """
         bs = 1
         with click.progressbar(length=len(files_iter), label='collecting info on dir:{}'.format(dir_path)) as bar:
-            pdbinfo_iter = get_pdb_info_iter(dir_path, files_iter, self.include_hetatm,ignore_remarks=self.ignore_remarks,is_verbose= self.is_verbose)
+            pdbinfo_iter = get_pdb_info_iter(dir_path, files_iter, self.include_hetatm,
+                                             ignore_remarks=self.ignore_remarks, is_verbose=self.is_verbose)
             bar.update(bs)
             # for fi, file in enumerate(files_iter):
             for fi, pdbinfo in enumerate(pdbinfo_iter, 1):
@@ -114,8 +134,8 @@ class inform():
                 bar.update(bs)
                 self.one_file(pdbinfo)
 
-    def create_pdb_info(self, file, dir_path,output_type):
-        return create_pdb_info(file, dir_path, self.include_hetatm,output_type)
+    def create_pdb_info(self, file, dir_path, output_type):
+        return create_pdb_info(file, dir_path, self.include_hetatm, output_type)
 
     def one_file(self, pdbinfo):
         """
@@ -127,18 +147,17 @@ class inform():
         """
         _caller = self.__class__.__name__
         _pdb = pdbinfo._pdb
-        _is_verbose=self.is_verbose
-        if pdbinfo.output_type=='json':
-            self.is_verbose=False
+        _is_verbose = self.is_verbose
+        if pdbinfo.output_type == 'json':
+            self.is_verbose = False
         self.verbose('')
         self.verbose('+---------------------------------------------------')
         self.verbose('| {}'.format(os.path.basename(_pdb.file_name)))
         self.verbose('+---------------------------------------------------')
-        self.is_verbose=_is_verbose
+        self.is_verbose = _is_verbose
         try:
             if _pdb.has_caveats():
                 self.cliutils.warn_msg("file:{} - has caveats lines!!!", caller=_caller)
-
 
             self.data[os.path.basename(_pdb.file_name)] = pdbinfo
             table_data = [["model No", "chain id", "residues", "atoms"]]
@@ -161,7 +180,6 @@ class inform():
                         self.cliutils.error_msg(msg.format(_pdb.file_name, model.model_number, chain.chain_id, e),
                                                 caller=_caller)
                         self.errors[_pdb.file_name] = e
-
 
             self.verbose(pdbinfo.info_report(models_table_data=table_data))
         except Exception as e:

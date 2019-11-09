@@ -43,23 +43,31 @@ class xray_inform(inform):
             file, pdbinfo = k, self.data[k]
             try:
 
-                # bar.update(fi + 1)
                 if not pdbinfo.Resolution or pdbinfo.Resolution == "NULL":
-                    self.verbose("file: '{}' - Resolution='NULL'".format(file))
+                    msg = "file: '{}' - Resolution='NULL'".format(file)
+                    self.verbose(msg)
+                    self.exluded_files[file] = msg
                     self.others_data[file] = pdbinfo
                     continue
+
                 if 350 not in self.ignore_remarks:
                     if not pdbinfo.bio_struct_identical_to_the_asymmetric_unit:
-                        self.verbose(
-                            "file: '{}' - biological structure  IS NOT identical to the asymmetric unit".format(file))
+                        msg = "file: '{}' - biological structure  IS NOT identical to the asymmetric unit".format(file)
+                        self.verbose(msg)
+                        self.exluded_files[file] = msg
                         self.others_data[file] = pdbinfo
                         continue
                 else:
-                    msg="remark 350 was ignored so bio_struct_identical_to_the_asymmetric_unit was not checked"
-                    print("WARN:file: '{}' - {}".format(file,msg))
+                    msg = "remark 350 was ignored so bio_struct_identical_to_the_asymmetric_unit was not checked"
+                    print("WARN:file: '{}' - {}".format(file, msg))
 
                 current_resolution = float(pdbinfo.Resolution)
                 min_r_free_key = float(min(pdbinfo.r_free_dict.keys()))
+                if self.one_file_mode:
+                    # on one file mode we should ignore r_free value and resolution
+                    self.reliable_data[file] = pdbinfo
+                    continue
+
                 if current_resolution <= min_r_free_key:
                     self.reliable_data[file] = pdbinfo
                     continue
@@ -70,21 +78,25 @@ class xray_inform(inform):
                     elif pdbinfo.R_free_grade >= limit_r_free_grade:
                         self.reliable_data[file] = pdbinfo
                     else:
-                        self.verbose(
-                            "file: {} 'current_resolution <= max_resolution ({}<={})".format(
-                                file,current_resolution , max_resolution))
+                        msg = "file: {} 'current_resolution <= max_resolution ({}<={})".format(
+                            file, current_resolution, max_resolution)
+                        self.verbose(msg)
+                        self.exluded_files[file] = msg
                         self.others_data[file] = pdbinfo
                     continue
 
                 if current_resolution > max_resolution:
-                    self.verbose(
-                        "file: {} 'current_resolution > max_resolution ({}>{})".format(
-                            file, current_resolution, max_resolution))
+                    msg = "file: {} 'current_resolution > max_resolution ({}>{})".format(
+                        file, current_resolution, max_resolution)
+                    self.verbose(msg)
+                    self.exluded_files[file] = msg
                     self.others_data[file] = pdbinfo
                     continue
 
             except Exception as e:
-                self.cliutils.error_msg("file {} - {}".format(file, e), self.__class__.__name__)
+                msg = "file {} - {}".format(file, e)
+                self.cliutils.error_msg(msg, self.__class__.__name__)
+                self.exluded_files[file] = msg
                 self.others_data[file] = pdbinfo
 
 
@@ -145,5 +157,7 @@ class nmr_inform(inform):
                 else:
                     self.others_data[file] = pdbinfo
             except Exception as e:
-                self.cliutils.error_msg("file {} - {}".format(file, e), self.__class__.__name__)
+                msg = "file {} - {}".format(file, e)
+                self.cliutils.error_msg(msg, self.__class__.__name__)
+                self.exluded_files[file] = msg
                 self.others_data[file] = pdbinfo
