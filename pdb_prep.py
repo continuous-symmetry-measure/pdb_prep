@@ -188,8 +188,7 @@ def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, 
                 dest_path=dest_path,
                 data=data,
                 with_hydrogens=with_hydrogens,
-                ignore_remarks=ignore_remarks,
-                informer=informer
+                ignore_remarks=ignore_remarks
             )
 
             # clean_missing_residues(data)

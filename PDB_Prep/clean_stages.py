@@ -332,7 +332,7 @@ class stages():
                     for ci, chain in enumerate(model):
                         if len(chain) != first_chain_len:
                             is_ok = False
-                            informer.exluded_files[_pdb.file_name]="not hommomer"
+                            self.informer.exluded_files[_pdb.file_name]="not hommomer"
                             break
                     if is_ok:
                         continue
@@ -354,7 +354,7 @@ class stages():
                          caller=_caller)
         return _dest_path, _data
 
-    def run_clean_stages(self, directory, dest_path, data, with_hydrogens, ignore_remarks=[],informer=None):
+    def run_clean_stages(self, directory, dest_path, data, with_hydrogens, ignore_remarks=[]):
         _caller = "run_clean_stages"
         _dest_path, _data = dest_path, data
         cliutils = self.cliutils
@@ -379,9 +379,9 @@ class stages():
         # 04-missing_atoms-remarks"
         _dest_path, _data = self.clean_04_missing_atoms_found_in_remarks(dest_path, _data, ignore_remarks)
         if not self.is_homomer:
-            self.cliutils.msg("This is hetromer so I will skip on stage '05_all_chains_has_same_number_of_atoms'")
-            return _data
+            print("This is heteromer so I will skip on stage '05_all_chains_has_same_number_of_atoms'")
+            return _data, total_report
         # ------------------------------------------------------------
         # 05-missing_atoms-remarks"
-        _dest_path, _data = self.clean_05_all_chains_has_same_number_of_atoms(dest_path, _data, ignore_remarks,informer)
+        _dest_path, _data = self.clean_05_all_chains_has_same_number_of_atoms(dest_path, _data, ignore_remarks)
         return _data, total_report
