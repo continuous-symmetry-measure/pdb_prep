@@ -612,7 +612,7 @@ class Report:
         return data
 
     def to_json(self):
-        ret_val = json.dumps(self.to_dict(), indent=2)
+        ret_val = json.dumps(self.to_dict(), sort_keys=True, indent=4)
         return ret_val
 
 

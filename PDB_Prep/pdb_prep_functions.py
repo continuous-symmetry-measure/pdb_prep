@@ -1,5 +1,8 @@
+import fnmatch
+import glob
 import json
 import os
+import re
 
 import click
 
@@ -22,10 +25,10 @@ def copy_data_into_dir(source_path, dest_path, data, cliutils):
     return rv
 
 
-def clean_tmp_data(stager: stages, pdb_dir, short_file_name, informer, cliutils):
+def clean_tmp_data_file_mode(stager: stages, pdb_dir, short_file_name, informer, cliutils):
     if stager.last_stage_dir is None:
-        cliutils.error_msg("exluded_files:\n{}".format(informer.exluded_files))
-        cliutils.error_msg("file is not valid - check the 'others' dir", caller=clean_tmp_data.__name__)
+        cliutils.error_msg("ecxluded_files:\n{}".format(informer.ecxluded_files))
+        cliutils.error_msg("file is not valid - check the 'others' dir", caller=clean_tmp_data_file_mode.__name__)
         exit(22)
     last_stage_full_file_name = os.path.join(stager.last_stage_dir, short_file_name)
     tmp = os.path.splitext(short_file_name)
@@ -39,9 +42,35 @@ def clean_tmp_data(stager: stages, pdb_dir, short_file_name, informer, cliutils)
     if not cliutils.is_verbose:
         # print ("remove:{}".format(cliutils.output_dirname))
         cliutils.rmtree(cliutils.output_dirname)
-        # for directory, data, copy_or_clean in sorted(informer.output_data_config):
-        #     if os.path.isdir(directory):
-        #         cliutils.rmtree(directory)
+    return
+
+
+def clean_tmp_data_dir_mode(stager: stages, pdb_dir, informer, cliutils):
+    cliutils.error_msg("ecxluded_files:\n{}".format(informer.ecxluded_files))
+    cliutils.error_msg("file is not valid - check the 'others' dir", caller=clean_tmp_data_file_mode.__name__)
+
+    if stager.last_stage_dir is None:
+        exit(22)
+
+    if not cliutils.is_verbose:
+        _is_verbose = cliutils.is_verbose
+        # cliutils.is_verbose=True
+        cliutils.verbose("--------------------------------------------------")
+        # pattern=os.path.join(os.getcwd(),cliutils.output_dirname,stager.last_stage_dir, "*.pdb")
+        # print (pattern)
+        dir_path = os.path.join(os.getcwd(), cliutils.output_dirname, stager.last_stage_dir)
+
+        rule = re.compile(fnmatch.translate("*.pdb"), re.IGNORECASE)
+        files = [name for name in os.listdir(dir_path) if rule.match(name)]
+
+        cliutils.copyfiles_to_dir(stager.last_stage_dir, cliutils.output_dirname, files)
+        # for dir_path in stager.stages_dirs_list:
+        for directory, data, copy_or_clean in sorted(informer.output_data_config):
+            dir_path = os.path.join(os.getcwd(), cliutils.output_dirname, directory)
+            cliutils.rmtree(dir_path)
+        cliutils.verbose("--------------------------------------------------")
+        cliutils.is_verbose = _is_verbose
+
     return
 
 
@@ -90,28 +119,34 @@ def nmr_validate_params(pdb_dir, pdb_file, output_dir, verbose):
     return cliutils
 
 
-def finish_outputs(mode_file_or_dir, informer, cliutils, report):
+def finish_outputs(mode_file_or_dir, informer, cliutils, stager, report):
+    ecxluded_file = "ecxluded-{}.json".format(list(informer.data)[0])
     if mode_file_or_dir == "file":
         print(str(informer))
-
+        ecxluded_file_path = os.path.join(ecxluded_file)
         report_file = "report-{}.txt".format(list(informer.data)[0])
         report_file = os.path.join(report_file)
         cliutils.write_file(report_file, str(informer))
         print("report file:{}".format(report_file))
-        if len(informer.exluded_files) > 0:
+        if len(informer.ecxluded_files) > 0:
             ecxluded_file = "ecxluded-{}.json".format(list(informer.data)[0])
             ecxluded_file = os.path.join(ecxluded_file)
-            cliutils.write_file(ecxluded_file, json.dumps(informer.exluded_files))
+            cliutils.write_file(ecxluded_file, json.dumps(informer.ecxluded_files))
             print("ecxluded file:{}".format(ecxluded_file))
 
     if mode_file_or_dir == 'dir':
         cliutils.msg("output dir is: '{}'".format(cliutils.output_dirname))
         report_file = os.path.join(cliutils.output_dirname, "report.txt")
-        print(str(informer))
+        ecxluded_file_path = os.path.join(cliutils.output_dirname, ecxluded_file)
+        # print(str(informer))
         cliutils.write_file(report_file, str(informer))
         cliutils.verbose("{:>20}={}".format("output file", report_file))
-        print("---\n")
-        print(report)
+        # print("---\n")
+        # print(report)
+    if len(informer.ecxluded_files) > 0:
+        cliutils.write_file(ecxluded_file_path, json.dumps(informer.ecxluded_files, sort_keys=True, indent=4))
+        # print("ecxluded file:{}".format(ecxluded_file))
+
     cliutils.verbose("mode_file_or_dir={}".format(mode_file_or_dir))
-    cliutils.verbose("exluded_files:\n{}".format(informer.exluded_files))
+    cliutils.verbose("ecxluded_files:\n{}".format(informer.ecxluded_files))
     return

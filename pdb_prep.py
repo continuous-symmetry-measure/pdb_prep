@@ -6,7 +6,8 @@ import click
 
 from Chemistry.PDB.pdb_utils import *
 from PDB_Prep.clean_stages import stages
-from PDB_Prep.pdb_prep_functions import copy_data_into_dir, clean_tmp_data, finish_outputs
+from PDB_Prep.pdb_prep_functions import copy_data_into_dir, clean_tmp_data_dir_mode, clean_tmp_data_file_mode, \
+    finish_outputs
 from PDB_Prep.pdb_prep_functions import xray_validate_params, nmr_validate_params
 from PDB_Prep.pdb_prep_inform import xray_inform, nmr_inform
 
@@ -53,6 +54,7 @@ def nmr(pdb_dir, pdb_file, with_hydrogens, is_homomer, parse_rem350, output_dir,
           biological structure (e.g., non unit matrix in REMARK 350).
       7.  For homomers, checking that all peptides are of the same length.
     """
+    report = ""
     ignore_remarks = []
     if not parse_rem350:
         ignore_remarks.append(350)
@@ -69,8 +71,8 @@ def nmr(pdb_dir, pdb_file, with_hydrogens, is_homomer, parse_rem350, output_dir,
     elif pdb_dir:
         mode_file_or_dir = "dir"
         informer.process_complete_dir(pdb_dir, click)
-    limit_r_free_grade_text = r_free_grade_vlaues.from_value(limit_r_free_grade)
-    informer.filter_data(max_resolution=max_resolution, limit_r_free_grade=limit_r_free_grade_text, click=click)
+    # limit_r_free_grade_text = r_free_grade_vlaues.from_value(limit_r_free_grade)
+    informer.filter_data(click=click)
 
     stager = stages(cliutils, informer, is_homomer=is_homomer)
     for directory, data, copy_or_clean in sorted(informer.output_data_config):
@@ -93,8 +95,11 @@ def nmr(pdb_dir, pdb_file, with_hydrogens, is_homomer, parse_rem350, output_dir,
             )
 
     if mode_file_or_dir == "file":
-        clean_tmp_data(stager, pdb_dir, short_file_name, informer, cliutils)
-    finish_outputs(mode_file_or_dir, informer, cliutils, report)
+        clean_tmp_data_file_mode(stager, pdb_dir, short_file_name, informer, cliutils)
+    else:
+        clean_tmp_data_dir_mode(stager, pdb_dir, informer, cliutils)
+
+    finish_outputs(mode_file_or_dir, informer, cliutils, stager, report)
     return
 
 
@@ -165,6 +170,7 @@ def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, 
     elif pdb_dir:
         mode_file_or_dir = "dir"
         informer.process_complete_dir(pdb_dir, click)
+        cliutils.verbose("informer.process_complete_dir ended")
 
     limit_r_free_grade_text = r_free_grade_vlaues.from_value(limit_r_free_grade)
     informer.filter_data(max_resolution=max_resolution, limit_r_free_grade=limit_r_free_grade_text, click=click)
@@ -194,8 +200,11 @@ def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, 
             # clean_missing_residues(data)
     # missing rsidues
     if mode_file_or_dir == "file":
-        clean_tmp_data(stager, pdb_dir, short_file_name, informer, cliutils)
-    finish_outputs(mode_file_or_dir, informer, cliutils, report)
+        clean_tmp_data_file_mode(stager, pdb_dir, short_file_name, informer, cliutils)
+    else:
+        clean_tmp_data_dir_mode(stager, pdb_dir, informer, cliutils)
+
+    finish_outputs(mode_file_or_dir, informer, cliutils, stager, report)
     return
 
 

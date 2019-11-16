@@ -42,6 +42,7 @@ class stages():
         self.last_stage_dir = None
         self.stages_dirs_list = []
         self.is_homomer = is_homomer
+        self.last_stage_dir_path = None
 
     def set_dest_path(self, directory):
         self.current_dest_path = os.path.join(os.getcwd(), self.cliutils.output_dirname, directory)
@@ -305,6 +306,7 @@ class stages():
         """
         _caller = "05-all_chains_has_same_number_of_atoms"
         _dest_path = self._change_stages_last_dir(dest_path, "05_all_chains_has_same_number_of_atoms")
+
         _data = data
         cliutils = self.cliutils
         print("")
@@ -332,7 +334,7 @@ class stages():
                     for ci, chain in enumerate(model):
                         if len(chain) != first_chain_len:
                             is_ok = False
-                            self.informer.exluded_files[_pdb.file_name]="not hommomer"
+                            self.informer.ecxluded_files[_pdb.file_name] = "not hommomer"
                             break
                     if is_ok:
                         continue

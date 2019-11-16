@@ -51,7 +51,7 @@ class inform():
         self.ignore_remarks = ignore_remarks
         self.one_file_mode = False
         self.errors = {}
-        self.exluded_files = {}
+        self.ecxluded_files = {}
         self.is_compare_atoms = False
         self.is_compare_resname = False
 

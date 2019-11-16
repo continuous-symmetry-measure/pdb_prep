@@ -46,7 +46,7 @@ class xray_inform(inform):
                 if not pdbinfo.Resolution or pdbinfo.Resolution == "NULL":
                     msg = "file: '{}' - Resolution='NULL'".format(file)
                     self.verbose(msg)
-                    self.exluded_files[file] = msg
+                    self.ecxluded_files[file] = msg
                     self.others_data[file] = pdbinfo
                     continue
 
@@ -54,7 +54,7 @@ class xray_inform(inform):
                     if not pdbinfo.bio_struct_identical_to_the_asymmetric_unit:
                         msg = "file: '{}' - biological structure  IS NOT identical to the asymmetric unit".format(file)
                         self.verbose(msg)
-                        self.exluded_files[file] = msg
+                        self.ecxluded_files[file] = msg
                         self.others_data[file] = pdbinfo
                         continue
                 else:
@@ -81,7 +81,7 @@ class xray_inform(inform):
                         msg = "file: {} 'current_resolution <= max_resolution ({}<={})".format(
                             file, current_resolution, max_resolution)
                         self.verbose(msg)
-                        self.exluded_files[file] = msg
+                        self.ecxluded_files[file] = msg
                         self.others_data[file] = pdbinfo
                     continue
 
@@ -89,14 +89,14 @@ class xray_inform(inform):
                     msg = "file: {} 'current_resolution > max_resolution ({}>{})".format(
                         file, current_resolution, max_resolution)
                     self.verbose(msg)
-                    self.exluded_files[file] = msg
+                    self.ecxluded_files[file] = msg
                     self.others_data[file] = pdbinfo
                     continue
 
             except Exception as e:
                 msg = "file {} - {}".format(file, e)
                 self.cliutils.error_msg(msg, self.__class__.__name__)
-                self.exluded_files[file] = msg
+                self.ecxluded_files[file] = msg
                 self.others_data[file] = pdbinfo
 
 
@@ -159,5 +159,5 @@ class nmr_inform(inform):
             except Exception as e:
                 msg = "file {} - {}".format(file, e)
                 self.cliutils.error_msg(msg, self.__class__.__name__)
-                self.exluded_files[file] = msg
+                self.ecxluded_files[file] = msg
                 self.others_data[file] = pdbinfo
