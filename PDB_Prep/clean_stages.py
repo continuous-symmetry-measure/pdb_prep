@@ -296,7 +296,7 @@ class stages():
                          caller=_caller)
         return _dest_path, _data
 
-    def clean_05_all_chains_has_same_number_of_atoms(self, dest_path, data, ignore_remarks=[],informer=None):
+    def clean_05_all_chains_has_same_number_of_atoms(self, dest_path, data, ignore_remarks=[], informer=None):
         """
         move to 05 dir only if each model chains has same number of atoms
         :param dest_path:
@@ -334,7 +334,9 @@ class stages():
                     for ci, chain in enumerate(model):
                         if len(chain) != first_chain_len:
                             is_ok = False
-                            self.informer.ecxluded_files[_pdb.file_name] = "not hommomer"
+                            msg = "not homomer - Model No.: {}  = first chain length is {} but chain number {} length is {} b"
+                            self.informer.excluded_files[_pdb.file_name] = msg.format(mi + 1, first_chain_len, ci + 1,
+                                                                                      len(chain))
                             break
                     if is_ok:
                         continue

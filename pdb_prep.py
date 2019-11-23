@@ -70,7 +70,13 @@ def nmr(pdb_dir, pdb_file, with_hydrogens, is_homomer, parse_rem350, output_dir,
         # informer.ignore_remarks.append(3)  # remark 3 is r_free - ignore it
     elif pdb_dir:
         mode_file_or_dir = "dir"
-        informer.process_complete_dir(pdb_dir, click)
+        try:
+            informer.process_complete_dir(pdb_dir, click)
+            cliutils.verbose("informer.process_complete_dir ended")
+        except IndexError as  e:
+            cliutils.error_msg("I did not find any PDB files in the input folder")
+            exit(31)
+
     # limit_r_free_grade_text = r_free_grade_vlaues.from_value(limit_r_free_grade)
     informer.filter_data(click=click)
 
@@ -165,12 +171,14 @@ def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, 
         mode_file_or_dir = "file"
         pdb_dir, short_file_name = os.path.split(pdb_file)
         informer.process_one_file(pdb_dir, short_file_name, click)
-        # informer.ignore_remarks.append(2)  # remark 2 is resolution - ignore it
-        # informer.ignore_remarks.append(3)  # remark 3 is r_free - ignore it
     elif pdb_dir:
         mode_file_or_dir = "dir"
-        informer.process_complete_dir(pdb_dir, click)
-        cliutils.verbose("informer.process_complete_dir ended")
+        try:
+            informer.process_complete_dir(pdb_dir, click)
+            cliutils.verbose("informer.process_complete_dir ended")
+        except IndexError as  e:
+            cliutils.error_msg("I did not find any PDB files in the input folder")
+            exit(31)
 
     limit_r_free_grade_text = r_free_grade_vlaues.from_value(limit_r_free_grade)
     informer.filter_data(max_resolution=max_resolution, limit_r_free_grade=limit_r_free_grade_text, click=click)
