@@ -78,7 +78,7 @@ def nmr(pdb_dir, pdb_file, with_hydrogens, is_homomer, parse_rem350, output_dir,
             exit(31)
 
     # limit_r_free_grade_text = r_free_grade_vlaues.from_value(limit_r_free_grade)
-    informer.filter_data(click=click)
+    informer.filter_data(click=click, test_is_homomer=is_homomer)
 
     stager = stages(cliutils, informer, is_homomer=is_homomer)
     for directory, data, copy_or_clean in sorted(informer.output_data_config):
@@ -181,12 +181,13 @@ def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, 
             exit(31)
 
     limit_r_free_grade_text = r_free_grade_vlaues.from_value(limit_r_free_grade)
-    informer.filter_data(max_resolution=max_resolution, limit_r_free_grade=limit_r_free_grade_text, click=click)
+    informer.filter_data(max_resolution=max_resolution, limit_r_free_grade=limit_r_free_grade_text, click=click,
+                         test_is_homomer=is_homomer)
 
     # sort the files into directories
     stager = stages(cliutils, informer, is_homomer=is_homomer)
 
-    for directory, data, copy_or_clean in sorted(informer.output_data_config):
+    for directory, data, copy_or_clean in informer.output_data_config:
         if len(data) == 0:
             cliutils.verbose("{} - no items to process - I will continue".format(directory))
             continue

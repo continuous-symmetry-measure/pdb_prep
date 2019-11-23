@@ -41,6 +41,11 @@ class pdb_file_parser():
         expdta_lines = list(filter(is_expdta, self.lines))
         return expdta_lines
 
+    def get_seqres_lines(self):
+        is_expdta = lambda ln: ln[0: 6].startswith('SEQRES')
+        seqres_lines = list(filter(is_expdta, self.lines))
+        return seqres_lines
+
     def get_models_lines(self):
         """
         returns lines wich are relvaat to the models
@@ -128,12 +133,14 @@ class pdb(list):
         # TODO prepare connects lines
         caveat_lines = parser.get_caveats_lines()
         extdta_lines = parser.get_expdta_lines()
+        seqreq_lines = parser.get_seqres_lines()
         if len(models) == 1:
             # we will not wrap MODEL 1 ... ENMMDL lines if the orig input  did not have them
             models[0].wrap_with_header_and_footer = parser.wrap_with_header_and_footer
-        return cls(models, remarks=remarks, caveats=caveat_lines, extdta=extdta_lines, include_hetatm=include_hetatm)
+        return cls(models, remarks=remarks, caveats=caveat_lines, extdta=extdta_lines, seqres=seqreq_lines,
+                   include_hetatm=include_hetatm)
 
-    def __init__(self, pdb_models, remarks=None, caveats=None, extdta=None, **kwargs):
+    def __init__(self, pdb_models, remarks=None, caveats=None, extdta=None, seqres=None, **kwargs):
         super().__init__()
         if remarks is None:
             remarks = {}
@@ -145,9 +152,11 @@ class pdb(list):
         self.remarks = remarks
         self.caveats = caveats
         self.extdta = extdta
+        self.seqres = seqres
         self.file_name = None
         self.include_extdta_in__str__ = False
         self.include_remarks_in__str__ = False
+        self.include_seqres_in__str__ = False
 
     def has_caveats(self):
         return len(self.caveats) > 1
@@ -174,10 +183,16 @@ class pdb(list):
 
     def __str__(self):
         s = ""
+        chomp = lambda s: s.rstrip('\n')
         if self.include_extdta_in__str__:
-            s += "\n".join(self.extdta)
+            s += "\n".join(map(chomp, self.extdta))
+            s += "\n"
         if self.include_remarks_in__str__:
             s += str(self.remarks)
+        if self.include_seqres_in__str__:
+            s += "\n".join(list(map(chomp, self.seqres)))
+            s += "\n"
+
         s += "\n".join(map(str, self)) + "\n" + pdb_constants().END + "\n"
         return s
 
@@ -191,6 +206,14 @@ class pdb(list):
             info["file_name"] = self.file_name
         return info
 
+    def get_resseq_as_chaindict(self):
+        seq = self.seqres
+        chain_dict = dict([(l[11], []) for l in seq])
+        for c in chain_dict.keys():
+            chain_seq = [l[19:70].split() for l in seq if l[11] == c]
+            for x in chain_seq:
+                chain_dict[c].extend(x)
+        return chain_dict
 
 """
 

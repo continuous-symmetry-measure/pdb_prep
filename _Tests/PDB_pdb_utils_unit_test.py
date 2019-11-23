@@ -12,7 +12,11 @@ class Test_pdb_info(unittest.TestCase):
         _path.append(pdb_file_name)
         _file = sys.modules['__main__'].__file__
         getcwd = os.path.abspath(os.path.dirname(_file))
-        return os.path.join(getcwd, "_Tests", *_path)
+        full_path = os.path.join(getcwd, "_Tests", *_path)
+        if not os.path.isfile(full_path):
+            getcwd = os.getcwd()
+            full_path = os.path.join(getcwd, "_Tests", *_path)
+        return full_path
 
     # H:\Chemistry\code\_Tests\pdb_files\pdb_utils_files\1HFF.pdb
     # H:\\Chemistry\code\_Tests\pdb_files\pdb_utils\\1HFF.pdb
@@ -28,6 +32,7 @@ class Test_pdb_info(unittest.TestCase):
     def test_parse_remark_2__resolution_info(self):
         pdb_1HFF = pdb.from_file(self.pdb_1HFF)
         info_1HFF = pdb_info(pdb_1HFF)
+        resseq = pdb_1HFF.get_resseq_as_chaindict()
         self.assertIsInstance(info_1HFF, pdb_info)
         self.assertRaises(ValueError, info_1HFF.parse_remark_2)
 
@@ -108,3 +113,27 @@ class Test_pdb_info(unittest.TestCase):
         info_1HFF = pdb_info(pdb_1HFF)
         self.assertIsInstance(info_1HFF, pdb_info)
         self.assertEqual(info_1HFF.is_nmr(), True)
+
+    def test_is_homomer_1HFF(self):
+        pdb_1HFF = pdb.from_file(self.pdb_1HFF)
+        info_1HFF = pdb_info(pdb_1HFF)
+        self.assertIsInstance(info_1HFF, pdb_info)
+        self.assertEqual(info_1HFF.is_homomer(), True)
+
+    def test_is_homomer_4xia(self):
+        pdb_4xia = pdb.from_file(self.pdb_4xia)
+        info_4xia = pdb_info(pdb_4xia)
+        self.assertIsInstance(info_4xia, pdb_info)
+        self.assertEqual(info_4xia.is_homomer(), True)
+
+    # def test_is_homomer_1aib(self):
+    #     pdb_1aib = pdb.from_file(self.pdb_1aib)
+    #     info_1aib = pdb_info(pdb_1aib)
+    #     self.assertIsInstance(info_1aib, pdb_info)
+    #     self.assertEqual(info_1aib.is_homomer(), True)
+
+    def test_is_homomer_2v2h(self):
+        pdb_2v2h = pdb.from_file(self.pdb_2v2h)
+        info_2v2h = pdb_info(pdb_2v2h)
+        self.assertIsInstance(info_2v2h, pdb_info)
+        self.assertEqual(info_2v2h.is_homomer(), True)

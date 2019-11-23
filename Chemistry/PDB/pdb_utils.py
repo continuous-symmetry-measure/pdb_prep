@@ -494,6 +494,22 @@ class pdb_info():
             return True
         return False
 
+    def is_homomer(self, is_verbose=True):
+        _pdb = self._pdb
+        if len(_pdb.seqres) > 0:
+            chaindict = _pdb.get_resseq_as_chaindict()
+            to_seq_str = lambda lst: "-".join(lst)
+            first_chain_str = to_seq_str(chaindict[min(chaindict)])
+            for chain_id, chain in chaindict.items():
+                if not to_seq_str(chain) == first_chain_str:
+                    if is_verbose:
+                        print("--- NOT_HOMOMER:{}\n{}:{}\n{}:{}\n---\n".format(
+                            _pdb.file_name, min(chaindict), first_chain_str, chain_id, to_seq_str(chain)))
+                    return False
+            return True
+        else:
+            raise ValueError(" missing SEQRES data")
+
     def gaps_report(self):
         pass
 

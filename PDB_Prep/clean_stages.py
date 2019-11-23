@@ -106,6 +106,7 @@ class stages():
                     _pdb = h_siever.sieve(_pdb)
                 _pdb.include_remarks_in__str__ = True
                 _pdb.include_extdta_in__str__ = True
+                _pdb.include_seqres_in__str__ = True
                 files_to_write[full_path] = str(_pdb)
                 # cliutils.write_a_file(full_path, str(_pdb))
 
@@ -168,6 +169,7 @@ class stages():
                 _pdb = info._pdb
                 _pdb.include_remarks_in__str__ = True
                 _pdb.include_extdta_in__str__ = True
+                _pdb.include_seqres_in__str__ = True
                 missing_residues_per_chain_id = self.get_02_missing_resseqs_per_chain_id(info)
                 s = str(_pdb)
                 _pdb = pdb_utils.remove_residues_from_every_chain(missing_residues_per_chain_id, _pdb)
@@ -178,6 +180,7 @@ class stages():
                 s = str(_pdb)
                 _pdb.include_remarks_in__str__ = True
                 _pdb.include_extdta_in__str__ = True
+                _pdb.include_seqres_in__str__ = True
                 files_to_write[full_path] = str(_pdb)
                 _data[file_name] = _pdb_info
                 # cliutils.write_file(full_path, str(_pdb))
@@ -251,11 +254,13 @@ class stages():
                 _pdb = info._pdb
                 _pdb.include_remarks_in__str__ = True
                 _pdb.include_extdta_in__str__ = True
+                _pdb.include_seqres_in__str__ = True
 
                 missing_atoms_per_chain_id = self.get_04_missing_atoms_per_chain_id(info)
                 if len(missing_atoms_per_chain_id) == 0:
                     _pdb.include_remarks_in__str__ = True
                     _pdb.include_extdta_in__str__ = True
+                    _pdb.include_seqres_in__str__ = True
                     files_to_write[full_path] = str(_pdb)
                     # cliutils.write_file(full_path, str(_pdb))
                     continue
@@ -281,6 +286,7 @@ class stages():
 
                 _pdb.include_remarks_in__str__ = True
                 _pdb.include_extdta_in__str__ = True
+                _pdb.include_seqres_in__str__ = True
                 files_to_write[full_path] = str(_pdb)
                 _data[file_name] = _pdb_info
                 # cliutils.write_file(full_path, str(_pdb))
@@ -328,6 +334,7 @@ class stages():
                 _pdb = info._pdb
                 _pdb.include_remarks_in__str__ = True
                 _pdb.include_extdta_in__str__ = True
+                _pdb.include_seqres_in__str__ = True
                 is_ok = True
                 for mi, model in enumerate(_pdb):
                     first_chain_len = len(model[0])
@@ -345,6 +352,7 @@ class stages():
                 if is_ok:
                     _pdb.include_remarks_in__str__ = True
                     _pdb.include_extdta_in__str__ = True
+                    _pdb.include_seqres_in__str__ = True
                     files_to_write[full_path] = str(_pdb)
                     # cliutils.write_file(full_path, str(_pdb))
             except Exception as e:
@@ -364,9 +372,10 @@ class stages():
         cliutils = self.cliutils
         cliutils.verbose("directory: '{}'".format(directory))
         total_report = ""
+
         # ------------------------------------------------------------
         # 01_without_gaps_handling
-        _dest_path, _data, report = self.clean_01_into_dir(dest_path, _data, with_hydrogens, ignore_remarks)
+        _dest_path, _data, report = self.clean_01_into_dir(_dest_path, _data, with_hydrogens, ignore_remarks)
         total_report += "\n{}\n".format(report)
 
         # ------------------------------------------------------------

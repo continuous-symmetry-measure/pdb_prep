@@ -13,7 +13,11 @@ class Test_pdb_remark(unittest.TestCase):
     def get_path(self, pdb_file_name):
         _file = sys.modules['__main__'].__file__
         getcwd = os.path.abspath(os.path.dirname(_file))
-        return os.path.join(getcwd, "_Tests", self.pdb_dir, pdb_file_name)
+        full_path = os.path.join(getcwd, "_Tests", self.pdb_dir, pdb_file_name)
+        if not os.path.isfile(full_path):
+            getcwd = os.getcwd()
+            full_path = os.path.join(getcwd, "_Tests", self.pdb_dir, pdb_file_name)
+        return full_path
 
     def setUp(self):
         self.pdb_dir = "pdb_files"

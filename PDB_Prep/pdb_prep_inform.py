@@ -15,7 +15,7 @@ class xray_inform(inform):
             s += self._str_data(self.others_data)
         return s
 
-    def filter_data(self, max_resolution, limit_r_free_grade=None, click=None):
+    def filter_data(self, max_resolution, limit_r_free_grade=None, click=None, test_is_homomer=False):
         """
          for each file:
             if (Resolution  == NULL) then                     file is unreliable
@@ -34,14 +34,22 @@ class xray_inform(inform):
         #  (dirname,data,copy_or_clean)
         #
         self.output_data_config = [
-            ("reliable", self.reliable_data, "clean"),
-            ("reliable_r_grades", self.reliable_R_grade_data, "clean"),
+            # the order of this list is importent also for the clean_tmp_* funtions
             ("others", self.others_data, "copy"),
+            ("reliable_r_grades", self.reliable_R_grade_data, "clean"),
+            ("reliable", self.reliable_data, "clean"),
         ]
 
         for fi, k in enumerate(self.data):
             file, pdbinfo = k, self.data[k]
             try:
+                if test_is_homomer and pdbinfo.is_homomer():
+                    self.cliutils.verbose("{} is homomer as expected".format(file))
+                    pass
+                elif test_is_homomer and not pdbinfo.is_homomer():
+                    cliutils.error_msg("{} is not homomer".format(file))
+                    raise ValueError(" exepcted homomer but got heteromer ")
+                # cliutils.write_a_file(full_path, str(_pdb))
 
                 if not pdbinfo.Resolution or pdbinfo.Resolution == "NULL":
                     msg = "file: '{}' - Resolution='NULL'".format(file)
@@ -130,7 +138,7 @@ class nmr_inform(inform):
 
         return s
 
-    def filter_data(self, click=None):
+    def filter_data(self, click=None, test_is_homomer=False):
         """
          for each file:
             if (is_nmr ) then                     file is nmr
@@ -144,6 +152,13 @@ class nmr_inform(inform):
         for fi, k in enumerate(self.data):
             file, pdbinfo = k, self.data[k]
             try:
+                if test_is_homomer and pdbinfo.is_homomer():
+                    self.cliutils.verbose("{} is homomer as expected".format(file))
+                    pass
+                elif test_is_homomer and not pdbinfo.is_homomer():
+                    self.cliutils.error_msg("{} is not homomer".format(file))
+                    raise ValueError(" exepcted homomer but got heteromer ")
+                # cliutils.write_a_file(full_path, str(_pdb))
 
                 if pdbinfo.is_nmr():
                     self.verbose("file: '{}' - NMR")
