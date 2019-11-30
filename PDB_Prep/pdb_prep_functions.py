@@ -48,7 +48,7 @@ def clean_tmp_data_file_mode(stager: stages, pdb_dir, short_file_name, informer,
 def clean_tmp_data_dir_mode(stager: stages, pdb_dir, informer, cliutils):
     _is_verbose = cliutils.is_verbose
     if stager.last_stage_dir is None:
-        cliutils.error_msg("excluded_files:\n{}".format(informer.excluded_files))
+        # cliutils.error_msg("excluded_files:\n{}".format(informer.excluded_files))
         cliutils.error_msg("file is not valid - check the 'others' dir", caller=clean_tmp_data_file_mode.__name__)
         # exit(22)
     else:

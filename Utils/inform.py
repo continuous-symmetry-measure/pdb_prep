@@ -92,15 +92,19 @@ class inform():
                 s += format_string.format(file, info.Resolution, info.Resolution_Grade, info.B_value, info.R_value,
                                           #                          5           6     7
                                           info.R_free, bios, info.R_free_grade)
+                if isinstance(info.R_free_grade, str):
+                    r_free_grade = info.R_free_grade
+                else:
+                    r_free_grade = info.R_free_grade.val
                 self.json_dict[data_name][file] = {"resolution": info.Resolution,
                                                    "resolution_grade": info.Resolution_Grade,
                                                    "b_value": info.B_value,
                                                    "r_free": info.R_free,
                                                    "identical_to_the_asym_unit": bios,
-                                                   "r_free_grade": info.R_free_grade.val
+                                                   "r_free_grade": r_free_grade
                                                    }
-            except:
-                s += "{}\n".format(file)
+            except Exception as e:
+                s += "{} - Exception{}\n".format(file, e)
                 self.json_dict[data_name][file] = None
         return s
 

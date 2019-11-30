@@ -57,7 +57,7 @@ class xray_inform(inform):
                     self.cliutils.verbose("{} is homomer as expected".format(file))
                     pass
                 elif test_is_homomer and not pdbinfo.is_homomer():
-                    raise ValueError("exepcted homomer but got heteromer")
+                    raise ValueError("expected homomer but got heteromer")
                 # cliutils.write_a_file(full_path, str(_pdb))
 
                 if not pdbinfo.Resolution or pdbinfo.Resolution == "NULL":
@@ -95,8 +95,8 @@ class xray_inform(inform):
                     elif pdbinfo.R_free_grade >= limit_r_free_grade:
                         self.reliable_data[file] = pdbinfo
                     else:
-                        msg = "file: '{}' - 'current_resolution' <= 'max_resolution' ({}<={})".format(
-                            file, current_resolution, max_resolution)
+                        msg = "file: '{}' - R_free_grade='{}'  worst then limit_R_free_grade='{}'".format(
+                            file, pdbinfo.R_free_grade, limit_r_free_grade, current_resolution, max_resolution)
                         self.verbose(msg)
                         self.excluded_files[file] = msg
                         self.others_data[file] = pdbinfo
