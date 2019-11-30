@@ -33,8 +33,11 @@ def cli():
 @click.option('--parse-rem350/--ignore-rem350', default=True,
               help='parse or ignore remark 350', show_default=True)
 @click.option('--output-dir', default='output.{time}', help='output dir', show_default=True)
+@click.option('--output-text/--output-json', default=True,
+              help='output report in text or json', show_default=True)
 @click.option('--verbose', is_flag=True, default=False, help='verbose mode', show_default=True)
-def nmr(pdb_dir, pdb_file, with_hydrogens, is_homomer, parse_rem350, output_dir, verbose):
+def nmr(pdb_dir, pdb_file, with_hydrogens, is_homomer, parse_rem350, output_dir,
+        output_text, verbose):
     """
     \b
     This procedure prepares protein files in pdb format from NMR measurements for 
@@ -104,8 +107,11 @@ def nmr(pdb_dir, pdb_file, with_hydrogens, is_homomer, parse_rem350, output_dir,
         clean_tmp_data_file_mode(stager, pdb_dir, short_file_name, informer, cliutils)
     else:
         clean_tmp_data_dir_mode(stager, pdb_dir, informer, cliutils)
-
-    finish_outputs(mode_file_or_dir, informer, cliutils, stager, report)
+    if output_text:
+        output_type = "text"
+    else:
+        output_type = "json"
+    finish_outputs(mode_file_or_dir, informer, cliutils, stager, report, output_type)
     return
 
 
@@ -128,9 +134,11 @@ def nmr(pdb_dir, pdb_file, with_hydrogens, is_homomer, parse_rem350, output_dir,
 @click.option('--parse-rem350/--ignore-rem350', default=True,
               help='parse or ignore remark 350', show_default=True)
 @click.option('--output-dir', default='output.{time}', help='output dir', show_default=True)
+@click.option('--output-text/--output-json', default=True,
+              help='output report in text or json', show_default=True)
 @click.option('--verbose', is_flag=True, default=False, help='verbose mode', show_default=True)
 def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, is_homomer, parse_rem350, output_dir,
-         verbose):
+         output_text, verbose):
     """
     
     \b
@@ -213,7 +221,11 @@ def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, 
     else:
         clean_tmp_data_dir_mode(stager, pdb_dir, informer, cliutils)
 
-    finish_outputs(mode_file_or_dir, informer, cliutils, stager, report)
+    if output_text:
+        output_type = "text"
+    else:
+        output_type = "json"
+    finish_outputs(mode_file_or_dir, informer, cliutils, stager, report, output_type)
     return
 
 

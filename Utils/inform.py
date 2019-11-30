@@ -54,6 +54,7 @@ class inform():
         self.excluded_files = {}
         self.is_compare_atoms = False
         self.is_compare_resname = False
+        self.json_dict = {}
 
     def __str__(self):
         return self._str_data(self.data)
@@ -63,30 +64,60 @@ class inform():
             return
         print(text)
 
-    def _str_data(self, data):
+    def _bios_value(self, info):
+        bios = info.bio_struct_identical_to_the_asymmetric_unit
+        if bios is None:
+            bios = "None"
+        elif bios:
+            bios = "True"
+        else:
+            bios = "False"
+        return bios
+
+    def _str_data(self, data, data_name="data", dont_include_files=[]):
         format_string = "{0:<25} {1:<10} {2:<19} {3:<7} {4:7} {5:7} {6:<26} {7:}\n"
         s = ""
+        self.json_dict[data_name] = {}
         #                          0       1             2                  3          4
         s += format_string.format("file", "Resolution", "Resolution_Grade", "B_value", "R_value",
                                   #                          5        6                           7
                                   "R_free", "identical_to_the_asym_unit", "R_free_grade")
-
         # t=(file,info)
         for file, info in sorted(data.items(), key=lambda t: t[0]):
+            if file in dont_include_files:
+                continue
             try:
-                bios = info.bio_struct_identical_to_the_asymmetric_unit
-                if bios is None:
-                    bios = "None"
-                elif bios:
-                    bios = "True"
-                else:
-                    bios = "False"
+                bios = self._bios_value(info)
                 # 0     1                2                      3             4
                 s += format_string.format(file, info.Resolution, info.Resolution_Grade, info.B_value, info.R_value,
                                           #                          5           6     7
                                           info.R_free, bios, info.R_free_grade)
+                self.json_dict[data_name][file] = {"resolution": info.Resolution,
+                                                   "resolution_grade": info.Resolution_Grade,
+                                                   "b_value": info.B_value,
+                                                   "r_free": info.R_free,
+                                                   "identical_to_the_asym_unit": bios,
+                                                   "r_free_grade": info.R_free_grade.val
+                                                   }
             except:
                 s += "{}\n".format(file)
+                self.json_dict[data_name][file] = None
+        return s
+
+    def _str_excluded(self, files):
+        ex = self.excluded_files
+        s = ""
+        data_name = "excluded"
+        self.json_dict[data_name] = {}
+
+        if len(ex) == 0:
+            return s
+        format_string_ex = "{0:<25} {1:<100}\n"
+        s += format_string_ex.format("excluded_file", "reason")
+        for file, reason in ex.items():
+            if file not in files:
+                s += format_string_ex.format(file, reason)
+                self.json_dict[data_name][file] = reason
 
         return s
 

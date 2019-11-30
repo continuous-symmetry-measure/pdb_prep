@@ -494,7 +494,7 @@ class pdb_info():
             return True
         return False
 
-    def is_homomer(self, is_verbose=True):
+    def is_homomer(self, is_verbose=False):
         _pdb = self._pdb
         if len(_pdb.seqres) > 0:
             chaindict = _pdb.get_resseq_as_chaindict()

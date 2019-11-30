@@ -38,5 +38,27 @@
     * pdb_atom.__init__(atom_dict)
 * readme.md
 * proteine_vector_distance
-* setup.py
-* add versions
+
+
+"""
+> pdb_prep.py xray --pdb-dir .
+>> we get only other dir with no report
+
+> pdb_prep.py nmr --pdb-dir .
+>> fix report format:
+nmr:
+file                      identical_to_the_asym_unit
+5xzk.pdb                  True
+6nhy.pdb                  True
+
+excluded:
+excluded_files:
+
+excluded_file            reason
+2h9r.pdb                  file: '2h9r.pdb' - exepcted homomer but got heteromer
+2le8.pdb                  file: '2le8.pdb' - exepcted homomer but got heteromer
+
+others:1qky.pdb
+
+
+"""

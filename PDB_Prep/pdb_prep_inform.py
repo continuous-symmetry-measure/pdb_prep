@@ -6,13 +6,22 @@ class xray_inform(inform):
         s = ""
         if len(self.reliable_data) >= 1:
             s += "\nreliable:\n"
-            s += self._str_data(self.reliable_data)
+            s += self._str_data(self.reliable_data, "reliable_data")
         if len(self.reliable_R_grade_data) >= 1:
             s += "\nreliable_r_grade:\n"
-            s += self._str_data(self.reliable_R_grade_data)
-        if len(self.others_data) >= 1:
+            s += self._str_data(self.reliable_R_grade_data, "reliable_R_grade_data")
+
+        files = list(self.reliable_data.keys())
+        files.extend(list(self.reliable_R_grade_data.keys()))
+        if len(set(self.excluded_files.keys()) - set(files)) >= 1:
+            s += "\nexcluded_files:\n"
+            s += self._str_excluded(files)
+            files.extend(self.excluded_files.keys())
+
+        if len(set(self.others_data) - set(files)) >= 1:
             s += "\nothers:\n"
-            s += self._str_data(self.others_data)
+            s += self._str_data(self.others_data, "others_data", dont_include_files=files)
+
         return s
 
     def filter_data(self, max_resolution, limit_r_free_grade=None, click=None, test_is_homomer=False):
@@ -33,22 +42,22 @@ class xray_inform(inform):
         #  this list will contain the info about the outputs directories
         #  (dirname,data,copy_or_clean)
         #
+        cliutils = self.cliutils
         self.output_data_config = [
             # the order of this list is importent also for the clean_tmp_* funtions
-            ("others", self.others_data, "copy"),
             ("reliable_r_grades", self.reliable_R_grade_data, "clean"),
             ("reliable", self.reliable_data, "clean"),
+            ("others", self.others_data, "copy"),
         ]
 
         for fi, k in enumerate(self.data):
             file, pdbinfo = k, self.data[k]
             try:
-                if test_is_homomer and pdbinfo.is_homomer():
+                if test_is_homomer and pdbinfo.is_homomer(cliutils.is_verbose):
                     self.cliutils.verbose("{} is homomer as expected".format(file))
                     pass
                 elif test_is_homomer and not pdbinfo.is_homomer():
-                    cliutils.error_msg("{} is not homomer".format(file))
-                    raise ValueError(" exepcted homomer but got heteromer ")
+                    raise ValueError("exepcted homomer but got heteromer")
                 # cliutils.write_a_file(full_path, str(_pdb))
 
                 if not pdbinfo.Resolution or pdbinfo.Resolution == "NULL":
@@ -86,7 +95,7 @@ class xray_inform(inform):
                     elif pdbinfo.R_free_grade >= limit_r_free_grade:
                         self.reliable_data[file] = pdbinfo
                     else:
-                        msg = "file: {} 'current_resolution <= max_resolution ({}<={})".format(
+                        msg = "file: '{}' - 'current_resolution' <= 'max_resolution' ({}<={})".format(
                             file, current_resolution, max_resolution)
                         self.verbose(msg)
                         self.excluded_files[file] = msg
@@ -94,7 +103,7 @@ class xray_inform(inform):
                     continue
 
                 if current_resolution > max_resolution:
-                    msg = "file: {} 'current_resolution > max_resolution ({}>{})".format(
+                    msg = "file: '{}' - 'current_resolution' > 'max_resolution' ({}>{})".format(
                         file, current_resolution, max_resolution)
                     self.verbose(msg)
                     self.excluded_files[file] = msg
@@ -102,7 +111,7 @@ class xray_inform(inform):
                     continue
 
             except Exception as e:
-                msg = "file {} - {}".format(file, e)
+                msg = "file: '{}' - {}".format(file, e)
                 self.cliutils.error_msg(msg, self.__class__.__name__)
                 self.excluded_files[file] = msg
                 self.others_data[file] = pdbinfo
@@ -112,29 +121,40 @@ class nmr_inform(inform):
     def __str__(self):
         s = ""
         s += "\nnmr:\n"
-        s += self._str_data(self.nmr_data)
+        s += self._str_data(self.nmr_data, "nmr_data")
         return s
 
-    def _str_data(self, data):
+    def _str_data(self, data, data_name="nmr_data"):
         format_string = "{0:<25} {1:<26}\n"
         s = ""
+        self.json_dict[data_name] = {}
         #                          0      1
         s += format_string.format("file", "identical_to_the_asym_unit")
-
         # t=(file,info)
+
         for file, info in sorted(data.items(), key=lambda t: t[0]):
             try:
-                bios = info.bio_struct_identical_to_the_asymmetric_unit
-                if bios is None:
-                    bios = "None"
-                elif bios:
-                    bios = "True"
-                else:
-                    bios = "False"
+                bios = self._bios_value(info)
                 # 0     1
                 s += format_string.format(file, bios)
+                self.json_dict[data_name][file] = bios
             except:
                 s += "{}\n".format(file)
+                self.json_dict[data_name][file] = None
+
+        if len(self.excluded_files) >= 1:
+            data_name = "excluded_data"
+            self.json_dict[data_name] = {}
+            files = []
+            if len(set(self.excluded_files.keys())) >= 1:
+                s += "excluded_files:\n"
+                s += self._str_excluded(files)
+            s += "\nothers:\n"
+            for file in self.others_data:
+                if file not in self.excluded_files:
+                    s += "{}\n".format(file)
+                    self.json_dict[data_name][file] = None
+
 
         return s
 
@@ -157,7 +177,7 @@ class nmr_inform(inform):
                     pass
                 elif test_is_homomer and not pdbinfo.is_homomer():
                     self.cliutils.error_msg("{} is not homomer".format(file))
-                    raise ValueError(" exepcted homomer but got heteromer ")
+                    raise ValueError("exepcted homomer but got heteromer")
                 # cliutils.write_a_file(full_path, str(_pdb))
 
                 if pdbinfo.is_nmr():
@@ -172,7 +192,7 @@ class nmr_inform(inform):
                 else:
                     self.others_data[file] = pdbinfo
             except Exception as e:
-                msg = "file {} - {}".format(file, e)
+                msg = "file: '{}' - {}".format(file, e)
                 self.cliutils.error_msg(msg, self.__class__.__name__)
                 self.excluded_files[file] = msg
                 self.others_data[file] = pdbinfo

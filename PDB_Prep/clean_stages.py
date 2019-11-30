@@ -43,6 +43,7 @@ class stages():
         self.stages_dirs_list = []
         self.is_homomer = is_homomer
         self.last_stage_dir_path = None
+        self.report = {}
 
     def set_dest_path(self, directory):
         self.current_dest_path = os.path.join(os.getcwd(), self.cliutils.output_dirname, directory)
@@ -113,6 +114,7 @@ class stages():
                 _pdb_info = pdb_info(_pdb, ignore_remarks=ignore_remarks)
                 report = "# {}\n".format(_caller)
                 report += _pdb_info.info_report()
+                self.report[_caller] = _pdb_info.info_report()
                 data[file_name] = _pdb_info
             except Exception as e:
                 file_delete = full_path
@@ -123,7 +125,6 @@ class stages():
         # bar.update(bs + 1)
         cliutils.verbose("end  stage 01 clean data into  {} ( excpecting {} items).\n".format(_dest_path, len(data)),
                          caller=_caller)
-
         return _dest_path, data, report
 
     def get_02_missing_resseqs_per_chain_id(self, info):
@@ -144,6 +145,7 @@ class stages():
         this function cleans the missing resseqs we found remark 365
         """
         _caller = "02-missing_resseqs-remarks"
+        report = ""
         cliutils = self.cliutils
         _dest_path = self._change_stages_last_dir(dest_path, "02_missing_resseqs_found_in_remarks")
         _data = data
@@ -154,7 +156,7 @@ class stages():
             caller=_caller)
         if len(_data.items()) == 0:
             cliutils.msg("end  02-missing_resseqs-remarks {} ( no data ).".format(_dest_path), caller=_caller)
-            return _dest_path, _data
+            return _dest_path, _data, report
         rv = cliutils.mkdir(dirname=_dest_path)
 
         files_to_write = {}
@@ -176,6 +178,7 @@ class stages():
                 _pdb_info = pdb_info(_pdb, ignore_remarks=ignore_remarks)
                 report = "# {}\n".format(_caller)
                 report += _pdb_info.info_report()
+                self.report[_caller] = _pdb_info.info_report()
 
                 s = str(_pdb)
                 _pdb.include_remarks_in__str__ = True
@@ -283,6 +286,7 @@ class stages():
                 _pdb_info = pdb_info(_pdb, ignore_remarks=ignore_remarks)
                 report = "# {}\n".format(_caller)
                 report += _pdb_info.info_report()
+                self.report[_caller] = _pdb_info.info_report()
 
                 _pdb.include_remarks_in__str__ = True
                 _pdb.include_extdta_in__str__ = True
