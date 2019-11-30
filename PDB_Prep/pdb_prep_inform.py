@@ -50,6 +50,7 @@ class xray_inform(inform):
             ("others", self.others_data, "copy"),
         ]
 
+        remark_350_warn_msg_flag = True
         for fi, k in enumerate(self.data):
             file, pdbinfo = k, self.data[k]
             try:
@@ -74,9 +75,11 @@ class xray_inform(inform):
                         self.excluded_files[file] = msg
                         self.others_data[file] = pdbinfo
                         continue
-                else:
+                elif remark_350_warn_msg_flag:
                     msg = "remark 350 was ignored so bio_struct_identical_to_the_asymmetric_unit was not checked"
-                    print("WARN:file: '{}' - {}".format(file, msg))
+                    print("WARN: file: '{}' - {}".format(file, msg))
+                    remark_350_warn_msg_flag = False
+
 
                 current_resolution = float(pdbinfo.Resolution)
                 min_r_free_key = float(min(pdbinfo.r_free_dict.keys()))
