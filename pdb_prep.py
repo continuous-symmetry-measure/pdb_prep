@@ -1,7 +1,5 @@
 #!/usr/bin/env python
-
 import os
-
 import click
 
 from Chemistry.PDB.pdb_utils import *
@@ -10,7 +8,7 @@ from PDB_Prep.pdb_prep_functions import copy_data_into_dir, clean_tmp_data_dir_m
     finish_outputs
 from PDB_Prep.pdb_prep_functions import xray_validate_params, nmr_validate_params
 from PDB_Prep.pdb_prep_inform import xray_inform, nmr_inform
-
+from version import __VERSION__
 
 @click.group()
 def cli():
@@ -57,6 +55,7 @@ def nmr(pdb_dir, pdb_file, with_hydrogens, is_homomer, parse_rem350, output_dir,
           biological structure (e.g., non unit matrix in REMARK 350).
       7.  For homomers, checking that all peptides are of the same length.
     """
+    print("Version: {}".format(__VERSION__))
     report = ""
     ignore_remarks = []
     if not parse_rem350:
@@ -167,6 +166,7 @@ def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, 
             (e.g., non unit matrix in REMARK 350).
         7.  For homomers, checking that all peptides are of the same length.
     """
+    print("Version: {}".format(__VERSION__))
     report = ""
     ignore_remarks = []
     if not parse_rem350:
