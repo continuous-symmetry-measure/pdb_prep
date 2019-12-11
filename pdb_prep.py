@@ -38,6 +38,7 @@ def nmr(pdb_dir, pdb_file, with_hydrogens, is_homomer, parse_rem350, output_dir,
         output_text, verbose):
     """
     \b
+
     This procedure prepares protein files in pdb format from NMR measurements for 
     a CSM calculation according to the following stage:
       1.  Removing non-coordinates lines from the atom section.
