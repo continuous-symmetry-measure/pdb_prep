@@ -3,7 +3,6 @@ import glob
 import json
 import os
 import re
-
 import click
 
 from PDB_Prep.clean_stages import stages
@@ -33,7 +32,7 @@ def clean_tmp_data_file_mode(stager: stages, pdb_dir, short_file_name, informer,
     else:
         last_stage_full_file_name = os.path.join(stager.last_stage_dir, short_file_name)
         tmp = os.path.splitext(short_file_name)
-        out_file_name = os.path.join(pdb_dir, tmp[0] + ".clean" + tmp[1])
+        out_file_name = os.path.join(pdb_dir, tmp[0] + "_clean" + tmp[1])
 
         print("\ncleaned file is: '{}'".format(out_file_name))
         if os.path.isfile(last_stage_full_file_name):
@@ -130,7 +129,7 @@ def finish_outputs(mode_file_or_dir, informer, cliutils, stager, report, output_
         if output_type == 'text':
             output_str = str_informer
         else:
-            output_str = json.dumps(informer.json_dict)
+            output_str = json.dumps(informer.json_dict, indent=4, sort_keys=True)
         cliutils.write_file(report_file, output_str)
         print("report file:{}".format(report_file))
     #        if len(informer.excluded_files) > 0:
@@ -147,7 +146,7 @@ def finish_outputs(mode_file_or_dir, informer, cliutils, stager, report, output_
             output_str = str(informer)
         else:
             output_str = json.dumps(informer.json_dict, indent=4, sort_keys=True)
-        # print(output_str)
+        print(output_str)
         # print(informer.json_dict)
         # print(informer.excluded_files)
         # print (">>>>>>>>{}".format(report_file))

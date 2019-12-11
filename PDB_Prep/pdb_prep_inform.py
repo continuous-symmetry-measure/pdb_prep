@@ -1,9 +1,10 @@
 from Utils.inform import inform
+from version import __VERSION__
 
 
 class xray_inform(inform):
     def __str__(self):
-        s = ""
+        s = "pdb_prep Version: {}\n".format(__VERSION__)
         if len(self.reliable_data) >= 1:
             s += "\nreliable:\n"
             s += self._str_data(self.reliable_data, "reliable_data")
@@ -62,7 +63,7 @@ class xray_inform(inform):
                 # cliutils.write_a_file(full_path, str(_pdb))
 
                 if not pdbinfo.Resolution or pdbinfo.Resolution == "NULL":
-                    msg = "file: '{}' - Resolution='NULL'".format(file)
+                    msg = "'{}' - Resolution='NULL'".format(file)
                     self.verbose(msg)
                     self.excluded_files[file] = msg
                     self.others_data[file] = pdbinfo
@@ -70,14 +71,14 @@ class xray_inform(inform):
 
                 if 350 not in self.ignore_remarks:
                     if not pdbinfo.bio_struct_identical_to_the_asymmetric_unit:
-                        msg = "file: '{}' - biological structure  IS NOT identical to the asymmetric unit".format(file)
+                        msg = "'{}' - biological structure  IS NOT identical to the asymmetric unit".format(file)
                         self.verbose(msg)
                         self.excluded_files[file] = msg
                         self.others_data[file] = pdbinfo
                         continue
                 elif remark_350_warn_msg_flag:
                     msg = "remark 350 was ignored so bio_struct_identical_to_the_asymmetric_unit was not checked"
-                    print("WARN: file: '{}' - {}".format(file, msg))
+                    print("WARN: '{}' - {}".format(file, msg))
                     remark_350_warn_msg_flag = False
 
 
@@ -98,7 +99,7 @@ class xray_inform(inform):
                     elif pdbinfo.R_free_grade >= limit_r_free_grade:
                         self.reliable_data[file] = pdbinfo
                     else:
-                        msg = "file: '{}' - R_free_grade='{}'  worst then limit_R_free_grade='{}'".format(
+                        msg = "'{}' - R_free_grade='{}'  worst then limit_R_free_grade='{}'".format(
                             file, pdbinfo.R_free_grade, limit_r_free_grade, current_resolution, max_resolution)
                         self.verbose(msg)
                         self.excluded_files[file] = msg
@@ -106,7 +107,7 @@ class xray_inform(inform):
                     continue
 
                 if current_resolution > max_resolution:
-                    msg = "file: '{}' - 'current_resolution' > 'max_resolution' ({}>{})".format(
+                    msg = "'{}' - 'current_resolution' > 'max_resolution' ({}>{})".format(
                         file, current_resolution, max_resolution)
                     self.verbose(msg)
                     self.excluded_files[file] = msg
@@ -114,7 +115,7 @@ class xray_inform(inform):
                     continue
 
             except Exception as e:
-                msg = "file: '{}' - {}".format(file, e)
+                msg = "'{}' - {}".format(file, e)
                 self.cliutils.error_msg(msg, self.__class__.__name__)
                 self.excluded_files[file] = msg
                 self.others_data[file] = pdbinfo
@@ -122,7 +123,7 @@ class xray_inform(inform):
 
 class nmr_inform(inform):
     def __str__(self):
-        s = ""
+        s = "pdb_prep Version: {}\n".format(__VERSION__)
         s += "\nnmr:\n"
         s += self._str_data(self.nmr_data, "nmr_data")
         return s
@@ -184,12 +185,12 @@ class nmr_inform(inform):
                 # cliutils.write_a_file(full_path, str(_pdb))
 
                 if pdbinfo.is_nmr():
-                    self.verbose("file: '{}' - NMR")
+                    self.verbose("'{}' - NMR")
                     if pdbinfo.bio_struct_identical_to_the_asymmetric_unit:
                         self.nmr_data[file] = pdbinfo
                     else:
                         self.verbose(
-                            "file: '{}' - biological structure  IS NOT identical to the asymmetric unit".format(file))
+                            "'{}' - biological structure  IS NOT identical to the asymmetric unit".format(file))
                         self.others_data[file] = pdbinfo
                         continue
                 else:

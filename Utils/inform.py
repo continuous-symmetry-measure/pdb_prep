@@ -7,6 +7,7 @@ import time
 from Chemistry.PDB.pdb_chain import chain_utils
 from Chemistry.PDB.pdb_obj import pdb
 from Chemistry.PDB.pdb_utils import pdb_info
+from version import __VERSION__
 
 
 def create_pdb_info(file, dir_path, include_hetatm, ignore_remarks=[], output_type='text', is_verbose=False):
@@ -57,7 +58,8 @@ class inform():
         self.json_dict = {}
 
     def __str__(self):
-        return self._str_data(self.data)
+        s = "pdb_prep Version: {}\n".format(__VERSION__)
+        return s + self._str_data(self.data)
 
     def verbose(self, text):
         if not self.is_verbose:
@@ -77,7 +79,7 @@ class inform():
     def _str_data(self, data, data_name="data", dont_include_files=[]):
         format_string = "{0:<25} {1:<10} {2:<19} {3:<7} {4:7} {5:7} {6:<26} {7:}\n"
         s = ""
-        self.json_dict[data_name] = {}
+        self.json_dict[data_name] = {"pdb_prep Version": __VERSION__}
         #                          0       1             2                  3          4
         s += format_string.format("file", "Resolution", "Resolution_Grade", "B_value", "R_value",
                                   #                          5        6                           7
@@ -116,11 +118,11 @@ class inform():
 
         if len(ex) == 0:
             return s
-        format_string_ex = "{0:<25} {1:<100}\n"
-        s += format_string_ex.format("excluded_file", "reason")
+        format_string_ex = "{:<100}\n"
+        # s += format_string_ex.format("reason")
         for file, reason in ex.items():
             if file not in files:
-                s += format_string_ex.format(file, reason)
+                s += format_string_ex.format(reason)
                 self.json_dict[data_name][file] = reason
 
         return s
