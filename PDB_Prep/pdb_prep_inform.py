@@ -71,13 +71,13 @@ class xray_inform(inform):
 
                 if 350 not in self.ignore_remarks:
                     if not pdbinfo.bio_struct_identical_to_the_asymmetric_unit:
-                        msg = "'{}' - biological structure  IS NOT identical to the asymmetric unit".format(file)
+                        msg = "'{}' - The given peptides structure does not create a biomolecule.".format(file)
                         self.verbose(msg)
                         self.excluded_files[file] = msg
                         self.others_data[file] = pdbinfo
                         continue
                 elif remark_350_warn_msg_flag:
-                    msg = "remark 350 was ignored so bio_struct_identical_to_the_asymmetric_unit was not checked"
+                    msg = "remark 350 was ignored"
                     print("WARN: '{}' - {}".format(file, msg))
                     remark_350_warn_msg_flag = False
 

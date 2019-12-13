@@ -6,6 +6,20 @@ import sys
 from Chemistry.PDB.pdb_chain import chain_utils
 
 
+def get_experimental_method(file_name):
+    with open(file_name) as f:
+        exp_methods = ('X-RAY DIFFRACTION', 'FIBER DIFFRACTION',
+                       'NEUTRON DIFFRACTION', 'ELECTRON CRYSTALLOGRAPHY', 'ELECTRON MICROSCOPY',
+                       'SOLID-STATE NMR', 'SOLUTION NMR', 'SOLUTION SCATTERING')
+        line = f.readline()
+        while line:
+            if line.startswith('EXPDTA'):
+                for exp in exp_methods:
+                    if exp in line:
+                        return exp
+            line = f.readline()
+    return 'UNKNOWN_EXPERIMENTAL_METHOD'
+
 class pdb_info():
     """
      general information from the pdb object:
@@ -359,7 +373,10 @@ class pdb_info():
         REMARK 350 BIOMT3   2  0.000000  0.000000 -1.000000        0.00000
 
         """
-        self._check_remark_exists(350, self.parse_remark_350.__name__)
+        try:
+            self._check_remark_exists(350, self.parse_remark_350.__name__)
+        except ValueError as e:
+            print("pdb file: {} -remark 350 is missing, undefined  biomolecule".format(self._pdb.file_name))
         _pdb = self._pdb
         remarak_350 = _pdb.remarks[350]
         is_boilogical_struct_defined = False

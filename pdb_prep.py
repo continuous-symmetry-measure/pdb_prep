@@ -26,15 +26,17 @@ def cli():
 @click.option('--pdb-file', help='input pdb file (use this or the --pdb-dir option!)', show_default=True)
 @click.option('--with-hydrogens/--no-hydrogens', default=False,
               help='sieve hydrogen atoms and hetatms from the files', show_default=True)
-@click.option('--is-homomer/--is-heteromer', default=True,
-              help='process the file as homomer or heteromer', show_default=True)
+# @click.option('--is-homomer/--is-heteromer', default=True,
+#               help='process the file as homomer or heteromer', show_default=True)
+@click.option('--type', default='homomer', type=click.Choice(['homomer', 'heteromer', 'monomer'], case_sensitive=False),
+              show_default=True, help="protein stoichiometry")
 @click.option('--parse-rem350/--ignore-rem350', default=True,
               help='parse or ignore remark 350', show_default=True)
 @click.option('--output-dir', default='output.{time}', help='output dir', show_default=True)
 @click.option('--output-text/--output-json', default=True,
               help='output report in text or json', show_default=True)
 @click.option('--verbose', is_flag=True, default=False, help='verbose mode', show_default=True)
-def nmr(pdb_dir, pdb_file, with_hydrogens, is_homomer, parse_rem350, output_dir,
+def nmr(pdb_dir, pdb_file, with_hydrogens, type, parse_rem350, output_dir,
         output_text, verbose):
     """
     \b
@@ -58,6 +60,9 @@ def nmr(pdb_dir, pdb_file, with_hydrogens, is_homomer, parse_rem350, output_dir,
     """
     print("Version: {}".format(__VERSION__))
     report = ""
+    is_homomer = True
+    if type == 'hetromer':
+        is_homomer = False
     ignore_remarks = []
     if not parse_rem350:
         ignore_remarks.append(350)
@@ -129,15 +134,17 @@ def nmr(pdb_dir, pdb_file, with_hydrogens, is_homomer, parse_rem350, output_dir,
               show_default=True)
 @click.option('--with-hydrogens/--no-hydrogens', default=False,
               help='sieve hydrogen atoms and hetatms from the files', show_default=True)
-@click.option('--is-homomer/--is-heteromer', default=True,
-              help='process the file as homomer or heteromer', show_default=True)
+# @click.option('--is-homomer/--is-heteromer', default=True,
+#               help='process the file as homomer or heteromer', show_default=True)
+@click.option('--type', default='homomer', type=click.Choice(['homomer', 'heteromer', 'monomer'], case_sensitive=False),
+              show_default=True, help="protein stoichiometry")
 @click.option('--parse-rem350/--ignore-rem350', default=True,
               help='parse or ignore remark 350', show_default=True)
 @click.option('--output-dir', default='output.{time}', help='output dir', show_default=True)
 @click.option('--output-text/--output-json', default=True,
               help='output report in text or json', show_default=True)
 @click.option('--verbose', is_flag=True, default=False, help='verbose mode', show_default=True)
-def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, is_homomer, parse_rem350, output_dir,
+def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, type, parse_rem350, output_dir,
          output_text, verbose):
     """
     
@@ -169,6 +176,10 @@ def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, 
     """
     print("Version: {}".format(__VERSION__))
     report = ""
+    is_homomer = True
+    if type == 'hetromer':
+        is_homomer = False
+
     ignore_remarks = []
     if not parse_rem350:
         ignore_remarks.append(350)
@@ -179,6 +190,7 @@ def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, 
     if pdb_file:
         mode_file_or_dir = "file"
         pdb_dir, short_file_name = os.path.split(pdb_file)
+        print(">>>>>>>>>>{}-{}".format(pdb_file, get_experimental_method(pdb_file)))
         informer.process_one_file(pdb_dir, short_file_name, click)
     elif pdb_dir:
         mode_file_or_dir = "dir"

@@ -32,7 +32,7 @@ def clean_tmp_data_file_mode(stager: stages, pdb_dir, short_file_name, informer,
     else:
         last_stage_full_file_name = os.path.join(stager.last_stage_dir, short_file_name)
         tmp = os.path.splitext(short_file_name)
-        out_file_name = os.path.join(pdb_dir, tmp[0] + "_clean" + tmp[1])
+        out_file_name = os.path.join(pdb_dir, tmp[0] + "-clean" + tmp[1])
 
         print("\ncleaned file is: '{}'".format(out_file_name))
         if os.path.isfile(last_stage_full_file_name):
