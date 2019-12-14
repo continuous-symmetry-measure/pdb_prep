@@ -28,7 +28,8 @@ def cli():
               help='sieve hydrogen atoms and hetatms from the files', show_default=True)
 # @click.option('--is-homomer/--is-heteromer', default=True,
 #               help='process the file as homomer or heteromer', show_default=True)
-@click.option('--type', default='homomer', type=click.Choice(['homomer', 'heteromer', 'monomer'], case_sensitive=False),
+@click.option('--ptype', default='homomer',
+              type=click.Choice(['homomer', 'heteromer', 'monomer'], case_sensitive=False),
               show_default=True, help="protein stoichiometry")
 @click.option('--parse-rem350/--ignore-rem350', default=True,
               help='parse or ignore remark 350', show_default=True)
@@ -36,7 +37,7 @@ def cli():
 @click.option('--output-text/--output-json', default=True,
               help='output report in text or json', show_default=True)
 @click.option('--verbose', is_flag=True, default=False, help='verbose mode', show_default=True)
-def nmr(pdb_dir, pdb_file, with_hydrogens, type, parse_rem350, output_dir,
+def nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
         output_text, verbose):
     """
     \b
@@ -58,10 +59,16 @@ def nmr(pdb_dir, pdb_file, with_hydrogens, type, parse_rem350, output_dir,
           biological structure (e.g., non unit matrix in REMARK 350).
       7.  For homomers, checking that all peptides are of the same length.
     """
+    func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
+             output_text, verbose)
+
+
+def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
+             output_text, verbose):
     print("Version: {}".format(__VERSION__))
     report = ""
     is_homomer = True
-    if type == 'hetromer':
+    if ptype == 'hetromer':
         is_homomer = False
     ignore_remarks = []
     if not parse_rem350:
@@ -136,7 +143,8 @@ def nmr(pdb_dir, pdb_file, with_hydrogens, type, parse_rem350, output_dir,
               help='sieve hydrogen atoms and hetatms from the files', show_default=True)
 # @click.option('--is-homomer/--is-heteromer', default=True,
 #               help='process the file as homomer or heteromer', show_default=True)
-@click.option('--type', default='homomer', type=click.Choice(['homomer', 'heteromer', 'monomer'], case_sensitive=False),
+@click.option('--ptype', default='homomer',
+              type=click.Choice(['homomer', 'heteromer', 'monomer'], case_sensitive=False),
               show_default=True, help="protein stoichiometry")
 @click.option('--parse-rem350/--ignore-rem350', default=True,
               help='parse or ignore remark 350', show_default=True)
@@ -144,7 +152,7 @@ def nmr(pdb_dir, pdb_file, with_hydrogens, type, parse_rem350, output_dir,
 @click.option('--output-text/--output-json', default=True,
               help='output report in text or json', show_default=True)
 @click.option('--verbose', is_flag=True, default=False, help='verbose mode', show_default=True)
-def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, type, parse_rem350, output_dir,
+def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype, parse_rem350, output_dir,
          output_text, verbose):
     """
     
@@ -174,10 +182,18 @@ def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, 
             (e.g., non unit matrix in REMARK 350).
         7.  For homomers, checking that all peptides are of the same length.
     """
+
+    func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype, parse_rem350, output_dir,
+              output_text, verbose)
+
+
+def func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype, parse_rem350, output_dir,
+              output_text, verbose):
+
     print("Version: {}".format(__VERSION__))
     report = ""
     is_homomer = True
-    if type == 'hetromer':
+    if ptype == 'hetromer':
         is_homomer = False
 
     ignore_remarks = []

@@ -133,7 +133,8 @@ class nmr_inform(inform):
         s = ""
         self.json_dict[data_name] = {}
         #                          0      1
-        s += format_string.format("file", "identical_to_the_asym_unit")
+        # s += format_string.format("file", "identical_to_the_asym_unit")
+        s += format_string.format("file", "biomolecule")
         # t=(file,info)
 
         for file, info in sorted(data.items(), key=lambda t: t[0]):
@@ -189,8 +190,9 @@ class nmr_inform(inform):
                     if pdbinfo.bio_struct_identical_to_the_asymmetric_unit:
                         self.nmr_data[file] = pdbinfo
                     else:
-                        self.verbose(
-                            "'{}' - biological structure  IS NOT identical to the asymmetric unit".format(file))
+                        msg = "'{}' - biological structure  IS NOT identical to the asymmetric unit".format(file)
+                        self.cliutils.error_msg(msg)
+                        self.excluded_files[file] = msg
                         self.others_data[file] = pdbinfo
                         continue
                 else:

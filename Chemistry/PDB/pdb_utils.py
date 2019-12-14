@@ -5,12 +5,13 @@ import sys
 
 from Chemistry.PDB.pdb_chain import chain_utils
 
+exp_methods = ('X-RAY DIFFRACTION', 'FIBER DIFFRACTION',
+               'NEUTRON DIFFRACTION', 'ELECTRON CRYSTALLOGRAPHY', 'ELECTRON MICROSCOPY',
+               'SOLID-STATE NMR', 'SOLUTION NMR', 'SOLUTION SCATTERING')
+
 
 def get_experimental_method(file_name):
     with open(file_name) as f:
-        exp_methods = ('X-RAY DIFFRACTION', 'FIBER DIFFRACTION',
-                       'NEUTRON DIFFRACTION', 'ELECTRON CRYSTALLOGRAPHY', 'ELECTRON MICROSCOPY',
-                       'SOLID-STATE NMR', 'SOLUTION NMR', 'SOLUTION SCATTERING')
         line = f.readline()
         while line:
             if line.startswith('EXPDTA'):
