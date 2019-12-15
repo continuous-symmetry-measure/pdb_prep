@@ -59,13 +59,13 @@ def nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
           biological structure (e.g., non unit matrix in REMARK 350).
       7.  For homomers, checking that all peptides are of the same length.
     """
+    print("Version: {}".format(__VERSION__))
     func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
              output_text, verbose)
 
 
 def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
              output_text, verbose):
-    print("Version: {}".format(__VERSION__))
     report = ""
     is_homomer = True
     if ptype == 'hetromer':
@@ -182,7 +182,7 @@ def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, 
             (e.g., non unit matrix in REMARK 350).
         7.  For homomers, checking that all peptides are of the same length.
     """
-
+    print("Version: {}".format(__VERSION__))
     func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype, parse_rem350, output_dir,
               output_text, verbose)
 
@@ -190,7 +190,6 @@ def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, 
 def func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype, parse_rem350, output_dir,
               output_text, verbose):
 
-    print("Version: {}".format(__VERSION__))
     report = ""
     is_homomer = True
     if ptype == 'hetromer':
