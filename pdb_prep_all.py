@@ -36,9 +36,9 @@ def pdb_prep_all(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hyd
     output_dir = "output.{time}"
     cliutils = cu(click=click, is_verbose=verbose, caller=pdb_prep_all.name)
     if pdb_file:
-        pdb_dir, short_file_name = os.path.split(pdb_file)
-        if pdb_dir == '': pdb_dir = '.'
-        exp_method = get_experimental_method(pdb_file)
+        curr_pdb_dir, short_file_name = os.path.split(pdb_file)
+        if pdb_dir == '': curr_pdb_dir = os.getcwd()
+        exp_method = get_experimental_method(os.path.join(curr_pdb_dir, pdb_file))
         if exp_method == 'X-RAY DIFFRACTION':
             func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype, parse_rem350,
                       output_dir, output_text, verbose)
@@ -58,15 +58,16 @@ def pdb_prep_all(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hyd
             exp_method = get_experimental_method(curr_pdb_file)
 
             if exp_method == 'X-RAY DIFFRACTION':
-                print(">>>>>>>>>>{}-{}".format(curr_pdb_file, get_experimental_method(curr_pdb_file)))
+                # print(">>>>>>>>>>{}-{}".format(curr_pdb_file, get_experimental_method(curr_pdb_file)))
                 cliutils.copy_file(curr_pdb_file, xray_dir)
             elif exp_method == 'SOLUTION NMR':
-                print(">>>>>>>>>>{}-{}".format(curr_pdb_file, get_experimental_method(curr_pdb_file)))
+                # print(">>>>>>>>>>{}-{}".format(curr_pdb_file, get_experimental_method(curr_pdb_file)))
                 cliutils.copy_file(curr_pdb_file, nmr_dir)
             else:
-                print(">>>>>>>>>>{}-{}".format(curr_pdb_file, get_experimental_method(curr_pdb_file)))
+                # print(">>>>>>>>>>{}-{}".format(curr_pdb_file, get_experimental_method(curr_pdb_file)))
                 cliutils.error_msg("file: '{}' - exp method {} not supported".format(curr_pdb_file, exp_method))
         pdb_file = None
+        if output_dir == 'output.{time}': output_dir = 'output'
         func_xray(xray_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype, parse_rem350,
                   output_dir + "-xray", output_text, verbose)
         func_nmr(nmr_dir, pdb_file, with_hydrogens, ptype, parse_rem350,
