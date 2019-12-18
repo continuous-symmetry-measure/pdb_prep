@@ -124,7 +124,7 @@ def finish_outputs(mode_file_or_dir, informer, cliutils, stager, report, output_
         excluded_file = "excluded-{}.json".format(list(informer.data)[0])
         print(str_informer)
         excluded_file_path = os.path.join(excluded_file)
-        report_file = "report-{}.txt".format(list(informer.data)[0])
+        report_file = "report-{}.{}".format(list(informer.data)[0], output_type)
         report_file = os.path.join(report_file)
         if output_type == 'text':
             output_str = str_informer
