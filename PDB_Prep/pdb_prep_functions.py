@@ -1,8 +1,8 @@
 import fnmatch
-import glob
 import json
 import os
 import re
+
 import click
 
 from PDB_Prep.clean_stages import stages

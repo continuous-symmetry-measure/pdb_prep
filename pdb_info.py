@@ -57,7 +57,7 @@ def brief(pdb_file, output_type, verbose):
 
     file_name = os.path.basename(pdb_file)
     path = os.path.dirname(pdb_file)
-    pdbinfo = informer.create_pdb_info(file_name, path,output_type)
+    pdbinfo = informer.create_pdb_info(file_name, path, output_type)
     informer.one_file(pdbinfo)
     return 0
 

@@ -1,7 +1,8 @@
+import click
+
+from Utils.cli_utils import cli_utils as cu
 from Utils.inform import inform
 from pdb_prep import *
-from Utils.cli_utils import cli_utils as cu
-import click
 
 
 @click.command()

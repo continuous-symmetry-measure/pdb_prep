@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import os
+
 import click
 
 from Chemistry.PDB.pdb_utils import *
@@ -9,6 +10,7 @@ from PDB_Prep.pdb_prep_functions import copy_data_into_dir, clean_tmp_data_dir_m
 from PDB_Prep.pdb_prep_functions import xray_validate_params, nmr_validate_params
 from PDB_Prep.pdb_prep_inform import xray_inform, nmr_inform
 from version import __VERSION__
+
 
 @click.group()
 def cli():
@@ -189,7 +191,6 @@ def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, 
 
 def func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype, parse_rem350, output_dir,
               output_text, verbose):
-
     report = ""
     is_homomer = True
     if ptype == 'hetromer':
@@ -234,14 +235,13 @@ def func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrog
         if copy_or_clean == 'copy':
             copy_data_into_dir(source_path=pdb_dir, dest_path=dest_path, data=data, cliutils=cliutils)
         else:
-            informer.data, report  = stager.run_clean_stages(
+            informer.data, report = stager.run_clean_stages(
                 directory=directory,
                 dest_path=dest_path,
                 data=data,
                 with_hydrogens=with_hydrogens,
                 ignore_remarks=ignore_remarks
             )
-
 
             # clean_missing_residues(data)
     # missing rsidues

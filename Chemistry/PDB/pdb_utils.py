@@ -21,6 +21,7 @@ def get_experimental_method(file_name):
             line = f.readline()
     return 'UNKNOWN_EXPERIMENTAL_METHOD'
 
+
 class pdb_info():
     """
      general information from the pdb object:
@@ -34,10 +35,10 @@ class pdb_info():
 
     """
 
-    def __init__(self, pdb, ignore_remarks=[],output_type='text'):
+    def __init__(self, pdb, ignore_remarks=[], output_type='text'):
         self._pdb = pdb
         self.ignore_remarks = ignore_remarks
-        self.output_type=output_type
+        self.output_type = output_type
         # self.models_table_data=[]
         self.R_value_list = []
         self.R_free_list = []
@@ -585,19 +586,22 @@ class pdb_info():
             remark_info = "\tremark {}:\tno info :{}".format(remark_number, e)
             report.add_remark_info(remark_number, remark_info)
 
-        if self.output_type=='text': return str(report)
-        elif self.output_type == 'json': return report.to_json()
-        else: return str(report)
+        if self.output_type == 'text':
+            return str(report)
+        elif self.output_type == 'json':
+            return report.to_json()
+        else:
+            return str(report)
+
 
 class Report:
     def __init__(self, pdb, models_table_data=[]):
         self._pdb = pdb
         info = self._pdb.info()
         self.info = info
-        self.models_table_data=models_table_data
+        self.models_table_data = models_table_data
         self._str_order = ["file_name", "number_of_models", "number_fo_remarks", "caveats"]
         self.remarks_info = []
-
 
     def add_remark_info(self, remark_number, remark_info):
         self.remarks_info.append({"remark_number": remark_number, "remark_info": remark_info})
@@ -619,7 +623,7 @@ class Report:
             report += "\t\tmodel_number: {}".format(mi["model_number"])
             report += "\t\tnumber_of_chains: {}\n".format(mi["number_of_chains"])
         for line in self.models_table_data:
-            report +="\t  {:>10} {:>10} {:>10} {:>10}\n".format(line[0], line[1], line[2], line[3])
+            report += "\t  {:>10} {:>10} {:>10} {:>10}\n".format(line[0], line[1], line[2], line[3])
         return report
 
     def to_dict(self):
@@ -641,8 +645,8 @@ class Report:
         if self._pdb.has_caveats():
             data["caveats"] = self._pdb.caveats
         data["remarks_info"] = list(sorted(self.remarks_info, key=lambda rem: rem["remark_number"]))
-        if len(self.models_table_data)>0:
-            data["models_table_data"]=self.models_table_data
+        if len(self.models_table_data) > 0:
+            data["models_table_data"] = self.models_table_data
         return data
 
     def to_json(self):

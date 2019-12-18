@@ -81,7 +81,6 @@ class xray_inform(inform):
                     print("WARN: '{}' - {}".format(file, msg))
                     remark_350_warn_msg_flag = False
 
-
                 current_resolution = float(pdbinfo.Resolution)
                 min_r_free_key = float(min(pdbinfo.r_free_dict.keys()))
                 if self.one_file_mode:
@@ -159,7 +158,6 @@ class nmr_inform(inform):
                 if file not in self.excluded_files:
                     s += "{}\n".format(file)
                     self.json_dict[data_name][file] = None
-
 
         return s
 
