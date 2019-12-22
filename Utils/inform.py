@@ -83,7 +83,7 @@ class inform():
         #                          0       1             2                  3          4
         s += format_string.format("file", "Resolution", "Resolution_Grade", "B_value", "R_value",
                                   #                          5        6                           7
-                                  "R_free", "identical_to_the_asym_unit", "R_free_grade")
+                                  "R_free", "forms_a_biomolecule", "R_free_grade")
         # t=(file,info)
         for file, info in sorted(data.items(), key=lambda t: t[0]):
             if file in dont_include_files:
@@ -102,7 +102,7 @@ class inform():
                                                    "resolution_grade": info.Resolution_Grade,
                                                    "b_value": info.B_value,
                                                    "r_free": info.R_free,
-                                                   "identical_to_the_asym_unit": bios,
+                                                   "forms_a_biomolecule": bios,
                                                    "r_free_grade": r_free_grade
                                                    }
             except Exception as e:

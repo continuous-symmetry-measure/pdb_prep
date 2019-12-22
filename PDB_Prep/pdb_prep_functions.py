@@ -1,8 +1,8 @@
 import fnmatch
+import glob
 import json
 import os
 import re
-
 import click
 
 from PDB_Prep.clean_stages import stages
@@ -63,10 +63,10 @@ def clean_tmp_data_dir_mode(stager: stages, pdb_dir, informer, cliutils):
 
             cliutils.copyfiles_to_dir(stager.last_stage_dir, cliutils.output_dirname, files)
             # for dir_path in stager.stages_dirs_list:
-    for directory, data, copy_or_clean in sorted(informer.output_data_config):
-        dir_path = os.path.join(os.getcwd(), cliutils.output_dirname, directory)
-        if os.path.isdir(dir_path):
-            cliutils.rmtree(dir_path)
+            for directory, data, copy_or_clean in sorted(informer.output_data_config):
+                dir_path = os.path.join(os.getcwd(), cliutils.output_dirname, directory)
+                if os.path.isdir(dir_path):
+                    cliutils.rmtree(dir_path)
     cliutils.verbose("--------------------------------------------------")
     cliutils.is_verbose = _is_verbose
 

@@ -71,7 +71,7 @@ class xray_inform(inform):
 
                 if 350 not in self.ignore_remarks:
                     if not pdbinfo.bio_struct_identical_to_the_asymmetric_unit:
-                        msg = "'{}' - The given peptides structure does not create a biomolecule.".format(file)
+                        msg = "file: '{}' - The given peptides structure does not create a biomolecule.".format(file)
                         self.verbose(msg)
                         self.excluded_files[file] = msg
                         self.others_data[file] = pdbinfo
@@ -98,7 +98,7 @@ class xray_inform(inform):
                     elif pdbinfo.R_free_grade >= limit_r_free_grade:
                         self.reliable_data[file] = pdbinfo
                     else:
-                        msg = "'{}' - R_free_grade='{}'  worse than limit_R_free_grade='{}'".format(
+                        msg = "file: '{}' - R_free_grade='{}'  worse than limit_R_free_grade='{}'".format(
                             file, pdbinfo.R_free_grade, limit_r_free_grade, current_resolution, max_resolution)
                         self.verbose(msg)
                         self.excluded_files[file] = msg
@@ -114,7 +114,7 @@ class xray_inform(inform):
                     continue
 
             except Exception as e:
-                msg = "'{}' - {}".format(file, e)
+                msg = "file: '{}' - {}".format(file, e)
                 self.cliutils.error_msg(msg, self.__class__.__name__)
                 self.excluded_files[file] = msg
                 self.others_data[file] = pdbinfo
@@ -132,9 +132,7 @@ class nmr_inform(inform):
         s = ""
         self.json_dict[data_name] = {}
         #                          0      1
-        # s += format_string.format("file", "identical_to_the_asym_unit")
-        s += format_string.format("file", "biomolecule")
-        # t=(file,info)
+        s += format_string.format("file", "forms_a_biomolecule")
 
         for file, info in sorted(data.items(), key=lambda t: t[0]):
             try:
@@ -151,7 +149,7 @@ class nmr_inform(inform):
             self.json_dict[data_name] = {}
             files = []
             if len(set(self.excluded_files.keys())) >= 1:
-                s += "excluded_files:\n"
+                s += "\nexcluded_files:\n"
                 s += self._str_excluded(files)
             s += "\nothers:\n"
             for file in self.others_data:
@@ -188,7 +186,7 @@ class nmr_inform(inform):
                     if pdbinfo.bio_struct_identical_to_the_asymmetric_unit:
                         self.nmr_data[file] = pdbinfo
                     else:
-                        msg = "'{}' - biological structure  IS NOT identical to the asymmetric unit".format(file)
+                        msg = "file: '{}' - The given peptides structure does not create a biomolecule.".format(file)
                         self.cliutils.error_msg(msg)
                         self.excluded_files[file] = msg
                         self.others_data[file] = pdbinfo
