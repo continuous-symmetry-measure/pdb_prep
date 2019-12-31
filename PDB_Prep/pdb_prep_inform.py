@@ -6,21 +6,21 @@ class xray_inform(inform):
     def __str__(self):
         s = "pdb_prep Version: {}\n".format(__VERSION__)
         if len(self.reliable_data) >= 1:
-            s += "\nreliable:\n"
+            s += "\nReliable:\n"
             s += self._str_data(self.reliable_data, "reliable_data")
         if len(self.reliable_R_grade_data) >= 1:
-            s += "\nreliable_r_grade:\n"
+            s += "\nReliable_r_grade:\n"
             s += self._str_data(self.reliable_R_grade_data, "reliable_R_grade_data")
 
         files = list(self.reliable_data.keys())
         files.extend(list(self.reliable_R_grade_data.keys()))
         if len(set(self.excluded_files.keys()) - set(files)) >= 1:
-            s += "\nexcluded_files:\n"
+            s += "\nExcluded_files:\n"
             s += self._str_excluded(files)
             files.extend(self.excluded_files.keys())
 
         if len(set(self.others_data) - set(files)) >= 1:
-            s += "\nothers:\n"
+            s += "\nOthers:\n"
             s += self._str_data(self.others_data, "others_data", dont_include_files=files)
 
         return s
@@ -106,7 +106,7 @@ class xray_inform(inform):
                     continue
 
                 if current_resolution > max_resolution:
-                    msg = "'{}' - 'current_resolution' > 'max_resolution' ({}>{})".format(
+                    msg = "file: '{}' - 'current_resolution' > 'max_resolution' ({}>{})".format(
                         file, current_resolution, max_resolution)
                     self.verbose(msg)
                     self.excluded_files[file] = msg

@@ -81,9 +81,9 @@ class inform():
         s = ""
         self.json_dict[data_name] = {"pdb_prep Version": __VERSION__}
         #                          0       1             2                  3          4
-        s += format_string.format("file", "Resolution", "Resolution_Grade", "B_value", "R_value",
+        s += format_string.format("File", "Resolution", "Resolution_Grade", "B_value", "R_value",
                                   #                          5        6                           7
-                                  "R_free", "forms_a_biomolecule", "R_free_grade")
+                                  "R_free", "Forms_a_biomolecule", "R_free_grade")
         # t=(file,info)
         for file, info in sorted(data.items(), key=lambda t: t[0]):
             if file in dont_include_files:
