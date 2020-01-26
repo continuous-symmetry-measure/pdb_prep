@@ -106,8 +106,9 @@ class xray_inform(inform):
                     continue
 
                 if current_resolution > max_resolution:
-                    msg = "File: '{} - 'current_resolution' > 'max_resolution' - File resolution is worse than " \
-                          "requested  ({}>{})".format(file, current_resolution, max_resolution)
+                    msg = "File: '{} - File resolution is worse than " \
+                          "requested  (current_resolution={} > max_resolution={})".format(file, current_resolution,
+                                                                                          max_resolution)
                     self.verbose(msg)
                     self.excluded_files[file] = msg
                     self.others_data[file] = pdbinfo
