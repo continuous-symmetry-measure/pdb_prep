@@ -7,7 +7,7 @@ class xray_inform(inform):
         s = "pdb_prep Version: {}\n".format(__VERSION__)
         if len(self.reliable_data) >= 1:
             s += "\nReliable:\n"
-            s += self._str_data(self.reliable_data, "reliable_data")
+            s += self._str_data(self.reliable_data, "Reliable_data")
         if len(self.reliable_R_grade_data) >= 1:
             s += "\nReliable_r_grade:\n"
             s += self._str_data(self.reliable_R_grade_data, "reliable_R_grade_data")
@@ -59,7 +59,7 @@ class xray_inform(inform):
                     self.cliutils.verbose("{} is homomer as expected".format(file))
                     pass
                 elif test_is_homomer and not pdbinfo.is_homomer():
-                    raise ValueError("expected homomer but got heteromer")
+                    raise ValueError("Exepcted homomer but got heteromer")
                 # cliutils.write_a_file(full_path, str(_pdb))
 
                 if not pdbinfo.Resolution or pdbinfo.Resolution == "NULL":
@@ -71,7 +71,7 @@ class xray_inform(inform):
 
                 if 350 not in self.ignore_remarks:
                     if not pdbinfo.bio_struct_identical_to_the_asymmetric_unit:
-                        msg = "file: '{}' - The given peptides structure does not create a biomolecule.".format(file)
+                        msg = "File: '{} - The given peptides structure does not create a biomolecule.".format(file)
                         self.verbose(msg)
                         self.excluded_files[file] = msg
                         self.others_data[file] = pdbinfo
@@ -98,7 +98,7 @@ class xray_inform(inform):
                     elif pdbinfo.R_free_grade >= limit_r_free_grade:
                         self.reliable_data[file] = pdbinfo
                     else:
-                        msg = "file: '{}' - R_free_grade='{}'  worse than limit_R_free_grade='{}'".format(
+                        msg = "File: '{} - R_free_grade='{}'  worse than limit_R_free_grade='{}'".format(
                             file, pdbinfo.R_free_grade, limit_r_free_grade, current_resolution, max_resolution)
                         self.verbose(msg)
                         self.excluded_files[file] = msg
@@ -106,15 +106,15 @@ class xray_inform(inform):
                     continue
 
                 if current_resolution > max_resolution:
-                    msg = "file: '{}' - 'current_resolution' > 'max_resolution' ({}>{})".format(
-                        file, current_resolution, max_resolution)
+                    msg = "File: '{} - 'current_resolution' > 'max_resolution' - File resolution is worse than " \
+                          "requested  ({}>{})".format(file, current_resolution, max_resolution)
                     self.verbose(msg)
                     self.excluded_files[file] = msg
                     self.others_data[file] = pdbinfo
                     continue
 
             except Exception as e:
-                msg = "file: '{}' - {}".format(file, e)
+                msg = "File: '{} - {}".format(file, e)
                 self.cliutils.error_msg(msg, self.__class__.__name__)
                 self.excluded_files[file] = msg
                 self.others_data[file] = pdbinfo
@@ -124,12 +124,13 @@ class nmr_inform(inform):
     def __str__(self):
         s = "pdb_prep Version: {}\n".format(__VERSION__)
         s += "\nnmr:\n"
-        s += self._str_data(self.nmr_data, "nmr_data")
+        s += self._str_data(self.nmr_data, "Reliable_data")
         return s
 
-    def _str_data(self, data, data_name="nmr_data"):
+    def _str_data(self, data, data_name="Reliable_data"):
         format_string = "{0:<25} {1:<26}\n"
         s = ""
+        self.json_dict["pdb_prep Version"] = __VERSION__
         self.json_dict[data_name] = {}
         #                          0      1
         s += format_string.format("file", "forms_a_biomolecule")
@@ -139,7 +140,7 @@ class nmr_inform(inform):
                 bios = self._bios_value(info)
                 # 0     1
                 s += format_string.format(file, bios)
-                self.json_dict[data_name][file] = bios
+                self.json_dict[data_name][file] = {"Forms_a_biomolecule": bios, "Exprimental method": "NMR"}
             except:
                 s += "{}\n".format(file)
                 self.json_dict[data_name][file] = None
@@ -178,7 +179,7 @@ class nmr_inform(inform):
                     pass
                 elif test_is_homomer and not pdbinfo.is_homomer():
                     # self.cliutils.error_msg("{} is not homomer".format(file))
-                    raise ValueError("exepcted homomer but got heteromer")
+                    raise ValueError("Exepcted homomer but got heteromer")
                 # cliutils.write_a_file(full_path, str(_pdb))
 
                 if pdbinfo.is_nmr():
@@ -186,7 +187,7 @@ class nmr_inform(inform):
                     if pdbinfo.bio_struct_identical_to_the_asymmetric_unit:
                         self.nmr_data[file] = pdbinfo
                     else:
-                        msg = "file: '{}' - The given peptides structure does not create a biomolecule.".format(file)
+                        msg = "File: '{} - The given peptides structure does not create a biomolecule.".format(file)
                         self.cliutils.error_msg(msg)
                         self.excluded_files[file] = msg
                         self.others_data[file] = pdbinfo
@@ -194,7 +195,7 @@ class nmr_inform(inform):
                 else:
                     self.others_data[file] = pdbinfo
             except Exception as e:
-                msg = "file: '{}' - {}".format(file, e)
+                msg = "File: '{} - {}".format(file, e)
                 self.cliutils.error_msg(msg, self.__class__.__name__)
                 self.excluded_files[file] = msg
                 self.others_data[file] = pdbinfo

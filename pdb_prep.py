@@ -24,40 +24,39 @@ def cli():
 
 
 @cli.command()
-@click.option('--pdb-dir', default='.', help='the input pdb directory containing PDB files', show_default=True)
-@click.option('--pdb-file', help='input pdb file (use this or the --pdb-dir option!)', show_default=True)
+@click.option('--pdb-dir', default='.', help='The input pdb directory containing PDB files', show_default=True)
+@click.option('--pdb-file', help='Input pdb file (use this or the --pdb-dir option!)', show_default=True)
 @click.option('--with-hydrogens/--no-hydrogens', default=False,
-              help='sieve hydrogen atoms and hetatms from the files', show_default=True)
+              help='Leave hydrogen atoms and hetatms from the files - default --with-hydrogens')  # , show_default=True)
 # @click.option('--is-homomer/--is-heteromer', default=True,
 #               help='process the file as homomer or heteromer', show_default=True)
 @click.option('--ptype', default='homomer',
               type=click.Choice(['homomer', 'heteromer', 'monomer'], case_sensitive=False),
-              show_default=True, help="protein stoichiometry")
+              show_default=True, help="Protein stoichiometry")
 @click.option('--parse-rem350/--ignore-rem350', default=True,
-              help='parse or ignore remark 350', show_default=True)
-@click.option('--output-dir', default='output.{time}', help='output dir', show_default=True)
+              help='parse or ignore remark 350  - default --parse-rem350')  # show_default=True)
+@click.option('--output-dir', default='output.{time}', help='Output dir', show_default=True)
 @click.option('--output-text/--output-json', default=True,
-              help='output report in text or json', show_default=True)
-@click.option('--verbose', is_flag=True, default=False, help='verbose mode', show_default=True)
+              help='output report in text or json  - default --output-text')  # , show_default=True)
+@click.option('--verbose', is_flag=True, default=False, help='Verbose mode', show_default=True)
 def nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
         output_text, verbose):
     """
     \b
-
-    This procedure prepares protein files in pdb format from NMR measurements for 
+    This procedure prepares protein files in pdb format from NMR measurements for
     a CSM calculation according to the following stage:
-      1.  Removing non-coordinates lines from the atom section.
-      2.  Removing ligands and solvent lines at the end of peptides.
-          HETATOM lines in the middle of a peptide are retained.
-      3.  Cleaning gaps in the sequence according to REMARK 470 (missing residues) 
-          and REMARK 465 (missing atoms):
+    1.  Removing non-coordinates lines from the atom section.
+    2.  Removing ligands and solvent lines at the end of peptides.
+        HETATOM lines in the middle of a peptide are retained.
+    3.  Cleaning gaps in the sequence according to REMARK 470 (missing residues)
+        and REMARK 465 (missing atoms):
           a.  If a backbone atom is missing - the whole amino acid is deleted.
           b.  If a side chain atom is missing – the side chain is removed.
           c.  For homomers – gap on one peptide causes the removal of the related 
               atoms from all other peptides.
-      4.  Retaining the first location in cases of alternate location.
-      5.  Removing hydrogen atoms (optional).
-      6.  Ignoring pdb files for which the asymmetric unit does not represent a 
+    4.  Retaining the first location in cases of alternate location.
+    5.  Removing hydrogen atoms (optional).
+    6.  Ignoring pdb files for which the asymmetric unit does not represent a
           biological structure (e.g., non unit matrix in REMARK 350).
       7.  For homomers, checking that all peptides are of the same length.
     """
@@ -130,11 +129,11 @@ def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
 
 
 @cli.command()
-@click.option('--pdb-dir', default='.', help='input pdb directory containing PDB files', show_default=True)
-@click.option('--pdb-file', help='input pdb file (use this or the --pdb-dir option!)', show_default=True)
-@click.option('--max-resolution', default=2.0, type=float, help='maximum allowed resolution', show_default=True)
+@click.option('--pdb-dir', default='.', help='Input pdb directory containing PDB files', show_default=True)
+@click.option('--pdb-file', help='Input pdb file (use this or the --pdb-dir option!)', show_default=True)
+@click.option('--max-resolution', default=2.0, type=float, help='Maximum allowed resolution', show_default=True)
 @click.option('--limit-r-free-grade', default='C', type=click.Choice(['A', 'B', 'C', 'D', 'E']),
-              help='limit for R_free_grade:\n' +
+              help='Limit for R_free_grade:\n' +
                    'A - MUCH BETTER THAN AVERAGE at this resolution\n' +
                    'B - BETTER THAN AVERAGE at this resolution\n' +
                    'C - AVERAGE at this resolution\n' +
@@ -142,17 +141,17 @@ def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
                    'E - UNRELIABLE\n',
               show_default=True)
 @click.option('--with-hydrogens/--no-hydrogens', default=False,
-              help='sieve hydrogen atoms and hetatms from the files', show_default=True)
+              help='Leave hydrogen atoms and hetatms from the files - default --with-hydrogens')  #, show_default=True)
 # @click.option('--is-homomer/--is-heteromer', default=True,
 #               help='process the file as homomer or heteromer', show_default=True)
 @click.option('--ptype', default='homomer',
               type=click.Choice(['homomer', 'heteromer', 'monomer'], case_sensitive=False),
-              show_default=True, help="protein stoichiometry")
+              show_default=True, help="Protein stoichiometry")
 @click.option('--parse-rem350/--ignore-rem350', default=True,
-              help='parse or ignore remark 350', show_default=True)
-@click.option('--output-dir', default='output.{time}', help='output dir', show_default=True)
+              help='parse or ignore remark 350  - default --parse-rem350')  # show_default=True)
+@click.option('--output-dir', default='output.{time}', help='Output dir', show_default=True)
 @click.option('--output-text/--output-json', default=True,
-              help='output report in text or json', show_default=True)
+              help='output report in text or json  - default --output-text')  #, show_default=True)
 @click.option('--verbose', is_flag=True, default=False, help='verbose mode', show_default=True)
 def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype, parse_rem350, output_dir,
          output_text, verbose):

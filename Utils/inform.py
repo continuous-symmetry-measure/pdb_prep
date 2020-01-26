@@ -79,7 +79,8 @@ class inform():
     def _str_data(self, data, data_name="data", dont_include_files=[]):
         format_string = "{0:<25} {1:<10} {2:<19} {3:<7} {4:7} {5:7} {6:<26} {7:}\n"
         s = ""
-        self.json_dict[data_name] = {"pdb_prep Version": __VERSION__}
+        self.json_dict[data_name] = {}
+        self.json_dict["pdb_prep Version"] = __VERSION__
         #                          0       1             2                  3          4
         s += format_string.format("File", "Resolution", "Resolution_Grade", "B_value", "R_value",
                                   #                          5        6                           7
@@ -98,12 +99,12 @@ class inform():
                     r_free_grade = info.R_free_grade
                 else:
                     r_free_grade = info.R_free_grade.val
-                self.json_dict[data_name][file] = {"resolution": info.Resolution,
-                                                   "resolution_grade": info.Resolution_Grade,
-                                                   "b_value": info.B_value,
-                                                   "r_free": info.R_free,
-                                                   "forms_a_biomolecule": bios,
-                                                   "r_free_grade": r_free_grade
+                self.json_dict[data_name][file] = {"Resolution": info.Resolution,
+                                                   "Resolution_grade": info.Resolution_Grade,
+                                                   "B_value": info.B_value,
+                                                   "R_free": info.R_free,
+                                                   "Forms_a_biomolecule": bios,
+                                                   "R_free_grade": r_free_grade
                                                    }
             except Exception as e:
                 s += "{} - Exception{}\n".format(file, e)

@@ -11,14 +11,14 @@ from Utils.cli_utils import cli_utils as cu
 
 def copy_data_into_dir(source_path, dest_path, data, cliutils):
     """
-    this function will be use to copy file which we dont wanr to process
+    This function will be use to copy file which we dont wanr to process
     :param source_path:
     :param dest_path:
     :param data: dict of file_name: pdb_info object
     :param cliutils:
     :return:
     """
-    cliutils.verbose("start copy data into  {} ( excpecting {} items).".format(dest_path, len(data)),
+    cliutils.verbose("Start copy data into  {} ( excpecting {} items).".format(dest_path, len(data)),
                      caller=copy_data_into_dir.__name__)
     rv = cliutils.copyfiles_to_dir(source_path, dest_path, files_list=sorted(data.keys()))
     return rv
@@ -27,18 +27,18 @@ def copy_data_into_dir(source_path, dest_path, data, cliutils):
 def clean_tmp_data_file_mode(stager: stages, pdb_dir, short_file_name, informer, cliutils):
     if stager.last_stage_dir is None:
         cliutils.error_msg("excluded_files:{}".format(informer.excluded_files))
-        cliutils.error_msg("file is not valid - check the 'others' dir", caller=clean_tmp_data_file_mode.__name__)
+        cliutils.error_msg("File is not valid - check the 'others' dir", caller=clean_tmp_data_file_mode.__name__)
         # exit(22)
     else:
         last_stage_full_file_name = os.path.join(stager.last_stage_dir, short_file_name)
         tmp = os.path.splitext(short_file_name)
         out_file_name = os.path.join(pdb_dir, tmp[0] + "-clean" + tmp[1])
 
-        print("\ncleaned file is: '{}'".format(out_file_name))
+        print("\nCleaned file is: '{}'".format(out_file_name))
         if os.path.isfile(last_stage_full_file_name):
             cliutils.copy_file(last_stage_full_file_name, out_file_name)
         else:
-            cliutils.error_msg("file:{} is not valid. try verbose mode for more info.".format(short_file_name))
+            cliutils.error_msg("File: '{}' is not valid. try verbose mode for more info.".format(short_file_name))
     if not cliutils.is_verbose and os.path.isdir(cliutils.output_dirname):
         cliutils.rmtree(cliutils.output_dirname)
     return
@@ -77,15 +77,15 @@ def validate_input_dir_or_file(pdb_dir, pdb_file, cliutils):
     if pdb_dir:
         cliutils.verbose("{:>20}={}".format("--pdb-dir", pdb_dir))
         if not os.path.isdir(pdb_dir):
-            cliutils.exit(exit_code=1, sevirity="ERROR", msg="not pdb dir: {}".format(pdb_dir))
+            cliutils.exit(exit_code=1, sevirity="ERROR", msg="This is not PDB dir: '{}'".format(pdb_dir))
     if pdb_file:
         cliutils.verbose("{:>20}={}".format("--pdb_file", pdb_file))
         if not os.path.isfile(pdb_file):
-            cliutils.exit(exit_code=1, sevirity="ERROR", msg="no such file: {}".format(pdb_file))
+            cliutils.exit(exit_code=1, sevirity="ERROR", msg="No such file: '{}'".format(pdb_file))
 
     if (pdb_dir != "." and pdb_file) or (not pdb_dir and not pdb_file):
         rv = 4
-        cliutils.exit(rv, 'ERROR', "you  must use exectly one of --pdb-dir or --pdb-file")
+        cliutils.exit(rv, 'ERROR', "You  must use exactly one of --pdb-dir or --pdb-file")
 
 
 def xray_validate_params(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, output_dir, verbose):
@@ -100,7 +100,7 @@ def xray_validate_params(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, 
         _output_dir = 'output'
     rv = cliutils.make_output_dir(dirname=_output_dir, with_timestamp=True)
     if rv != 0:
-        cliutils.exit(rv, 'ERROR', "could not create {} dir".format(output_dir))
+        cliutils.exit(rv, 'ERROR', "Dir '{}' could not be created".format(output_dir))
 
     return cliutils
 
@@ -114,7 +114,7 @@ def nmr_validate_params(pdb_dir, pdb_file, output_dir, verbose):
         _output_dir = 'output'
     rv = cliutils.make_output_dir(dirname=_output_dir, with_timestamp=True)
     if rv != 0:
-        cliutils.exit(rv, 'ERROR', "could not create {} dir".format(output_dir))
+        cliutils.exit(rv, 'ERROR', "Dir '{}' could not be created".format(output_dir))
     return cliutils
 
 
@@ -132,6 +132,7 @@ def finish_outputs(mode_file_or_dir, informer, cliutils, stager, report, output_
             output_str = json.dumps(informer.json_dict, indent=4, sort_keys=True)
         cliutils.write_file(report_file, output_str)
         print("report file:{}".format(report_file))
+        print(output_str)
     #        if len(informer.excluded_files) > 0:
     #            excluded_file = "excluded-{}.json".format(list(informer.data)[0])
     #            excluded_file = os.path.join(excluded_file)
@@ -139,7 +140,7 @@ def finish_outputs(mode_file_or_dir, informer, cliutils, stager, report, output_
     #            print("excluded file:{}".format(excluded_file))
     elif mode_file_or_dir == 'dir':
         excluded_file = "excluded.json".format(list(informer.data)[0])
-        cliutils.msg("output dir is: '{}'".format(cliutils.output_dirname))
+        cliutils.msg("Output dir is: '{}'".format(cliutils.output_dirname))
         report_file = os.path.join(cliutils.output_dirname, "report.txt")
         excluded_file_path = os.path.join(cliutils.output_dirname, excluded_file)
         if output_type == 'text':

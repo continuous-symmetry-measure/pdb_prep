@@ -56,7 +56,7 @@ class stages():
 
     def handle_file_with_unexpected_errors(self, file_name, file_delete, info, exeption, caller):
         cliutils = self.cliutils
-        msg = "file:'{}' Error: {}  = I will write the file in others dir".format(file_name, exeption)
+        msg = "File: '{}' Error: {}  = I will write the file in the 'others' dir".format(file_name, exeption)
         print("\n")
         cliutils.error_msg(msg, caller)
         others_dir = self.set_dest_path('others')
@@ -155,7 +155,7 @@ class stages():
             "start stage 02-missing_resseqs-remarks {} ( excpecting {} items).".format(_dest_path, len(data)),
             caller=_caller)
         if len(_data.items()) == 0:
-            cliutils.msg("end  02-missing_resseqs-remarks {} ( no data ).".format(_dest_path), caller=_caller)
+            cliutils.msg("End  02-missing_resseqs-remarks {} ( no data ).".format(_dest_path), caller=_caller)
             return _dest_path, _data, report
         rv = cliutils.mkdir(dirname=_dest_path)
 
@@ -195,7 +195,7 @@ class stages():
         write_files(files_dict=files_to_write, is_verbose=self.cliutils.is_verbose)
         # bar.update(bs)
         cliutils.verbose(
-            "end  stage 02-missing_resseqs-remarks {} ( excpecting {} items).\n".format(_dest_path, len(data)),
+            "End  stage 02-missing_resseqs-remarks {} ( excpecting {} items).\n".format(_dest_path, len(data)),
             caller=_caller)
 
         return _dest_path, _data, report
@@ -205,7 +205,7 @@ class stages():
         _dest_path = self._change_stages_last_dir(dest_path, "03_fix_resseqs")
         _data = data
         cliutils = self.cliutils
-        cliutils.verbose("end  stage {} {} TODO: (was not iplemented).\n".format(_caller, _dest_path, len(data)),
+        cliutils.verbose("End  stage {} {} TODO: (was not iplemented).\n".format(_caller, _dest_path, len(data)),
                          caller=_caller)
         return _dest_path, _data
 
@@ -243,7 +243,7 @@ class stages():
         cliutils.verbose("start stage {} {} ( excpecting {} items).".format(_caller, _dest_path, len(data)),
                          caller=_caller)
         if len(_data.items()) == 0:
-            cliutils.msg("end  stage {} {} ( no data ).".format(_caller, _dest_path), caller=_caller)
+            cliutils.msg("End  stage {} {} ( no data ).".format(_caller, _dest_path), caller=_caller)
             return _dest_path, _data
         rv = cliutils.mkdir(dirname=_dest_path)
         files_to_write = {}
@@ -302,7 +302,7 @@ class stages():
         write_files(files_dict=files_to_write, is_verbose=self.cliutils.is_verbose)
         # bar.update(bs + 1)
 
-        cliutils.verbose("end  stage {} {} ( excpecting {} items).\n".format(_caller, _dest_path, len(data)),
+        cliutils.verbose("End  stage {} {} ( excpecting {} items).\n".format(_caller, _dest_path, len(data)),
                          caller=_caller)
         return _dest_path, _data
 
@@ -345,7 +345,8 @@ class stages():
                     for ci, chain in enumerate(model):
                         if len(chain) != first_chain_len:
                             is_ok = False
-                            msg = "'file: {}' - not homomer - Model No.: {}  = first chain length is {} but chain number {} length is {} b"
+                            msg = "File: '{}' -is not a homomer - " \
+                                  "Model No.: {}  = First chain length is {} and chain number {} length is {}"
                             self.informer.excluded_files[_pdb.file_name] = msg.format(_pdb.file_name, mi + 1,
                                                                                       first_chain_len, ci + 1,
                                                                                       len(chain))
@@ -367,7 +368,7 @@ class stages():
                 continue
         write_files(files_dict=files_to_write, is_verbose=self.cliutils.is_verbose)
         # bar.update(bs + 1)
-        cliutils.verbose("end  stage {} {} ( excpecting {} items).\n".format(_caller, _dest_path, len(data)),
+        cliutils.verbose("End  stage {} {} ( excpecting {} items).\n".format(_caller, _dest_path, len(data)),
                          caller=_caller)
         return _dest_path, _data
 

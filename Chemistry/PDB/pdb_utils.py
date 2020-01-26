@@ -163,12 +163,12 @@ class pdb_info():
                 return r_free_grade_vlaues("UNRELIABLE")
 
         else:
-            msg = "pdb file: {}  r_free error  R_free={};  could not {}"
+            msg = "file: {}  R_free error  R_free={};  could not {}"
             raise ValueError(msg.format(self._pdb.file_name, self._calc_r_free_grade.__name__))
 
     def _check_remark_exists(self, remark_number, caller):
         if remark_number not in self._pdb.remarks:
-            msg = "pdb file: {} missing remark {} - could not {}"
+            msg = "File: {} Missing remark {} - could not {}"
             raise ValueError(msg.format(self._pdb.file_name, remark_number, caller))
 
     def parse_remark_2(self):
@@ -190,7 +190,7 @@ class pdb_info():
                 return
             except:
                 pass
-        msg = "pdb file: {} missing RESOLUTION info on remark 2 - could not {}"
+        msg = "File: {} Missing resolution information on remark 2 - could not {}"
         raise ValueError(msg.format(_pdb.file_name, self.parse_remark_2.__name__))
 
     def parse_remark_3(self):
@@ -658,15 +658,15 @@ class r_free_grade_vlaues():
     def __init__(self, text_value):
         values = r_free_grade_vlaues.get_struct()
 
-        if text_value not in map(lambda v: v['text'], values):
+        if text_value not in map(lambda v: v['Text'], values):
             raise ValueError("not valid value:{}".format(text_value))
         for v in values:
-            if v['text'] == text_value:
+            if v['Text'] == text_value:
                 self.val = v
                 break
 
     def __str__(self):
-        return self.val["text"]
+        return self.val["Text"]
 
     def _convert(self, other):
         if type(other) is str:
@@ -675,24 +675,24 @@ class r_free_grade_vlaues():
 
     def __ge__(self, other):
         """ A is better then B"""
-        return self.val["value"] <= self._convert(other).val["value"]
+        return self.val["Value"] <= self._convert(other).val["Value"]
 
     def __le__(self, other):
         """ A is better then B"""
-        return self.val["value"] >= self._convert(other).val["value"]
+        return self.val["Value"] >= self._convert(other).val["Value"]
 
     def __eq__(self, other):
         """ A is better then B"""
-        return self.val["value"] == self._convert(other).val["value"]
+        return self.val["Value"] == self._convert(other).val["Value"]
 
     @classmethod
     def get_struct(cls):
         return [
-            {'text': "MUCH BETTER THAN AVERAGE at this resolution", "value": "A"},
-            {'text': "BETTER THAN AVERAGE at this resolution", "value": "B"},
-            {'text': "AVERAGE at this resolution", "value": "C"},
-            {'text': "WORSE THAN AVERAGE at this resolution", "value": "D"},
-            {'text': "UNRELIABLE", "value": "E"},
+            {'Text': "MUCH BETTER THAN AVERAGE at this resolution", "Value": "A"},
+            {'Text': "BETTER THAN AVERAGE at this resolution", "Value": "B"},
+            {'Text': "AVERAGE at this resolution", "Value": "C"},
+            {'Text': "WORSE THAN AVERAGE at this resolution", "Value": "D"},
+            {'Text': "UNRELIABLE", "Value": "E"},
         ]
 
     @classmethod
@@ -700,17 +700,17 @@ class r_free_grade_vlaues():
         lst = cls.get_struct()
         values = []
         s = ""
-        for x in sorted(lst, key=lambda d: d["value"]):
-            values.append(x["value"])
-            s += "\t\t{} - {}\n".format(x["value"], x["text"])
+        for x in sorted(lst, key=lambda d: d["Value"]):
+            values.append(x["Value"])
+            s += "\t\t{} - {}\n".format(x["Value"], x["Text"])
         return s, values
 
     @classmethod
     def from_value(cls, value):
         lst = cls.get_struct()
-        for x in sorted(lst, key=lambda d: d["value"]):
-            if x["value"] == value:
-                return cls(x["text"])
+        for x in sorted(lst, key=lambda d: d["Value"]):
+            if x["Value"] == value:
+                return cls(x["Text"])
 
 
 class pdb_utils():

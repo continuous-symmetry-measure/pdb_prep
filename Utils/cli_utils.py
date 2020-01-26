@@ -127,6 +127,6 @@ class cli_utils():
         try:
             with open(full_file_name, 'w') as file:
                 file.writelines(*args)
-                self.verbose("file: {} was written".format(full_file_name), caller=self.write_file.__name__)
+                self.verbose("File: {} was written".format(full_file_name), caller=self.write_file.__name__)
         except Exception as e:
             self.exit(1, "ERROR", "{} - Exeption:{} args={}".format(full_file_name, e, args))

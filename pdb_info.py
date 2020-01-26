@@ -22,8 +22,8 @@ def cli():
 
 
 @cli.command()
-@click.option('-d', '--pdb-dir', help='the input pdb  directory which contains PDB files')
-@click.option('-v', '--verbose', is_flag=True, default=False, help='verbose mode')
+@click.option('-d', '--pdb-dir', help='The input pdb  directory which contains PDB files')
+@click.option('-v', '--verbose', is_flag=True, default=False, help='Verbose mode')
 def dir_brief(pdb_dir, verbose):
     """
     get a brief info on the PDB file content
@@ -40,9 +40,9 @@ def dir_brief(pdb_dir, verbose):
 
 
 @cli.command()
-@click.option('-i', '--pdb-file', help='the input pdb file or a directory containing PDB files')
+@click.option('-i', '--pdb-file', help='The input pdb file or a directory containing PDB files')
 @click.option('-T', '--output-type', help='text|json', type=click.Choice(['text', 'json']), default='text')
-@click.option('-v', '--verbose', is_flag=True, default=False, help='verbose mode')
+@click.option('-v', '--verbose', is_flag=True, default=False, help='Verbose mode')
 def brief(pdb_file, output_type, verbose):
     """
     get a brief info on the PDB file content
@@ -63,13 +63,13 @@ def brief(pdb_file, output_type, verbose):
 
 
 @cli.command()
-@click.option('-i', '--pdb-file', help='the input pdb file ')
-@click.option('-o', '--out-file', help='the output html file [defult PDB_FILE-diff.html]')
-@click.option('-a', '--chain-a', help='the chain id  of the first peptide')
-@click.option('-b', '--chain-b', help='the chain id  of the second peptide')
-@click.option('--model-a', default='1', help='the model number of the first peptide ', show_default=True)
-@click.option('--model-b', default='1', help='the model number of the second peptide ', show_default=True)
-@click.option('-v', '--verbose', is_flag=True, default=False, help='verbose mode')
+@click.option('-i', '--pdb-file', help='The input pdb file ')
+@click.option('-o', '--out-file', help='The output html file [defult PDB_FILE-diff.html]')
+@click.option('-a', '--chain-a', help='The chain id  of the first peptide')
+@click.option('-b', '--chain-b', help='The chain id  of the second peptide')
+@click.option('--model-a', default='1', help='The model number of the first peptide ', show_default=True)
+@click.option('--model-b', default='1', help='The model number of the second peptide ', show_default=True)
+@click.option('-v', '--verbose', is_flag=True, default=False, help='Verbose mode')
 def diff(pdb_file, out_file, chain_a, chain_b, model_a, model_b,
          verbose):  # , chain_id_a, chain_id_b, model_num_a, model_num_b,verbose):
     """compare two peptides"""
