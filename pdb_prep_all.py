@@ -49,7 +49,7 @@ def pdb_prep_all(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hyd
         else:
             cliutils.error_msg("File: '{}' - Eexperimental method {} is not supported".format(pdb_file, exp_method))
     elif pdb_dir:
-        nmr_dir, xray_dir = os.path.join(pdb_dir, "nmr"), os.path.join(pdb_dir, "xray")
+        nmr_dir, xray_dir = os.path.join(pdb_dir, ".nmr.tmp"), os.path.join(pdb_dir, ".xray.tmp")
         cliutils.mkdir(nmr_dir)
         cliutils.mkdir(xray_dir)
         informer = inform(cliutils, verbose)
