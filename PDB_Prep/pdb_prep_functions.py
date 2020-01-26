@@ -132,7 +132,7 @@ def finish_outputs(mode_file_or_dir, informer, cliutils, stager, report, output_
             output_str = json.dumps(informer.json_dict, indent=4, sort_keys=True)
         cliutils.write_file(report_file, output_str)
         print("report file:{}".format(report_file))
-        print(output_str)
+        # print(output_str)
     #        if len(informer.excluded_files) > 0:
     #            excluded_file = "excluded-{}.json".format(list(informer.data)[0])
     #            excluded_file = os.path.join(excluded_file)

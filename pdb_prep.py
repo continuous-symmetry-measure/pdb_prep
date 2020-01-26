@@ -61,8 +61,9 @@ def nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
       7.  For homomers, checking that all peptides are of the same length.
     """
     print("Version: {}".format(__VERSION__))
-    func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
-             output_text, verbose)
+    ret_val = func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
+                       output_text, verbose)
+    exit(ret_val)
 
 
 def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
@@ -91,7 +92,7 @@ def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
             cliutils.verbose("informer.process_complete_dir ended")
         except IndexError as  e:
             cliutils.error_msg("I did not find any PDB files in the input folder")
-            exit(31)
+            return 31
 
     # limit_r_free_grade_text = r_free_grade_vlaues.from_value(limit_r_free_grade)
     informer.filter_data(click=click, test_is_homomer=is_homomer)
@@ -125,7 +126,7 @@ def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
     else:
         output_type = "json"
     finish_outputs(mode_file_or_dir, informer, cliutils, stager, report, output_type)
-    return
+    return 0
 
 
 @cli.command()
@@ -184,8 +185,10 @@ def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, 
         7.  For homomers, checking that all peptides are of the same length.
     """
     print("Version: {}".format(__VERSION__))
-    func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype, parse_rem350, output_dir,
-              output_text, verbose)
+    ret_val = func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype, parse_rem350,
+                        output_dir,
+                        output_text, verbose)
+    exit(ret_val)
 
 
 def func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype, parse_rem350, output_dir,
@@ -205,16 +208,16 @@ def func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrog
     if pdb_file:
         mode_file_or_dir = "file"
         pdb_dir, short_file_name = os.path.split(pdb_file)
-        print(">>>>>>>>>>{}-{}".format(pdb_file, get_experimental_method(pdb_file)))
+        # print(">>>>>>>>>>{}-{}".format(pdb_file, get_experimental_method(pdb_file)))
         informer.process_one_file(pdb_dir, short_file_name, click)
     elif pdb_dir:
         mode_file_or_dir = "dir"
         try:
             informer.process_complete_dir(pdb_dir, click)
             cliutils.verbose("informer.process_complete_dir ended")
-        except IndexError as  e:
+        except IndexError as e:
             cliutils.error_msg("I did not find any PDB files in the input folder")
-            exit(31)
+            return 31
 
     limit_r_free_grade_text = r_free_grade_vlaues.from_value(limit_r_free_grade)
     informer.filter_data(max_resolution=max_resolution, limit_r_free_grade=limit_r_free_grade_text, click=click,
@@ -254,7 +257,7 @@ def func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrog
     else:
         output_type = "json"
     finish_outputs(mode_file_or_dir, informer, cliutils, stager, report, output_type)
-    return
+    return 0
 
 
 if __name__ == '__main__':
