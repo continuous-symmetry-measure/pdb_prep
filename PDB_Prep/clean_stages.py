@@ -345,7 +345,7 @@ class stages():
                     for ci, chain in enumerate(model):
                         if len(chain) != first_chain_len:
                             is_ok = False
-                            msg = "File: '{}' -is not a homomer - " \
+                            msg = "File: '{} - Is not a homomer - " \
                                   "Model No.: {}  = First chain length is {} and chain number {} length is {}"
                             _file_name = os.path.basename(_pdb.file_name)
                             self.informer.excluded_files[_pdb.file_name] = msg.format(_file_name, mi + 1,

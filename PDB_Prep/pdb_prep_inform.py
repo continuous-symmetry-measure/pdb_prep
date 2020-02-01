@@ -71,7 +71,7 @@ class xray_inform(inform):
 
                 if 350 not in self.ignore_remarks:
                     if not pdbinfo.bio_struct_identical_to_the_asymmetric_unit:
-                        msg = "File: '{} - The given peptides structure does not create a biomolecule.".format(file)
+                        msg = "File: '{}' - The given peptides structure does not create a biomolecule.".format(file)
                         self.verbose(msg)
                         self.excluded_files[file] = msg
                         self.others_data[file] = pdbinfo
@@ -98,7 +98,7 @@ class xray_inform(inform):
                     elif pdbinfo.R_free_grade >= limit_r_free_grade:
                         self.reliable_data[file] = pdbinfo
                     else:
-                        msg = "File: '{} - R_free_grade='{}'  worse than limit_R_free_grade='{}'".format(
+                        msg = "File: '{}' - R_free_grade='{}'  worse than limit_R_free_grade='{}'".format(
                             file, pdbinfo.R_free_grade, limit_r_free_grade, current_resolution, max_resolution)
                         self.verbose(msg)
                         self.excluded_files[file] = msg
@@ -106,7 +106,7 @@ class xray_inform(inform):
                     continue
 
                 if current_resolution > max_resolution:
-                    msg = "File: '{} - File resolution is worse than " \
+                    msg = "File: '{}' - File resolution is worse than " \
                           "requested  (current_resolution={} > max_resolution={})".format(file, current_resolution,
                                                                                           max_resolution)
                     self.verbose(msg)
@@ -115,7 +115,7 @@ class xray_inform(inform):
                     continue
 
             except Exception as e:
-                msg = "File: '{} - {}".format(file, e)
+                msg = "File: '{}' - {}".format(file, e)
                 self.cliutils.error_msg(msg, self.__class__.__name__)
                 self.excluded_files[file] = msg
                 self.others_data[file] = pdbinfo
@@ -188,7 +188,7 @@ class nmr_inform(inform):
                     if pdbinfo.bio_struct_identical_to_the_asymmetric_unit:
                         self.nmr_data[file] = pdbinfo
                     else:
-                        msg = "File: '{} - The given peptides structure does not create a biomolecule.".format(file)
+                        msg = "File: '{}' - The given peptides structure does not create a biomolecule.".format(file)
                         self.cliutils.error_msg(msg)
                         self.excluded_files[file] = msg
                         self.others_data[file] = pdbinfo
@@ -196,7 +196,7 @@ class nmr_inform(inform):
                 else:
                     self.others_data[file] = pdbinfo
             except Exception as e:
-                msg = "File: '{} - {}".format(file, e)
+                msg = "File: '{}' - {}".format(file, e)
                 self.cliutils.error_msg(msg, self.__class__.__name__)
                 self.excluded_files[file] = msg
                 self.others_data[file] = pdbinfo

@@ -65,7 +65,7 @@ class pdb_info():
             (1.8, 2.0): "Very good",
             (2.0, 2.3): "Very good/Good",
             (2.3, 2.6): "Good",
-            (2.6, 2.9): "GOod/Fair",
+            (2.6, 2.9): "Good/Fair",
             (2.9, 3.2): "Fair",
             (3.2, 3.5): "Fair/Poor",
             (3.5, sys.float_info.max): "Poor",
