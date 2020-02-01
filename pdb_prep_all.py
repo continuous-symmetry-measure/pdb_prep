@@ -1,5 +1,6 @@
 import click
 
+from PDB_Prep.pdb_prep_functions import validate_input_dir_or_file
 from Utils.cli_utils import cli_utils as cu
 from Utils.inform import inform
 from pdb_prep import *
@@ -29,13 +30,14 @@ from pdb_prep import *
 # @click.option('--output-dir', default='output', help='output dir', show_default=True)
 @click.option('--output-text/--output-json', default=True,
               help='Output report in text or json  - default --output-text')  # , show_default=True)
-@click.option('--Verbose', is_flag=True, default=False, help='verbose mode', show_default=True)
+@click.option('--verbose', is_flag=True, default=False, help='verbose mode', show_default=True)
 def pdb_prep_all(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype, parse_rem350,
                  # output_dir,
                  output_text, verbose):
     """"""
     output_dir = "output.{time}"
     cliutils = cu(click=click, is_verbose=verbose, caller=pdb_prep_all.name)
+    validate_input_dir_or_file(pdb_dir, pdb_file, cliutils)
     if pdb_file:
         curr_pdb_dir, short_file_name = os.path.split(pdb_file)
         if pdb_dir == '': curr_pdb_dir = os.getcwd()

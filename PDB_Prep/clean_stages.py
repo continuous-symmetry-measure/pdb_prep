@@ -347,7 +347,8 @@ class stages():
                             is_ok = False
                             msg = "File: '{}' -is not a homomer - " \
                                   "Model No.: {}  = First chain length is {} and chain number {} length is {}"
-                            self.informer.excluded_files[_pdb.file_name] = msg.format(_pdb.file_name, mi + 1,
+                            _file_name = os.path.basename(_pdb.file_name)
+                            self.informer.excluded_files[_pdb.file_name] = msg.format(_file_name, mi + 1,
                                                                                       first_chain_len, ci + 1,
                                                                                       len(chain))
                             break

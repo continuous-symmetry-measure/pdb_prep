@@ -70,7 +70,7 @@ def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
              output_text, verbose):
     report = ""
     is_homomer = True
-    if ptype == 'hetromer':
+    if ptype == 'heteromer':
         is_homomer = False
     ignore_remarks = []
     if not parse_rem350:
@@ -195,7 +195,7 @@ def func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrog
               output_text, verbose):
     report = ""
     is_homomer = True
-    if ptype == 'hetromer':
+    if ptype == 'heteromer':
         is_homomer = False
 
     ignore_remarks = []
