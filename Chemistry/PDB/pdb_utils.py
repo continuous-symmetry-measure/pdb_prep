@@ -60,15 +60,15 @@ class pdb_info():
         self.missing_atoms = []
         self.missing_residues = []
         self.ranges = {
-            (sys.float_info.min, 1.6): "EXCELLENT",
-            (1.6, 1.8): "EXCELLENT/VERY GOOD",
-            (1.8, 2.0): "VERY GOOD",
-            (2.0, 2.3): "VERY GOOD/GOOD",
-            (2.3, 2.6): "GOOD",
-            (2.6, 2.9): "GOOD/FAIR",
-            (2.9, 3.2): "FAIR",
-            (3.2, 3.5): "FAIR/POOR",
-            (3.5, sys.float_info.max): "POOR",
+            (sys.float_info.min, 1.6): "Excellent",
+            (1.6, 1.8): "Excellent/Very good",
+            (1.8, 2.0): "Very good",
+            (2.0, 2.3): "Very good/Good",
+            (2.3, 2.6): "Good",
+            (2.6, 2.9): "GOod/Fair",
+            (2.9, 3.2): "Fair",
+            (3.2, 3.5): "Fair/Poor",
+            (3.5, sys.float_info.max): "Poor",
         }
         self.r_free_dict = {
             # Resolution : (GoodQ	Median	BadQ),
@@ -132,11 +132,11 @@ class pdb_info():
     def _calc_r_free_grade(self):
         """
                             Free R Value	Grade
-                            <= (GoodQ - 0.02)	                                MUCH BETTER THAN AVERAGE at this res
-        GoodQ (best 25%)    > (GoodQ - 0.02)       and <= ((GoodQ + Median)/2)  BETTER THAN AVERAGE at this resolution
-        Median              > ((GoodQ + Median)/2) and <= ((Median + BadQ)/2)	AVERAGE at this resolution
-        BadQ (worst 25%)    > ((Median + BadQ)/2)  and <= (BadQ + 0.02)	        WORSE THAN AVERAGE at this resolution
-                            > (BadQ + 0.02)                                     UNRELIABLE
+                            <= (GoodQ - 0.02)	                                Much better than average at this res
+        GoodQ (best 25%)    > (GoodQ - 0.02)       and <= ((GoodQ + Median)/2)  Better than average at this resolution
+        Median              > ((GoodQ + Median)/2) and <= ((Median + BadQ)/2)	Average at this resolution
+        BadQ (worst 25%)    > ((Median + BadQ)/2)  and <= (BadQ + 0.02)	        Worse than AVERAGE at this resolution
+                            > (BadQ + 0.02)                                     Unreliable
         """
         if self.R_free.upper() == "NULL":
             return "NULL"
@@ -148,19 +148,19 @@ class pdb_info():
             GoodQ, Median, BadQ = float(tpl[0]), float(tpl[1]), float(tpl[2])
 
             if r_free <= (GoodQ - 0.02):
-                return r_free_grade_vlaues("MUCH BETTER THAN AVERAGE at this resolution")
+                return r_free_grade_vlaues("Much better than average at this resolution")
 
             if (GoodQ - 0.02) < r_free <= ((GoodQ + Median) / 2):
-                return r_free_grade_vlaues("BETTER THAN AVERAGE at this resolution")
+                return r_free_grade_vlaues("Better than average at this resolution")
 
             if ((GoodQ + Median) / 2) < r_free <= ((Median + BadQ) / 2):
-                return r_free_grade_vlaues("AVERAGE at this resolution")
+                return r_free_grade_vlaues("Average at this resolution")
 
             if ((Median + BadQ) / 2) < r_free <= (BadQ + 0.02):
-                return r_free_grade_vlaues("WORSE THAN AVERAGE at this resolution")
+                return r_free_grade_vlaues("Worse than average at this resolution")
 
             if (BadQ + 0.02) < r_free:
-                return r_free_grade_vlaues("UNRELIABLE")
+                return r_free_grade_vlaues("Unreliable")
 
         else:
             msg = "file: {}  R_free error  R_free={};  could not {}"
@@ -378,7 +378,9 @@ class pdb_info():
         try:
             self._check_remark_exists(350, self.parse_remark_350.__name__)
         except ValueError as e:
-            print("pdb file: {} -remark 350 is missing, undefined  biomolecule".format(self._pdb.file_name))
+            print("pdb file: {} -remark 350 is missing, undefined  biomolecule".format(
+                os.path.basename(self._pdb.file_name))
+            )
         _pdb = self._pdb
         remarak_350 = _pdb.remarks[350]
         is_boilogical_struct_defined = False
@@ -527,7 +529,7 @@ class pdb_info():
                     return False
             return True
         else:
-            raise ValueError(" missing SEQRES data")
+            raise ValueError("Missing SEQRES data")
 
     def gaps_report(self):
         pass
@@ -688,11 +690,11 @@ class r_free_grade_vlaues():
     @classmethod
     def get_struct(cls):
         return [
-            {'Text': "MUCH BETTER THAN AVERAGE at this resolution", "Value": "A"},
-            {'Text': "BETTER THAN AVERAGE at this resolution", "Value": "B"},
-            {'Text': "AVERAGE at this resolution", "Value": "C"},
-            {'Text': "WORSE THAN AVERAGE at this resolution", "Value": "D"},
-            {'Text': "UNRELIABLE", "Value": "E"},
+            {'Text': "Much better than average at this resolution", "Value": "A"},
+            {'Text': "Better than average at this resolution", "Value": "B"},
+            {'Text': "Average at this resolution", "Value": "C"},
+            {'Text': "Worse THAN AVERAGE at this resolution", "Value": "D"},
+            {'Text': "Unreliable", "Value": "E"},
         ]
 
     @classmethod

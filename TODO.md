@@ -55,8 +55,8 @@ excluded:
 excluded_files:
 
 excluded_file            reason
-2h9r.pdb                  file: '2h9r.pdb' - Exepcted homomer but got heteromer
-2le8.pdb                  file: '2le8.pdb' - Exepcted homomer but got heteromer
+2h9r.pdb                  file: '2h9r.pdb' -  Expected homomer but got heteromer
+2le8.pdb                  file: '2le8.pdb' -  Expected homomer but got heteromer
 
 others:1qky.pdb
 

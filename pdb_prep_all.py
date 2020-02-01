@@ -18,18 +18,18 @@ from pdb_prep import *
                    'E - Unreliable\n',
               show_default=True)
 @click.option('--with-hydrogens/--no-hydrogens', default=False,
-              help='Leave hydrogen atoms and hetatms from the files - default --with-hydrogens')  # , show_default=True)
+              help='Leave hydrogen atoms and hetatms from the files - default --no-hydrogens')  # , show_default=True)
 # @click.option('--is-homomer/--is-heteromer', default=True,
 #               help='process the file as homomer or heteromer', show_default=True)
 @click.option('--ptype', default='homomer',
               type=click.Choice(['homomer', 'heteromer', 'monomer'], case_sensitive=False),
-              show_default=True, help="protein stoichiometry")
+              show_default=True, help="Protein stoichiometry")
 @click.option('--parse-rem350/--ignore-rem350', default=True,
-              help='parse or ignore remark 350  - default --parse-rem350')  # show_default=True)
+              help='Parse or ignore remark 350  - default --parse-rem350')  # show_default=True)
 # @click.option('--output-dir', default='output', help='output dir', show_default=True)
 @click.option('--output-text/--output-json', default=True,
-              help='output report in text or json  - default --output-text')  #, show_default=True)
-@click.option('--verbose', is_flag=True, default=False, help='verbose mode', show_default=True)
+              help='Output report in text or json  - default --output-text')  # , show_default=True)
+@click.option('--Verbose', is_flag=True, default=False, help='verbose mode', show_default=True)
 def pdb_prep_all(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype, parse_rem350,
                  # output_dir,
                  output_text, verbose):

@@ -59,7 +59,7 @@ class xray_inform(inform):
                     self.cliutils.verbose("{} is homomer as expected".format(file))
                     pass
                 elif test_is_homomer and not pdbinfo.is_homomer():
-                    raise ValueError("Exepcted homomer but got heteromer")
+                    raise ValueError("Expected homomer but got heteromer")
                 # cliutils.write_a_file(full_path, str(_pdb))
 
                 if not pdbinfo.Resolution or pdbinfo.Resolution == "NULL":
@@ -180,7 +180,7 @@ class nmr_inform(inform):
                     pass
                 elif test_is_homomer and not pdbinfo.is_homomer():
                     # self.cliutils.error_msg("{} is not homomer".format(file))
-                    raise ValueError("Exepcted homomer but got heteromer")
+                    raise ValueError("Expected homomer but got heteromer")
                 # cliutils.write_a_file(full_path, str(_pdb))
 
                 if pdbinfo.is_nmr():
