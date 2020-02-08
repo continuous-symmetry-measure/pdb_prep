@@ -1,5 +1,3 @@
-import click
-
 from PDB_Prep.pdb_prep_functions import validate_input_dir_or_file
 from Utils.cli_utils import cli_utils as cu
 from Utils.inform import inform
@@ -20,20 +18,17 @@ from pdb_prep import *
               show_default=True)
 @click.option('--with-hydrogens/--no-hydrogens', default=False,
               help='Leave hydrogen atoms and hetatms from the files - default --no-hydrogens')  # , show_default=True)
-# @click.option('--is-homomer/--is-heteromer', default=True,
-#               help='process the file as homomer or heteromer', show_default=True)
 @click.option('--ptype', default='homomer',
               type=click.Choice(['homomer', 'heteromer', 'monomer'], case_sensitive=False),
               show_default=True, help="Protein stoichiometry")
 @click.option('--parse-rem350/--ignore-rem350', default=True,
               help='Parse or ignore remark 350  - default --parse-rem350')  # show_default=True)
-# @click.option('--output-dir', default='output', help='output dir', show_default=True)
+@click.option('--bio-molecule-chains', type=click.INT, help='Number of peptides in remark 350')
 @click.option('--output-text/--output-json', default=True,
               help='Output report in text or json  - default --output-text')  # , show_default=True)
 @click.option('--verbose', is_flag=True, default=False, help='verbose mode', show_default=True)
-def pdb_prep_all(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype, parse_rem350,
-                 # output_dir,
-                 output_text, verbose):
+def pdb_prep_all(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype,
+                 parse_rem350, bio_molecule_chains, output_text, verbose):
     """"""
     output_dir = "output.{time}"
     cliutils = cu(click=click, is_verbose=verbose, caller=pdb_prep_all.name)
@@ -43,13 +38,13 @@ def pdb_prep_all(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hyd
         if pdb_dir == '': curr_pdb_dir = os.getcwd()
         exp_method = get_experimental_method(os.path.join(curr_pdb_dir, pdb_file))
         if exp_method == 'X-RAY DIFFRACTION':
-            func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype, parse_rem350,
-                      output_dir, output_text, verbose)
+            func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype,
+                      parse_rem350, bio_molecule_chains, output_dir, output_text, verbose)
         elif exp_method == 'SOLUTION NMR':
-            func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350,
+            func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, bio_molecule_chains,
                      output_dir, output_text, verbose)
         else:
-            cliutils.error_msg("File: '{}' - Eexperimental method {} is not supported".format(pdb_file, exp_method))
+            cliutils.error_msg("File: '{}' - Experimental method {} is not supported".format(pdb_file, exp_method))
     elif pdb_dir:
         nmr_dir, xray_dir = os.path.join(pdb_dir, ".nmr.tmp"), os.path.join(pdb_dir, ".xray.tmp")
         cliutils.mkdir(nmr_dir)
@@ -72,10 +67,10 @@ def pdb_prep_all(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hyd
                     "File: '{}' - Experimental method {} is not supported".format(curr_pdb_file, exp_method))
         pdb_file = None
         if output_dir == 'output.{time}': output_dir = 'output'
-        func_xray(xray_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype, parse_rem350,
-                  output_dir + "-xray", output_text, verbose)
-        func_nmr(nmr_dir, pdb_file, with_hydrogens, ptype, parse_rem350,
-                 output_dir + "-nmr", output_text, verbose)
+        func_xray(xray_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype,
+                  parse_rem350, bio_molecule_chains, output_dir + "-xray", output_text, verbose)
+        func_nmr(nmr_dir, pdb_file, with_hydrogens, ptype,
+                 parse_rem350, bio_molecule_chains, output_dir + "-nmr", output_text, verbose)
         cliutils.rmtree(nmr_dir)
         cliutils.rmtree(xray_dir)
 

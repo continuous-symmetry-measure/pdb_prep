@@ -1,5 +1,6 @@
 import decimal
 import json
+import os
 import re
 import sys
 
@@ -35,15 +36,16 @@ class pdb_info():
 
     """
 
-    def __init__(self, pdb, ignore_remarks=[], output_type='text'):
+    def __init__(self, pdb, ignore_remarks=[], output_type='text', bio_molecule_chains=None):
         self._pdb = pdb
         self.ignore_remarks = ignore_remarks
+        self.bio_molecule_chains = bio_molecule_chains
         self.output_type = output_type
         # self.models_table_data=[]
         self.R_value_list = []
         self.R_free_list = []
         self.R_free_grade = 'NULL'
-        self.B_value = 'NULL'
+        self.B_factor = 'NULL'
         self.R_free = 'NULL'
         self.R_value = 'NULL'
         self.Resolution = None
@@ -148,19 +150,19 @@ class pdb_info():
             GoodQ, Median, BadQ = float(tpl[0]), float(tpl[1]), float(tpl[2])
 
             if r_free <= (GoodQ - 0.02):
-                return r_free_grade_vlaues("Much better than average at this resolution")
+                return r_free_grade_values("Much better than average at this resolution")
 
             if (GoodQ - 0.02) < r_free <= ((GoodQ + Median) / 2):
-                return r_free_grade_vlaues("Better than average at this resolution")
+                return r_free_grade_values("Better than average at this resolution")
 
             if ((GoodQ + Median) / 2) < r_free <= ((Median + BadQ) / 2):
-                return r_free_grade_vlaues("Average at this resolution")
+                return r_free_grade_values("Average at this resolution")
 
             if ((Median + BadQ) / 2) < r_free <= (BadQ + 0.02):
-                return r_free_grade_vlaues("Worse than average at this resolution")
+                return r_free_grade_values("Worse than average at this resolution")
 
             if (BadQ + 0.02) < r_free:
-                return r_free_grade_vlaues("Unreliable")
+                return r_free_grade_values("Unreliable")
 
         else:
             msg = "file: {}  R_free error  R_free={};  could not {}"
@@ -285,7 +287,7 @@ class pdb_info():
         remarak_3 = _pdb.remarks[3]
         is_rb_line = lambda s: 'FREE R VALUE' in s or 'R VALUE' in s or 'MEAN B VALUE' in s
         for line in filter(is_rb_line, remarak_3):
-            self._get_b_value(line)
+            self._get_b_factor(line)
             self._get_r_free(line)
             self._get_r_value(line)
 
@@ -339,7 +341,47 @@ class pdb_info():
         if len(list(filter(lambda s: s.startswith("NMR."), remarak_210))) > 0:
             self._is_nmr = True
 
-    def parse_remark_350(self):
+    def _creat_bio_molecule_data_item(self, bio_molecule_id, chains_str, biomat_lst, number_of_chains):
+        bio_molecule_data = {
+            "bio_molecule_id": bio_molecule_id,
+            "chains_str": chains_str,
+            "biomat_lst": biomat_lst,
+            "number_of_chains": number_of_chains
+        }
+        return bio_molecule_data
+
+    def _parse_bio_molecules(self, remark_350):
+        _remark_350 = remark_350
+        bio_molecules_lst = []
+        biomat_lst = []
+        bio_molecule_id = None
+        chains_str = None
+        number_of_chains = 0
+        for i, line in enumerate(_remark_350):
+            if line.startswith('BIOMOLECULE'):
+                (prefix, bio_molecule_id) = line.split(':')
+                continue
+            #   REMARK 350 APPLY THE FOLLOWING TO CHAINS: A, B, C
+            elif line.startswith('APPLY THE FOLLOWING TO CHAINS'):
+                prefix, chains_str = line.split(':')
+                number_of_chains = len(list(chains_str.split(',')))  # A, B, C return 3
+                biomat_lst = []
+            elif line.startswith('BIOMT'):
+                biomat_lst.append(line)
+            elif line == '' and len(biomat_lst) > 0:
+                bio_molecule_data = self._creat_bio_molecule_data_item(bio_molecule_id, chains_str, biomat_lst,
+                                                                       number_of_chains)
+                bio_molecules_lst.append(bio_molecule_data)
+            else:
+                continue
+
+        bio_molecule_data = self._creat_bio_molecule_data_item(bio_molecule_id, chains_str, biomat_lst,
+                                                               number_of_chains)
+        bio_molecules_lst.append(bio_molecule_data)
+
+        return bio_molecules_lst
+
+    def parse_remark_350(self, bio_molecule_chains=None):
         """
         REMARK 350
         REMARK 350 COORDINATES FOR A COMPLETE MULTIMER REPRESENTING THE KNOWN
@@ -375,44 +417,51 @@ class pdb_info():
         REMARK 350 BIOMT3   2  0.000000  0.000000 -1.000000        0.00000
 
         """
+        self.bio_struct_identical_to_the_asymmetric_unit = False
         try:
             self._check_remark_exists(350, self.parse_remark_350.__name__)
         except ValueError as e:
-            print("pdb file: {} -remark 350 is missing, undefined  biomolecule".format(
-                os.path.basename(self._pdb.file_name))
-            )
-        _pdb = self._pdb
-        remarak_350 = _pdb.remarks[350]
-        is_boilogical_struct_defined = False
-        for i, line in enumerate(remarak_350):
-            if line.startswith('BIOMOLECULE'):
-                i = i + 1
-                is_boilogical_struct_defined = True
-                continue
-            if is_boilogical_struct_defined and line.startswith('APPLY THE FOLLOWING TO CHAINS'):
-                break
+            msg = "WARN pdb file: {} -remark 350 is missing, undefined  biomolecule"
+            print(msg.format(os.path.basename(self._pdb.file_name)))
+            return
 
-                # BIOMT1   1  1.000000  0.000000  0.000000        0.00000
-                # BIOMT2   1  0.000000  1.000000  0.000000        0.00000
-                # BIOMT3   1  0.000000  0.000000  1.000000        0.00000
+        _pdb = self._pdb
+        remarak_350 = self._pdb.remarks[350]
+        bio_molecules_lst = self._parse_bio_molecules(remarak_350)
+        for bm in bio_molecules_lst:
+            if self.bio_struct_identical_to_the_asymmetric_unit:
+                break
+            if bio_molecule_chains is None and self._pdb[0].get_number_of_chains() == bm["number_of_chains"]:
+                self._check_identity_matrix(bm["biomat_lst"])
+                return
+            elif bio_molecule_chains == bm["number_of_chains"]:
+                self._check_identity_matrix(bm["biomat_lst"])
+                return
+
+    def _check_identity_matrix(self, biomolecule_lines):
+
+        # BIOMT1   1  1.000000  0.000000  0.000000        0.00000
+        # BIOMT2   1  0.000000  1.000000  0.000000        0.00000
+        # BIOMT3   1  0.000000  0.000000  1.000000        0.00000
         biomt_lines = [
             'BIOMT1   1  1.000000  0.000000  0.000000        0.00000',
             'BIOMT2   1  0.000000  1.000000  0.000000        0.00000',
             'BIOMT3   1  0.000000  0.000000  1.000000        0.00000'
         ]
-        i += 1
-        is_last_index = lambda i: len(remarak_350) - 1 == i
-        is_identity_matrix = lambda m: biomt_lines[0] == m[0] and biomt_lines[1] == m[1] and biomt_lines[2] == m[2]
-        # will set to tru only if the lines are identity_matrix:
+        is_identity_matrix = lambda m: len(m) == 3 and \
+                                       biomt_lines[0] == m[0] and \
+                                       biomt_lines[1] == m[1] and \
+                                       biomt_lines[2] == m[2]
+        # will set to true only if the lines are identity_matrix:
         #     we have only 3 BIOMT lines with  identity_matrix of 3X3
         #     the third line of thm identity_matrix: is the last or
         #      the forth line is not BIOMT line
-        if is_identity_matrix(remarak_350[i:i + 3]) and is_last_index(i + 2):
-            self.bio_struct_identical_to_the_asymmetric_unit = True
-        elif is_identity_matrix(remarak_350[i:i + 3]) and not remarak_350[i + 3].startswith('BIOMT'):
+        if is_identity_matrix(biomolecule_lines):
             self.bio_struct_identical_to_the_asymmetric_unit = True
         else:
             self.bio_struct_identical_to_the_asymmetric_unit = False
+
+        return
 
     def parse_remark_465(self):
         """
@@ -481,11 +530,11 @@ class pdb_info():
                     "atom_names": atom_names
                 })
 
-    def _get_b_value(self, remark_3_line):
+    def _get_b_factor(self, remark_3_line):
         # extracting the average B value
         match_B_val = re.search(self.pattern_B_factor, remark_3_line)
         if match_B_val:
-            self.B_value = match_B_val.group(1)
+            self.B_factor = match_B_val.group(1)
 
     def _get_r_free(self, remark_3_line):
         # extracting the R_free value
@@ -578,7 +627,7 @@ class pdb_info():
 
             if remark_number in self.ignore_remarks:
                 raise RuntimeWarning(rem_ignore_msg(remark_number))
-            self.parse_remark_350()
+            self.parse_remark_350(bio_molecule_chains=self.bio_molecule_chains)
             remark_info = ""
             remark_info += rem_header(remark_number)
             remark_info += "\t\tbio_struct_identical_to_the_asymmetric_unit = {}".format(
@@ -656,9 +705,9 @@ class Report:
         return ret_val
 
 
-class r_free_grade_vlaues():
+class r_free_grade_values():
     def __init__(self, text_value):
-        values = r_free_grade_vlaues.get_struct()
+        values = r_free_grade_values.get_struct()
 
         if text_value not in map(lambda v: v['Text'], values):
             raise ValueError("not valid value:{}".format(text_value))
@@ -672,7 +721,7 @@ class r_free_grade_vlaues():
 
     def _convert(self, other):
         if type(other) is str:
-            return r_free_grade_vlaues(other)
+            return r_free_grade_values(other)
         return other
 
     def __ge__(self, other):
@@ -693,7 +742,7 @@ class r_free_grade_vlaues():
             {'Text': "Much better than average at this resolution", "Value": "A"},
             {'Text': "Better than average at this resolution", "Value": "B"},
             {'Text': "Average at this resolution", "Value": "C"},
-            {'Text': "Worse THAN AVERAGE at this resolution", "Value": "D"},
+            {'Text': "Worse than average at this resolution", "Value": "D"},
             {'Text': "Unreliable", "Value": "E"},
         ]
 

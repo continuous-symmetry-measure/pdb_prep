@@ -6,7 +6,7 @@ import click
 from Chemistry.PDB.pdb_utils import *
 from PDB_Prep.clean_stages import stages
 from PDB_Prep.pdb_prep_functions import copy_data_into_dir, clean_tmp_data_dir_mode, clean_tmp_data_file_mode, \
-    finish_outputs
+    finish_outputs, validate_options
 from PDB_Prep.pdb_prep_functions import xray_validate_params, nmr_validate_params
 from PDB_Prep.pdb_prep_inform import xray_inform, nmr_inform
 from version import __VERSION__
@@ -28,18 +28,17 @@ def cli():
 @click.option('--pdb-file', help='Input pdb file (use this or the --pdb-dir option!)', show_default=True)
 @click.option('--with-hydrogens/--no-hydrogens', default=False,
               help='Leave hydrogen atoms and hetatms from the files - default --no-hydrogens')  # , show_default=True)
-# @click.option('--is-homomer/--is-heteromer', default=True,
-#               help='process the file as homomer or heteromer', show_default=True)
 @click.option('--ptype', default='homomer',
               type=click.Choice(['homomer', 'heteromer', 'monomer'], case_sensitive=False),
               show_default=True, help="Protein stoichiometry")
 @click.option('--parse-rem350/--ignore-rem350', default=True,
               help='Parse or ignore remark 350  - default --parse-rem350')  # show_default=True)
+@click.option('--bio-molecule-chains', type=click.INT, help='Number of peptides in remark 350')
 @click.option('--output-dir', default='output.{time}', help='Output dir', show_default=True)
 @click.option('--output-text/--output-json', default=True,
               help='Output report in text or json  - default --output-text')  # , show_default=True)
 @click.option('--verbose', is_flag=True, default=False, help='Verbose mode', show_default=True)
-def nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
+def nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, bio_molecule_chains, output_dir,
         output_text, verbose):
     """
     \b
@@ -61,12 +60,12 @@ def nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
       7.  For homomers, checking that all peptides are of the same length.
     """
     print("Version: {}".format(__VERSION__))
-    ret_val = func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
+    ret_val = func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, bio_molecule_chains, output_dir,
                        output_text, verbose)
     exit(ret_val)
 
 
-def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
+def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, bio_molecule_chains, output_dir,
              output_text, verbose):
     report = ""
     is_homomer = True
@@ -76,7 +75,11 @@ def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
     if not parse_rem350:
         ignore_remarks.append(350)
     cliutils = nmr_validate_params(pdb_dir=pdb_dir, pdb_file=pdb_file, output_dir=output_dir, verbose=verbose)
-    informer = nmr_inform(cliutils, is_verbose=verbose, include_hetatm=True, ignore_remarks=ignore_remarks)
+    if not validate_options(parse_rem350, bio_molecule_chains, ptype, cliutils):
+        return -1
+
+    informer = nmr_inform(cliutils, is_verbose=verbose, include_hetatm=True, ignore_remarks=ignore_remarks,
+                          bio_molecule_chains=bio_molecule_chains)
     mode_file_or_dir = None
     short_file_name = None
     if pdb_file:
@@ -91,10 +94,10 @@ def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
             informer.process_complete_dir(pdb_dir, click)
             cliutils.verbose("informer.process_complete_dir ended")
         except IndexError as  e:
-            cliutils.error_msg("I did not find any PDB files in the input folder")
+            cliutils.error_msg("I did not find any PDB files in the input folder", caller=func_nmr.__name__)
             return 31
 
-    # limit_r_free_grade_text = r_free_grade_vlaues.from_value(limit_r_free_grade)
+    # limit_r_free_grade_text = r_free_grade_values.from_value(limit_r_free_grade)
     informer.filter_data(click=click, test_is_homomer=is_homomer)
 
     stager = stages(cliutils, informer, is_homomer=is_homomer)
@@ -114,7 +117,8 @@ def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
                 dest_path=dest_path,
                 data=data,
                 with_hydrogens=with_hydrogens,
-                ignore_remarks=ignore_remarks
+                ignore_remarks=ignore_remarks,
+                bio_molecule_chains=bio_molecule_chains
             )
 
     if mode_file_or_dir == "file":
@@ -143,19 +147,18 @@ def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, output_dir,
               show_default=True)
 @click.option('--with-hydrogens/--no-hydrogens', default=False,
               help='Leave hydrogen atoms and hetatms from the files - default --no-hydrogens')  # , show_default=True)
-# @click.option('--is-homomer/--is-heteromer', default=True,
-#               help='process the file as homomer or heteromer', show_default=True)
 @click.option('--ptype', default='homomer',
               type=click.Choice(['homomer', 'heteromer', 'monomer'], case_sensitive=False),
               show_default=True, help="Protein stoichiometry")
 @click.option('--parse-rem350/--ignore-rem350', default=True,
               help='Parse or ignore remark 350  - default --parse-rem350')  # show_default=True)
+@click.option('--bio-molecule-chains', type=click.INT, help='Number of peptides in remark 350')
 @click.option('--output-dir', default='output.{time}', help='Output dir', show_default=True)
 @click.option('--output-text/--output-json', default=True,
               help='Output report in text or json  - default --output-text')  # , show_default=True)
 @click.option('--verbose', is_flag=True, default=False, help='Verbose mode', show_default=True)
-def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype, parse_rem350, output_dir,
-         output_text, verbose):
+def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype,
+         parse_rem350, bio_molecule_chains, output_dir, output_text, verbose):
     """
     
     \b
@@ -185,14 +188,13 @@ def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, 
         7.  For homomers, checking that all peptides are of the same length.
     """
     print("Version: {}".format(__VERSION__))
-    ret_val = func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype, parse_rem350,
-                        output_dir,
-                        output_text, verbose)
+    ret_val = func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype,
+                        parse_rem350, bio_molecule_chains, output_dir, output_text, verbose)
     exit(ret_val)
 
 
-def func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype, parse_rem350, output_dir,
-              output_text, verbose):
+def func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype,
+              parse_rem350, bio_molecule_chains, output_dir, output_text, verbose):
     report = ""
     is_homomer = True
     if ptype == 'heteromer':
@@ -202,7 +204,10 @@ def func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrog
     if not parse_rem350:
         ignore_remarks.append(350)
     cliutils = xray_validate_params(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, output_dir, verbose)
-    informer = xray_inform(cliutils, is_verbose=verbose, include_hetatm=True, ignore_remarks=ignore_remarks)
+    if not validate_options(parse_rem350, bio_molecule_chains, ptype, cliutils):
+        return -1
+    informer = xray_inform(cliutils, is_verbose=verbose, include_hetatm=True, ignore_remarks=ignore_remarks,
+                           bio_molecule_chains=bio_molecule_chains)
     mode_file_or_dir = None
     short_file_name = None
     if pdb_file:
@@ -216,10 +221,10 @@ def func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrog
             informer.process_complete_dir(pdb_dir, click)
             cliutils.verbose("informer.process_complete_dir ended")
         except IndexError as e:
-            cliutils.error_msg("I did not find any PDB files in the input folder")
+            cliutils.error_msg("I did not find any PDB files in the input folder", func_xray.__name__)
             return 31
 
-    limit_r_free_grade_text = r_free_grade_vlaues.from_value(limit_r_free_grade)
+    limit_r_free_grade_text = r_free_grade_values.from_value(limit_r_free_grade)
     informer.filter_data(max_resolution=max_resolution, limit_r_free_grade=limit_r_free_grade_text, click=click,
                          test_is_homomer=is_homomer)
 
@@ -242,7 +247,8 @@ def func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrog
                 dest_path=dest_path,
                 data=data,
                 with_hydrogens=with_hydrogens,
-                ignore_remarks=ignore_remarks
+                ignore_remarks=ignore_remarks,
+                bio_molecule_chains=bio_molecule_chains
             )
 
             # clean_missing_residues(data)

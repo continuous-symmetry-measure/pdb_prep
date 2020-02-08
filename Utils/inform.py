@@ -10,23 +10,27 @@ from Chemistry.PDB.pdb_utils import pdb_info
 from version import __VERSION__
 
 
-def create_pdb_info(file, dir_path, include_hetatm, ignore_remarks=[], output_type='text', is_verbose=False):
+def create_pdb_info(file, dir_path, include_hetatm, ignore_remarks=[], output_type='text', bio_molecule_chains=None,
+                    is_verbose=False):
     start_time = time.time()
     _file_path = os.path.join(dir_path, file)
     _pdb = pdb.from_file(_file_path, include_hetatm=include_hetatm)
-    pdbinfo = pdb_info(_pdb, ignore_remarks=ignore_remarks, output_type=output_type)
+    pdbinfo = pdb_info(_pdb, ignore_remarks=ignore_remarks, bio_molecule_chains=bio_molecule_chains,
+                       output_type=output_type)
     if is_verbose:
         print(" create_pdb_info iter execution time = {0:.5f} ".format(time.time() - start_time))
 
     return pdbinfo
 
 
-def get_pdb_info_iter(dir_path, files_iter, include_hetatm, ignore_remarks=[], is_verbose=None):
+def get_pdb_info_iter(dir_path, files_iter, include_hetatm, ignore_remarks=[], bio_molecule_chains=None,
+                      is_verbose=None):
     if len(list(files_iter)) <= 1:
         if is_verbose: print(" one file mode - not parallel")
 
         pdbinfo = create_pdb_info(file=files_iter[0], dir_path=dir_path, include_hetatm=include_hetatm,
-                                  ignore_remarks=ignore_remarks)
+                                  ignore_remarks=ignore_remarks, bio_molecule_chains=bio_molecule_chains,
+                                  is_verbose=is_verbose)
         return [pdbinfo]
 
     with multiprocessing.Pool() as p:
@@ -44,12 +48,14 @@ def get_pdb_info_iter(dir_path, files_iter, include_hetatm, ignore_remarks=[], i
 
 
 class inform():
-    def __init__(self, cliutils, is_verbose=True, include_hetatm=False, ignore_remarks=[]):
+    def __init__(self, cliutils, is_verbose=True, include_hetatm=False, ignore_remarks=[], bio_molecule_chains=None):
         self.data = {}
         self.cliutils = cliutils
         self.is_verbose = is_verbose
         self.include_hetatm = include_hetatm
         self.ignore_remarks = ignore_remarks
+        self.bio_molecule_chains = bio_molecule_chains
+        self.exprimental_method = None
         self.one_file_mode = False
         self.errors = {}
         self.excluded_files = {}
@@ -69,7 +75,7 @@ class inform():
     def _bios_value(self, info):
         bios = info.bio_struct_identical_to_the_asymmetric_unit
         if bios is None:
-            bios = "None"
+            bios = "N/A"
         elif bios:
             bios = "True"
         else:
@@ -82,7 +88,7 @@ class inform():
         self.json_dict[data_name] = {}
         self.json_dict["pdb_prep Version"] = __VERSION__
         #                          0       1             2                  3          4
-        s += format_string.format("File", "Resolution", "Resolution_Grade", "B_value", "R_value",
+        s += format_string.format("File", "Resolution", "Resolution_Grade", "B_factor", "R_value",
                                   #                          5        6                           7
                                   "R_free", "Forms_a_biomolecule", "R_free_grade")
         # t=(file,info)
@@ -92,7 +98,7 @@ class inform():
             try:
                 bios = self._bios_value(info)
                 # 0     1                2                      3             4
-                s += format_string.format(file, info.Resolution, info.Resolution_Grade, info.B_value, info.R_value,
+                s += format_string.format(file, info.Resolution, info.Resolution_Grade, info.B_factor, info.R_value,
                                           #                          5           6     7
                                           info.R_free, bios, info.R_free_grade)
                 if isinstance(info.R_free_grade, str):
@@ -101,11 +107,14 @@ class inform():
                     r_free_grade = info.R_free_grade.val
                 self.json_dict[data_name][file] = {"Resolution": info.Resolution,
                                                    "Resolution_grade": info.Resolution_Grade,
-                                                   "B_value": info.B_value,
+                                                   "B_factor": info.B_factor,
                                                    "R_free": info.R_free,
                                                    "Forms_a_biomolecule": bios,
                                                    "R_free_grade": r_free_grade
                                                    }
+                if self.exprimental_method:
+                    self.json_dict[data_name][file]["Exprimental method"] = self.exprimental_method
+
             except Exception as e:
                 s += "{} - Exception{}\n".format(file, e)
                 self.json_dict[data_name][file] = None
@@ -164,7 +173,9 @@ class inform():
         bs = 1
         with click.progressbar(length=len(files_iter), label='collecting info on dir:{}'.format(dir_path)) as bar:
             pdbinfo_iter = get_pdb_info_iter(dir_path, files_iter, self.include_hetatm,
-                                             ignore_remarks=self.ignore_remarks, is_verbose=self.is_verbose)
+                                             ignore_remarks=self.ignore_remarks,
+                                             bio_molecule_chains=self.bio_molecule_chains,
+                                             is_verbose=self.is_verbose)
             bar.update(bs)
             # for fi, file in enumerate(files_iter):
             for fi, pdbinfo in enumerate(pdbinfo_iter, 1):

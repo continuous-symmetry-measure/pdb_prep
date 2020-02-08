@@ -15,7 +15,7 @@ def write_a_file(file_info, cliutils):
         rv = cliutils.write_file(file_path, str(file_data))
         print(".", flush=True, end='')
     except Exception as e:
-        cliutils.error_msg("{} - {}".format(e, file_path))
+        cliutils.error_msg("{} - {}".format(e, file_path), caller=write_a_file.__name__)
     return rv
 
 
@@ -140,7 +140,7 @@ class stages():
 
         return missing_residues_per_chain_id
 
-    def clean_02_missing_resseqs_found_in_remarks(self, dest_path, data, ignore_remarks=[]):
+    def clean_02_missing_resseqs_found_in_remarks(self, dest_path, data, ignore_remarks=[], bio_molecule_chain=None):
         """
         this function cleans the missing resseqs we found remark 365
         """
@@ -373,7 +373,7 @@ class stages():
                          caller=_caller)
         return _dest_path, _data
 
-    def run_clean_stages(self, directory, dest_path, data, with_hydrogens, ignore_remarks=[]):
+    def run_clean_stages(self, directory, dest_path, data, with_hydrogens, ignore_remarks=[], bio_molecule_chains=None):
         _caller = "run_clean_stages"
         _dest_path, _data = dest_path, data
         cliutils = self.cliutils
@@ -387,7 +387,8 @@ class stages():
 
         # ------------------------------------------------------------
         # 02-missing_resseqs-remarks
-        _dest_path, _data, report = self.clean_02_missing_resseqs_found_in_remarks(dest_path, _data, ignore_remarks)
+        _dest_path, _data, report = self.clean_02_missing_resseqs_found_in_remarks(dest_path, _data, ignore_remarks,
+                                                                                   bio_molecule_chains)
         total_report += "\n{}\n".format(report)
 
         # ------------------------------------------------------------

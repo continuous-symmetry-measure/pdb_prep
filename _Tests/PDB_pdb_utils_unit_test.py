@@ -28,6 +28,10 @@ class Test_pdb_info(unittest.TestCase):
         self.pdb_2ZVK_missingRES = self.get_path(pdb_file_name='2ZVK_missingRES.pdb')
         self.pdb_5tor = self.get_path(pdb_file_name='5tor.pdb')  # 2v2h
         self.pdb_2v2h = self.get_path(pdb_file_name='2v2h.pdb')
+        self.pdb_1g2y = self.get_path(pdb_file_name='1g2y.pdb')  # unit matrix with all peptides
+        self.pdb_3cwr = self.get_path(pdb_file_name='3cwr.pdb')  # unit matrix with part of the peptides
+        self.pdb_3mux = self.get_path(pdb_file_name='3mux.pdb')  # not a unit matrix
+        self.pdb_3mwj = self.get_path(pdb_file_name='3mwj.pdb')  # missing remark 3503
 
     def test_parse_remark_2__resolution_info(self):
         pdb_1HFF = pdb.from_file(self.pdb_1HFF)
@@ -40,7 +44,7 @@ class Test_pdb_info(unittest.TestCase):
         info_4xia = pdb_info(pdb_4xia)
         self.assertIsInstance(info_4xia, pdb_info)
         info_4xia.parse_remark_2()
-        self.assertEqual(info_4xia.Resolution_Grade, 'GOOD')
+        self.assertEqual(info_4xia.Resolution_Grade, 'Good')
 
     def test_parse_remark_3__get_r_free_grade(self):
         pdb_1HFF = pdb.from_file(self.pdb_1HFF)
@@ -61,9 +65,9 @@ class Test_pdb_info(unittest.TestCase):
         self.assertIsInstance(info_2Z, pdb_info)
         info_2Z.parse_remark_2()
         info_2Z.parse_remark_3()
-        self.assertEqual(info_2Z.Resolution_Grade, 'GOOD/FAIR')
+        self.assertEqual(info_2Z.Resolution_Grade, 'Good/Fair')
         self.assertEqual(info_2Z.R_value, '0.215')
-        self.assertEqual(info_2Z.R_free_grade, 'WORSE THAN AVERAGE at this resolution')
+        self.assertEqual(info_2Z.R_free_grade, 'Worse than average at this resolution')
 
     def test_parse_remark_3__get_r_free_grade_first_r_free(self):
         pdb_2v2h = pdb.from_file(self.pdb_2v2h)
@@ -79,6 +83,35 @@ class Test_pdb_info(unittest.TestCase):
         self.assertIsInstance(info_4xia, pdb_info)
         info_4xia.parse_remark_350()
         self.assertEqual(info_4xia.bio_struct_identical_to_the_asymmetric_unit, False)
+
+        pdb_1g2y = pdb.from_file(self.pdb_1g2y)
+        info_1g2y = pdb_info(pdb_1g2y)
+        self.assertIsInstance(info_1g2y, pdb_info)
+        info_1g2y.parse_remark_350(bio_molecule_chains=4)
+        self.assertEqual(info_1g2y.bio_struct_identical_to_the_asymmetric_unit, True, 'unit matrix with all peptides')
+
+        info_1g2y = pdb_info(pdb_1g2y)
+        info_1g2y.parse_remark_350(bio_molecule_chains=1)
+        self.assertEqual(info_1g2y.bio_struct_identical_to_the_asymmetric_unit, False)
+
+        pdb_3cwr = pdb.from_file(self.pdb_3cwr)
+        info_3cwr = pdb_info(pdb_3cwr)
+        self.assertIsInstance(info_3cwr, pdb_info)
+        info_3cwr.parse_remark_350()
+        self.assertEqual(info_3cwr.bio_struct_identical_to_the_asymmetric_unit, False,
+                         'unit matrix with part of the peptides')
+
+        pdb_3mux = pdb.from_file(self.pdb_3mux)
+        info_3mux = pdb_info(pdb_3mux)
+        self.assertIsInstance(info_3mux, pdb_info)
+        info_3mux.parse_remark_350()
+        self.assertEqual(info_3mux.bio_struct_identical_to_the_asymmetric_unit, False, 'not a unit matrix')
+
+        pdb_3mwj = pdb.from_file(self.pdb_3mwj)
+        info_3mwj = pdb_info(pdb_3mwj)
+        self.assertIsInstance(info_3mwj, pdb_info)
+        info_3mwj.parse_remark_350()
+        self.assertEqual(info_3mwj.bio_struct_identical_to_the_asymmetric_unit, False, ' missing remark 350')
 
     def test_parse_remark_465_get_r_free_grade(self):
         pdb_5tor = pdb.from_file(self.pdb_5tor)

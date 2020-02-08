@@ -1,8 +1,8 @@
 import fnmatch
-import glob
 import json
 import os
 import re
+
 import click
 
 from PDB_Prep.clean_stages import stages
@@ -26,7 +26,8 @@ def copy_data_into_dir(source_path, dest_path, data, cliutils):
 
 def clean_tmp_data_file_mode(stager: stages, pdb_dir, short_file_name, informer, cliutils):
     if stager.last_stage_dir is None:
-        cliutils.error_msg("excluded_files:{}".format(informer.excluded_files))
+        cliutils.error_msg("excluded_files:{}".format(informer.excluded_files),
+                           caller=clean_tmp_data_file_mode.__name__)
         cliutils.error_msg("File is not valid - check the 'others' dir", caller=clean_tmp_data_file_mode.__name__)
         # exit(22)
     else:
@@ -38,7 +39,8 @@ def clean_tmp_data_file_mode(stager: stages, pdb_dir, short_file_name, informer,
         if os.path.isfile(last_stage_full_file_name):
             cliutils.copy_file(last_stage_full_file_name, out_file_name)
         else:
-            cliutils.error_msg("File: '{}' is not valid. try verbose mode for more info.".format(short_file_name))
+            cliutils.error_msg("File: '{}' is not valid. try verbose mode for more info.".format(short_file_name),
+                               caller=clean_tmp_data_file_mode.__name__)
     if not cliutils.is_verbose and os.path.isdir(cliutils.output_dirname):
         cliutils.rmtree(cliutils.output_dirname)
     return
@@ -71,6 +73,21 @@ def clean_tmp_data_dir_mode(stager: stages, pdb_dir, informer, cliutils):
     cliutils.is_verbose = _is_verbose
 
     return
+
+
+def validate_options(parse_rem350, bio_molecule_chains, ptype, cliutils):
+    if bio_molecule_chains is not None and bio_molecule_chains < 1:
+        cliutils.error_msg("--bio-molecule-chains is invalid {} is not natural number")
+        return False
+    if not parse_rem350 and bio_molecule_chains:
+        cliutils.error_msg("The combination of --ignore-rem350 and --bio-molecule-chains is invalid ")
+        return False
+
+    if (bio_molecule_chains == 1 and ptype != 'monomer') or (bio_molecule_chains > 1 and ptype == 'monomer'):
+        msg = "The combination of --ptype {}  and --bio-molecule-chains {} is invalid "
+        cliutils.error_msg(msg.format(ptype))
+        return False
+    return True
 
 
 def validate_input_dir_or_file(pdb_dir, pdb_file, cliutils):
@@ -140,6 +157,7 @@ def finish_outputs(mode_file_or_dir, informer, cliutils, stager, report, output_
     #            print("excluded file:{}".format(excluded_file))
     elif mode_file_or_dir == 'dir':
         excluded_file = "excluded.json".format(list(informer.data)[0])
+        print("\n")
         cliutils.msg("Output dir is: '{}'".format(cliutils.output_dirname))
         report_file = os.path.join(cliutils.output_dirname, "report.txt")
         excluded_file_path = os.path.join(cliutils.output_dirname, excluded_file)

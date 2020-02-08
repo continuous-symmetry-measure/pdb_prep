@@ -3,6 +3,11 @@ from version import __VERSION__
 
 
 class xray_inform(inform):
+
+    def __init__(self, cliutils, is_verbose=True, include_hetatm=False, ignore_remarks=[], bio_molecule_chains=None):
+        super().__init__(cliutils, is_verbose, include_hetatm, ignore_remarks, bio_molecule_chains)
+        self.exprimental_method = "XRAY"
+
     def __str__(self):
         s = "pdb_prep Version: {}\n".format(__VERSION__)
         if len(self.reliable_data) >= 1:
@@ -78,8 +83,10 @@ class xray_inform(inform):
                         continue
                 elif remark_350_warn_msg_flag:
                     msg = "remark 350 was ignored"
-                    print("WARN: '{}' - {}".format(file, msg))
-                    remark_350_warn_msg_flag = False
+                    if remark_350_warn_msg_flag:
+                        cliutils.msg(msg, caller=type(self).__name__)
+                        # print("WARN: '{}' - {}".format(file, msg))
+                        remark_350_warn_msg_flag = False
 
                 current_resolution = float(pdbinfo.Resolution)
                 min_r_free_key = float(min(pdbinfo.r_free_dict.keys()))
@@ -116,12 +123,16 @@ class xray_inform(inform):
 
             except Exception as e:
                 msg = "File: '{}' - {}".format(file, e)
-                self.cliutils.error_msg(msg, self.__class__.__name__)
+                self.cliutils.error_msg(msg, type(self).__name__)
                 self.excluded_files[file] = msg
                 self.others_data[file] = pdbinfo
 
 
 class nmr_inform(inform):
+    def __init__(self, cliutils, is_verbose=True, include_hetatm=False, ignore_remarks=[], bio_molecule_chains=None):
+        super().__init__(cliutils, is_verbose, include_hetatm, ignore_remarks, bio_molecule_chains)
+        self.exprimental_method = "NMR"
+
     def __str__(self):
         s = "pdb_prep Version: {}\n".format(__VERSION__)
         s += "\nnmr:\n"
@@ -141,7 +152,8 @@ class nmr_inform(inform):
                 bios = self._bios_value(info)
                 # 0     1
                 s += format_string.format(file, bios)
-                self.json_dict[data_name][file] = {"Forms_a_biomolecule": bios, "Exprimental method": "NMR"}
+                self.json_dict[data_name][file] = {"Forms_a_biomolecule": bios,
+                                                   "Exprimental_method": self.exprimental_method}
             except:
                 s += "{}\n".format(file)
                 self.json_dict[data_name][file] = None
@@ -189,7 +201,7 @@ class nmr_inform(inform):
                         self.nmr_data[file] = pdbinfo
                     else:
                         msg = "File: '{}' - The given peptides structure does not create a biomolecule.".format(file)
-                        self.cliutils.error_msg(msg)
+                        self.cliutils.error_msg(msg, type(self).__name__)
                         self.excluded_files[file] = msg
                         self.others_data[file] = pdbinfo
                         continue
@@ -197,6 +209,6 @@ class nmr_inform(inform):
                     self.others_data[file] = pdbinfo
             except Exception as e:
                 msg = "File: '{}' - {}".format(file, e)
-                self.cliutils.error_msg(msg, self.__class__.__name__)
+                self.cliutils.error_msg(msg, type(self).__name__)
                 self.excluded_files[file] = msg
                 self.others_data[file] = pdbinfo
