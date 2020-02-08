@@ -83,10 +83,11 @@ def validate_options(parse_rem350, bio_molecule_chains, ptype, cliutils):
         cliutils.error_msg("The combination of --ignore-rem350 and --bio-molecule-chains is invalid ")
         return False
 
-    if (bio_molecule_chains == 1 and ptype != 'monomer') or (bio_molecule_chains > 1 and ptype == 'monomer'):
-        msg = "The combination of --ptype {}  and --bio-molecule-chains {} is invalid "
-        cliutils.error_msg(msg.format(ptype))
-        return False
+    if bio_molecule_chains is not None:
+        if (bio_molecule_chains == 1 and ptype != 'monomer') or (bio_molecule_chains > 1 and ptype == 'monomer'):
+            msg = "The combination of --ptype {}  and --bio-molecule-chains {} is invalid "
+            cliutils.error_msg(msg.format(ptype))
+            return False
     return True
 
 
