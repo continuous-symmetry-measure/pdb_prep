@@ -3,6 +3,7 @@ import os
 
 import click
 
+from Utils.cli_utils import cli_utils as cu
 from Chemistry.PDB.pdb_utils import *
 from PDB_Prep.clean_stages import stages
 from PDB_Prep.pdb_prep_functions import copy_data_into_dir, clean_tmp_data_dir_mode, clean_tmp_data_file_mode, \
@@ -28,9 +29,9 @@ def cli():
 @click.option('--pdb-file', help='Input pdb file (use this or the --pdb-dir option!)', show_default=True)
 @click.option('--with-hydrogens/--no-hydrogens', default=False,
               help='Leave hydrogen atoms and hetatms from the files - default --no-hydrogens')  # , show_default=True)
-@click.option('--ptype', default='homomer',
+@click.option('--ptype',
               type=click.Choice(['homomer', 'heteromer', 'monomer'], case_sensitive=False),
-              show_default=True, help="Protein stoichiometry")
+              help="Protein stoichiometry (defualt: homomer)")
 @click.option('--parse-rem350/--ignore-rem350', default=True,
               help='Parse or ignore remark 350  - default --parse-rem350')  # show_default=True)
 @click.option('--bio-molecule-chains', type=click.INT, help='Number of peptides in remark 350')
@@ -69,6 +70,10 @@ def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, bio_molecul
              output_text, verbose):
     report = ""
     is_homomer = True
+    if ptype is None and bio_molecule_chains == 1:
+        ptype = 'monomer'
+        cu(click).msg("The option '--ptype' was set to monomer since you set '--bio-molecule-chains' to 1")
+
     if ptype == 'heteromer':
         is_homomer = False
     ignore_remarks = []
@@ -147,9 +152,9 @@ def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, bio_molecul
               show_default=True)
 @click.option('--with-hydrogens/--no-hydrogens', default=False,
               help='Leave hydrogen atoms and hetatms from the files - default --no-hydrogens')  # , show_default=True)
-@click.option('--ptype', default='homomer',
+@click.option('--ptype',
               type=click.Choice(['homomer', 'heteromer', 'monomer'], case_sensitive=False),
-              show_default=True, help="Protein stoichiometry")
+              help="Protein stoichiometry (defualt: homomer)")
 @click.option('--parse-rem350/--ignore-rem350', default=True,
               help='Parse or ignore remark 350  - default --parse-rem350')  # show_default=True)
 @click.option('--bio-molecule-chains', type=click.INT, help='Number of peptides in remark 350')
@@ -197,6 +202,10 @@ def func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrog
               parse_rem350, bio_molecule_chains, output_dir, output_text, verbose):
     report = ""
     is_homomer = True
+    if ptype is None and bio_molecule_chains == 1:
+        ptype = 'monomer'
+        cu(click).msg("The option '--ptype' was set to monomer since you set '--bio-molecule-chains' to 1")
+
     if ptype == 'heteromer':
         is_homomer = False
 

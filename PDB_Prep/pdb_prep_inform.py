@@ -37,7 +37,7 @@ class xray_inform(inform):
             if (Resolution  <1.0) then                        file is reliable_R_grade
             if (1.0<=Resolution  max_resolution) then
                     if R_free_grade == 'NULL' then            file is reliable_R_grade
-                    if R_free_grade>= limit_r_free_grade then file is  reliable
+                    if R_free_grade>= limit_r_free_grade then file is reliable
                     else                                      file is unreliable
 
         :param max_resolution:
@@ -76,7 +76,8 @@ class xray_inform(inform):
 
                 if 350 not in self.ignore_remarks:
                     if not pdbinfo.bio_struct_identical_to_the_asymmetric_unit:
-                        msg = "File: '{}' - The given peptides structure does not create a biomolecule.".format(file)
+                        msg = "File: '{}' - The given peptides structure does not create a biomolecule. ({})"
+                        msg = msg.format(file, pdbinfo.bio_struct_msg)
                         self.verbose(msg)
                         self.excluded_files[file] = msg
                         self.others_data[file] = pdbinfo
@@ -89,13 +90,15 @@ class xray_inform(inform):
                         remark_350_warn_msg_flag = False
 
                 current_resolution = float(pdbinfo.Resolution)
+                r_free = float(pdbinfo.R_free)
                 min_r_free_key = float(min(pdbinfo.r_free_dict.keys()))
                 if self.one_file_mode:
                     # on one file mode we should ignore r_free value and resolution
                     self.reliable_data[file] = pdbinfo
                     continue
 
-                if current_resolution <= min_r_free_key:
+                # if current_resolution <= min_r_free_key:
+                if current_resolution < min_r_free_key:
                     self.reliable_data[file] = pdbinfo
                     continue
 
@@ -200,7 +203,8 @@ class nmr_inform(inform):
                     if pdbinfo.bio_struct_identical_to_the_asymmetric_unit:
                         self.nmr_data[file] = pdbinfo
                     else:
-                        msg = "File: '{}' - The given peptides structure does not create a biomolecule.".format(file)
+                        msg = "File: '{}' - The given peptides structure does not create a biomolecule. ({})"
+                        msg = msg.format(file, pdbinfo.bio_struct_msg)
                         self.cliutils.error_msg(msg, type(self).__name__)
                         self.excluded_files[file] = msg
                         self.others_data[file] = pdbinfo

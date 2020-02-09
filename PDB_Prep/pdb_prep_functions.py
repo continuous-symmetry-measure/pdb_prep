@@ -86,7 +86,7 @@ def validate_options(parse_rem350, bio_molecule_chains, ptype, cliutils):
     if bio_molecule_chains is not None:
         if (bio_molecule_chains == 1 and ptype != 'monomer') or (bio_molecule_chains > 1 and ptype == 'monomer'):
             msg = "The combination of --ptype {}  and --bio-molecule-chains {} is invalid "
-            cliutils.error_msg(msg.format(ptype))
+            cliutils.error_msg(msg.format(ptype, bio_molecule_chains))
             return False
     return True
 

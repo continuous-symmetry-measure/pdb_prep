@@ -68,7 +68,7 @@ class stages():
 
         return rv
 
-    def clean_01_into_dir(self, dest_path, data, with_hydrogens, ignore_remarks=[]):
+    def clean_01_into_dir(self, dest_path, data, with_hydrogens, ignore_remarks=[], bio_molecule_chain=None):
         """
         for  each pdb:
             atom_hydrogen_siever
@@ -111,7 +111,7 @@ class stages():
                 files_to_write[full_path] = str(_pdb)
                 # cliutils.write_a_file(full_path, str(_pdb))
 
-                _pdb_info = pdb_info(_pdb, ignore_remarks=ignore_remarks)
+                _pdb_info = pdb_info(_pdb, ignore_remarks=ignore_remarks, bio_molecule_chains=bio_molecule_chain)
                 report = "# {}\n".format(_caller)
                 report += _pdb_info.info_report()
                 self.report[_caller] = _pdb_info.info_report()
@@ -175,7 +175,7 @@ class stages():
                 missing_residues_per_chain_id = self.get_02_missing_resseqs_per_chain_id(info)
                 s = str(_pdb)
                 _pdb = pdb_utils.remove_residues_from_every_chain(missing_residues_per_chain_id, _pdb)
-                _pdb_info = pdb_info(_pdb, ignore_remarks=ignore_remarks)
+                _pdb_info = pdb_info(_pdb, ignore_remarks=ignore_remarks, bio_molecule_chains=bio_molecule_chain)
                 report = "# {}\n".format(_caller)
                 report += _pdb_info.info_report()
                 self.report[_caller] = _pdb_info.info_report()
@@ -230,7 +230,7 @@ class stages():
                         return True
         return False
 
-    def clean_04_missing_atoms_found_in_remarks(self, dest_path, data, ignore_remarks=[]):
+    def clean_04_missing_atoms_found_in_remarks(self, dest_path, data, ignore_remarks=[], bio_molecule_chains=None):
         """
         this function cleans the missing atoms we found remark 365
         """
@@ -283,7 +283,7 @@ class stages():
                 _pdb = pdb_utils.remove_atoms_from_every_chain(atoms_to_remove, _pdb)
                 _pdb = pdb_utils.remove_residues_from_every_chain(missing_residues_per_chain_id, _pdb)
 
-                _pdb_info = pdb_info(_pdb, ignore_remarks=ignore_remarks)
+                _pdb_info = pdb_info(_pdb, ignore_remarks=ignore_remarks, bio_molecule_chains=bio_molecule_chains)
                 report = "# {}\n".format(_caller)
                 report += _pdb_info.info_report()
                 self.report[_caller] = _pdb_info.info_report()
@@ -306,7 +306,8 @@ class stages():
                          caller=_caller)
         return _dest_path, _data
 
-    def clean_05_all_chains_has_same_number_of_atoms(self, dest_path, data, ignore_remarks=[], informer=None):
+    def clean_05_all_chains_has_same_number_of_atoms(self, dest_path, data, ignore_remarks=[], bio_molecule_chains=None,
+                                                     informer=None):
         """
         move to 05 dir only if each model chains has same number of atoms
         :param dest_path:
@@ -382,7 +383,8 @@ class stages():
 
         # ------------------------------------------------------------
         # 01_without_gaps_handling
-        _dest_path, _data, report = self.clean_01_into_dir(_dest_path, _data, with_hydrogens, ignore_remarks)
+        _dest_path, _data, report = self.clean_01_into_dir(_dest_path, _data, with_hydrogens, ignore_remarks,
+                                                           bio_molecule_chains)
         total_report += "\n{}\n".format(report)
 
         # ------------------------------------------------------------
@@ -398,11 +400,13 @@ class stages():
 
         # ------------------------------------------------------------
         # 04-missing_atoms-remarks"
-        _dest_path, _data = self.clean_04_missing_atoms_found_in_remarks(dest_path, _data, ignore_remarks)
+        _dest_path, _data = self.clean_04_missing_atoms_found_in_remarks(dest_path, _data, ignore_remarks,
+                                                                         bio_molecule_chains)
         if not self.is_homomer:
             print("This is heteromer so I will skip on stage '05_all_chains_has_same_number_of_atoms'")
             return _data, total_report
         # ------------------------------------------------------------
         # 05-missing_atoms-remarks"
-        _dest_path, _data = self.clean_05_all_chains_has_same_number_of_atoms(dest_path, _data, ignore_remarks)
+        _dest_path, _data = self.clean_05_all_chains_has_same_number_of_atoms(dest_path, _data, ignore_remarks,
+                                                                              bio_molecule_chains)
         return _data, total_report

@@ -51,6 +51,7 @@ class pdb_info():
         self.Resolution = None
         self.Resolution_Grade = None
         self.bio_struct_identical_to_the_asymmetric_unit = None
+        self.bio_struct_msg = None
         self._is_nmr = None
         str_FREE_R = r"^FREE R VALUE(\s+|\s+\(.+\)\s+):\s*(\d+\.\d+|NULL)"
         str_R_value = r"R VALUE\s+\(.+\)\s+:\s*(\d+\.\d+|NULL)"
@@ -421,7 +422,8 @@ class pdb_info():
         try:
             self._check_remark_exists(350, self.parse_remark_350.__name__)
         except ValueError as e:
-            msg = "WARN pdb file: {} -remark 350 is missing, undefined  biomolecule"
+            msg = "WARN pdb file: {} - Remark 350 is missing, undefined  biomolecule"
+            self.bio_struct_msg = "Remark 350 is missing."
             print(msg.format(os.path.basename(self._pdb.file_name)))
             return
 
@@ -433,10 +435,15 @@ class pdb_info():
                 break
             if bio_molecule_chains is None and self._pdb[0].get_number_of_chains() == bm["number_of_chains"]:
                 self._check_identity_matrix(bm["biomat_lst"])
-                return
+                break
             elif bio_molecule_chains == bm["number_of_chains"]:
                 self._check_identity_matrix(bm["biomat_lst"])
-                return
+                break
+
+        if self.bio_struct_msg is None and not self.bio_struct_identical_to_the_asymmetric_unit:
+            msg = 'No matching number of chains in the "APPLY THE FOLLOWING TO CHAINS" ' + \
+                  'lines to the "--bio-molecule-chains" option '
+            self.bio_struct_msg = msg
 
     def _check_identity_matrix(self, biomolecule_lines):
 
@@ -458,8 +465,10 @@ class pdb_info():
         #      the forth line is not BIOMT line
         if is_identity_matrix(biomolecule_lines):
             self.bio_struct_identical_to_the_asymmetric_unit = True
+            self.bio_struct_msg = "is_identity_matrix returned True"
         else:
             self.bio_struct_identical_to_the_asymmetric_unit = False
+            self.bio_struct_msg = "is_identity_matrix returned False"
 
         return
 
@@ -630,8 +639,8 @@ class pdb_info():
             self.parse_remark_350(bio_molecule_chains=self.bio_molecule_chains)
             remark_info = ""
             remark_info += rem_header(remark_number)
-            remark_info += "\t\tbio_struct_identical_to_the_asymmetric_unit = {}".format(
-                self.bio_struct_identical_to_the_asymmetric_unit)
+            remark_info += "\t\tbio_struct_identical_to_the_asymmetric_unit = {}: {} ".format(
+                self.bio_struct_identical_to_the_asymmetric_unit, self.bio_struct_msg)
             report.add_remark_info(remark_number, remark_info)
         except Exception as e:
             remark_info = "\tremark {}:\tno info :{}".format(remark_number, e)

@@ -18,9 +18,9 @@ from pdb_prep import *
               show_default=True)
 @click.option('--with-hydrogens/--no-hydrogens', default=False,
               help='Leave hydrogen atoms and hetatms from the files - default --no-hydrogens')  # , show_default=True)
-@click.option('--ptype', default='homomer',
+@click.option('--ptype',
               type=click.Choice(['homomer', 'heteromer', 'monomer'], case_sensitive=False),
-              show_default=True, help="Protein stoichiometry")
+              help="Protein stoichiometry (defulet: homomer)")
 @click.option('--parse-rem350/--ignore-rem350', default=True,
               help='Parse or ignore remark 350  - default --parse-rem350')  # show_default=True)
 @click.option('--bio-molecule-chains', type=click.INT, help='Number of peptides in remark 350')

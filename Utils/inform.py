@@ -36,7 +36,7 @@ def get_pdb_info_iter(dir_path, files_iter, include_hetatm, ignore_remarks=[], b
     with multiprocessing.Pool() as p:
         start_time = time.time()
         ft = functools.partial(create_pdb_info, dir_path=dir_path, include_hetatm=include_hetatm,
-                               ignore_remarks=ignore_remarks)
+                               ignore_remarks=ignore_remarks, bio_molecule_chains=bio_molecule_chains)
         pdbinfo_iter = list(p.map(ft, files_iter))
         # pdbinfo_iter = list(
         #     p.map(functools.partial(create_pdb_info, dir_path=dir_path, include_hetatm=include_hetatm,
