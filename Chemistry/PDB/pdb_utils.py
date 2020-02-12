@@ -53,6 +53,7 @@ class pdb_info():
         self.bio_struct_identical_to_the_asymmetric_unit = None
         self.bio_struct_msg = None
         self._is_nmr = None
+        self.warning_msg = None
         str_FREE_R = r"^FREE R VALUE(\s+|\s+\(.+\)\s+):\s*(\d+\.\d+|NULL)"
         str_R_value = r"R VALUE\s+\(.+\)\s+:\s*(\d+\.\d+|NULL)"
         str_B_factor = r"MEAN B VALUE\s+\(.+:\s+([-+]?\d*\.\d+|NULL)"
@@ -364,6 +365,10 @@ class pdb_info():
                 continue
             #   REMARK 350 APPLY THE FOLLOWING TO CHAINS: A, B, C
             elif line.startswith('APPLY THE FOLLOWING TO CHAINS'):
+                if len(biomat_lst) > 0:
+                    bio_molecule_data = self._creat_bio_molecule_data_item(bio_molecule_id, chains_str, biomat_lst,
+                                                                           number_of_chains)
+                    bio_molecules_lst.append(bio_molecule_data)
                 prefix, chains_str = line.split(':')
                 number_of_chains = len(list(chains_str.split(',')))  # A, B, C return 3
                 biomat_lst = []
@@ -692,7 +697,7 @@ class Report:
             data[k] = self.info[k]
         try:
             data["number_of_remarks"] = len(list(self.remarks_info))
-        except e as  Exception:
+        except Exception as e:
             data["number_of_remarks"] = 0
 
         data["models_info"] = []

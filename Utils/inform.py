@@ -112,6 +112,9 @@ class inform():
                                                    "Forms_a_biomolecule": bios,
                                                    "R_free_grade": r_free_grade
                                                    }
+                if info.warning_msg:
+                    self.json_dict[data_name][file]["Warning"] = info.warning_msg
+
                 if self.exprimental_method:
                     self.json_dict[data_name][file]["Exprimental method"] = self.exprimental_method
 

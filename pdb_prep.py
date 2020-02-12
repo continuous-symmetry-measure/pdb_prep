@@ -89,6 +89,7 @@ def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, bio_molecul
     short_file_name = None
     if pdb_file:
         mode_file_or_dir = "file"
+        parse_rem350 = False
         pdb_dir, short_file_name = os.path.split(pdb_file)
         informer.process_one_file(pdb_dir, short_file_name, click)
         # informer.ignore_remarks.append(2)  # remark 2 is resolution - ignore it

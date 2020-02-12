@@ -112,6 +112,7 @@ class stages():
                 # cliutils.write_a_file(full_path, str(_pdb))
 
                 _pdb_info = pdb_info(_pdb, ignore_remarks=ignore_remarks, bio_molecule_chains=bio_molecule_chain)
+                _pdb_info.warning_msg = _data[file_name].warning_msg
                 report = "# {}\n".format(_caller)
                 report += _pdb_info.info_report()
                 self.report[_caller] = _pdb_info.info_report()
@@ -176,6 +177,7 @@ class stages():
                 s = str(_pdb)
                 _pdb = pdb_utils.remove_residues_from_every_chain(missing_residues_per_chain_id, _pdb)
                 _pdb_info = pdb_info(_pdb, ignore_remarks=ignore_remarks, bio_molecule_chains=bio_molecule_chain)
+                _pdb_info.warning_msg = _data[file_name].warning_msg
                 report = "# {}\n".format(_caller)
                 report += _pdb_info.info_report()
                 self.report[_caller] = _pdb_info.info_report()
@@ -284,6 +286,7 @@ class stages():
                 _pdb = pdb_utils.remove_residues_from_every_chain(missing_residues_per_chain_id, _pdb)
 
                 _pdb_info = pdb_info(_pdb, ignore_remarks=ignore_remarks, bio_molecule_chains=bio_molecule_chains)
+                _pdb_info.warning_msg = _data[file_name].warning_msg
                 report = "# {}\n".format(_caller)
                 report += _pdb_info.info_report()
                 self.report[_caller] = _pdb_info.info_report()

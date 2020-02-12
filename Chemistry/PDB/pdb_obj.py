@@ -115,7 +115,7 @@ class pdb(list):
 
         :param pdb_file_lines:
         :param include_hetatm:
-        :param pdb_file_name: we need this only for model warnning messages
+        :param pdb_file_name: we need this only for model warning messages
         :return:
         """
         parser = pdb_file_parser(pdb_file_lines, include_hetatm)

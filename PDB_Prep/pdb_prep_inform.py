@@ -73,8 +73,10 @@ class xray_inform(inform):
                     self.excluded_files[file] = msg
                     self.others_data[file] = pdbinfo
                     continue
-
-                if 350 not in self.ignore_remarks:
+                ignore_rem350 = 350 in self.ignore_remarks
+                is_file_mode = self.one_file_mode
+                is_dir_mode = not self.one_file_mode
+                if is_dir_mode and not ignore_rem350:
                     if not pdbinfo.bio_struct_identical_to_the_asymmetric_unit:
                         msg = "File: '{}' - The given peptides structure does not create a biomolecule. ({})"
                         msg = msg.format(file, pdbinfo.bio_struct_msg)
@@ -82,17 +84,21 @@ class xray_inform(inform):
                         self.excluded_files[file] = msg
                         self.others_data[file] = pdbinfo
                         continue
-                elif remark_350_warn_msg_flag:
+                elif is_file_mode and not ignore_rem350:
+                    if not pdbinfo.bio_struct_identical_to_the_asymmetric_unit:
+                        msg = "File: '{}' - The given peptides structure does not create a biomolecule. ({})"
+                        msg = msg.format(file, pdbinfo.bio_struct_msg)
+                        cliutils.warn_msg(msg, caller=type(self).__name__)
+                        pdbinfo.warning_msg = msg
+
+                if remark_350_warn_msg_flag and ignore_rem350:
                     msg = "remark 350 was ignored"
-                    if remark_350_warn_msg_flag:
-                        cliutils.msg(msg, caller=type(self).__name__)
-                        # print("WARN: '{}' - {}".format(file, msg))
-                        remark_350_warn_msg_flag = False
+                    cliutils.msg(msg, caller=type(self).__name__)
+                    remark_350_warn_msg_flag = False
 
                 current_resolution = float(pdbinfo.Resolution)
-                r_free = float(pdbinfo.R_free)
                 min_r_free_key = float(min(pdbinfo.r_free_dict.keys()))
-                if self.one_file_mode:
+                if is_file_mode:
                     # on one file mode we should ignore r_free value and resolution
                     self.reliable_data[file] = pdbinfo
                     continue
@@ -157,6 +163,9 @@ class nmr_inform(inform):
                 s += format_string.format(file, bios)
                 self.json_dict[data_name][file] = {"Forms_a_biomolecule": bios,
                                                    "Exprimental_method": self.exprimental_method}
+                if info.warning_msg:
+                    self.json_dict[data_name][file]["Warning"] = info.warning_msg
+
             except:
                 s += "{}\n".format(file)
                 self.json_dict[data_name][file] = None
@@ -203,12 +212,21 @@ class nmr_inform(inform):
                     if pdbinfo.bio_struct_identical_to_the_asymmetric_unit:
                         self.nmr_data[file] = pdbinfo
                     else:
-                        msg = "File: '{}' - The given peptides structure does not create a biomolecule. ({})"
-                        msg = msg.format(file, pdbinfo.bio_struct_msg)
-                        self.cliutils.error_msg(msg, type(self).__name__)
-                        self.excluded_files[file] = msg
-                        self.others_data[file] = pdbinfo
-                        continue
+                        ignore_rem350 = 350 not in self.ignore_remarks
+                        is_file_mode = self.one_file_mode
+                        is_dir_mode = not self.one_file_mode
+                        if is_dir_mode and not ignore_rem350:
+                            msg = "File: '{}' - The given peptides structure does not create a biomolecule. ({})"
+                            msg = msg.format(file, pdbinfo.bio_struct_msg)
+                            self.cliutils.error_msg(msg, type(self).__name__)
+                            self.excluded_files[file] = msg
+                            self.others_data[file] = pdbinfo
+                            continue
+                        elif is_file_mode and not ignore_rem350:
+                            msg = "File: '{}' - The given peptides structure does not create a biomolecule. ({})"
+                            msg = msg.format(file, pdbinfo.bio_struct_msg)
+                            cliutils.warn_msg(msg, caller=type(self).__name__)
+                            pdbinfo.warning_msg = msg
                 else:
                     self.others_data[file] = pdbinfo
             except Exception as e:
