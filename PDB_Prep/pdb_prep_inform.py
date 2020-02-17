@@ -171,7 +171,7 @@ class nmr_inform(inform):
                 self.json_dict[data_name][file] = None
 
         if len(self.excluded_files) >= 1:
-            data_name = "excluded_data"
+            data_name = "excluded"
             self.json_dict[data_name] = {}
             files = []
             if len(set(self.excluded_files.keys())) >= 1:
@@ -212,7 +212,7 @@ class nmr_inform(inform):
                     if pdbinfo.bio_struct_identical_to_the_asymmetric_unit:
                         self.nmr_data[file] = pdbinfo
                     else:
-                        ignore_rem350 = 350 not in self.ignore_remarks
+                        ignore_rem350 = 350 in self.ignore_remarks
                         is_file_mode = self.one_file_mode
                         is_dir_mode = not self.one_file_mode
                         if is_dir_mode and not ignore_rem350:
@@ -222,11 +222,21 @@ class nmr_inform(inform):
                             self.excluded_files[file] = msg
                             self.others_data[file] = pdbinfo
                             continue
+                        elif is_dir_mode and ignore_rem350:
+                            # if bio_struct_identical_to_the_asymmetric_unit=False
+                            #    and  this is_dir_mode
+                            #    and  ignore_rem350
+                            msg = "File: '{}' - The given peptides structure does not create a biomolecule. ({})"
+                            msg = msg.format(file, pdbinfo.bio_struct_msg)
+                            self.cliutils.error_msg(msg, type(self).__name__)
+                            self.excluded_files[file] = msg
+                            self.others_data[file] = pdbinfo
                         elif is_file_mode and not ignore_rem350:
                             msg = "File: '{}' - The given peptides structure does not create a biomolecule. ({})"
                             msg = msg.format(file, pdbinfo.bio_struct_msg)
-                            cliutils.warn_msg(msg, caller=type(self).__name__)
+                            self.cliutils.warn_msg(msg, caller=type(self).__name__)
                             pdbinfo.warning_msg = msg
+                            self.nmr_data[file] = pdbinfo
                 else:
                     self.others_data[file] = pdbinfo
             except Exception as e:

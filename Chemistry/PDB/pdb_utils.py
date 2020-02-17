@@ -427,9 +427,10 @@ class pdb_info():
         try:
             self._check_remark_exists(350, self.parse_remark_350.__name__)
         except ValueError as e:
-            msg = "WARN pdb file: {} - Remark 350 is missing, undefined  biomolecule"
             self.bio_struct_msg = "Remark 350 is missing."
-            print(msg.format(os.path.basename(self._pdb.file_name)))
+            msg = "WARN pdb file: {} - {}, undefined  biomolecule."
+            print(msg.format(os.path.basename(self._pdb.file_name), self.bio_struct_msg))
+            self.warning_msg = self.bio_struct_msg
             return
 
         _pdb = self._pdb
