@@ -1,7 +1,6 @@
 from distutils.core import setup
 
 import setuptools
-
 from version import __VERSION__
 
 setup(
@@ -16,11 +15,12 @@ setup(
     description='pdb utils',
     test_suite='discover_tests',
     license='BSD 2-Clause',
-    py_modules=['pdb_prep'],
+    py_modules=['pdb_prep', 'pdb_info', 'pdb_prep_all', 'pdb_distance', 'version'],
     keywords='pdb-files chemistry RSCB proteins',
     entry_points={
         'console_scripts': [
             'pdb_prep = pdb_prep:cli',
+            'pdb_prep_all = pdb_prep_all:pdb_prep_all',
             'pdb_info = pdb_info:cli',
             'pdb_distance = pdb_distance:cli',
         ]

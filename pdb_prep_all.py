@@ -1,8 +1,9 @@
 from PDB_Prep.pdb_prep_functions import validate_input_dir_or_file
 from Utils.cli_utils import cli_utils as cu
 from Utils.inform import inform
-from pdb_prep import *
-
+from pdb_prep import func_xray, func_nmr, get_experimental_method
+import click
+import os
 
 @click.command()
 @click.option('--pdb-dir', default='.', help='Input pdb directory containing PDB files', show_default=True)

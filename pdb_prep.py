@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import os
-
+# import sys
+# print(f"path: {sys.path}")
 import click
 
 from Utils.cli_utils import cli_utils as cu
@@ -10,6 +11,7 @@ from PDB_Prep.pdb_prep_functions import copy_data_into_dir, clean_tmp_data_dir_m
     finish_outputs, validate_options
 from PDB_Prep.pdb_prep_functions import xray_validate_params, nmr_validate_params
 from PDB_Prep.pdb_prep_inform import xray_inform, nmr_inform
+
 from version import __VERSION__
 
 
@@ -194,6 +196,7 @@ def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, 
         7.  For homomers, checking that all peptides are of the same length.
     """
     print("Version: {}".format(__VERSION__))
+    print(f"path: {sys.path}")
     ret_val = func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype,
                         parse_rem350, bio_molecule_chains, output_dir, output_text, verbose)
     exit(ret_val)
