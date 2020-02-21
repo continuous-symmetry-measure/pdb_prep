@@ -40,6 +40,7 @@ class stages():
         self.current_dest_path = ""
         self.other_data = []
         self.last_stage_dir = None
+        self.include_dirs = []
         self.stages_dirs_list = []
         self.is_homomer = is_homomer
         self.last_stage_dir_path = None

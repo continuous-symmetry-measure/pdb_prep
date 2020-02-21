@@ -46,33 +46,57 @@ def clean_tmp_data_file_mode(stager: stages, pdb_dir, short_file_name, informer,
     return
 
 
+def get_path(lst, cliutils):
+    return os.path.join(os.getcwd(), cliutils.output_dirname, *lst)
+
+
 def clean_tmp_data_dir_mode(stager: stages, pdb_dir, informer, cliutils):
     _is_verbose = cliutils.is_verbose
     if stager.last_stage_dir is None:
         # cliutils.error_msg("excluded_files:\n{}".format(informer.excluded_files))
         cliutils.error_msg("All files are not reliable or was excluded", caller=clean_tmp_data_dir_mode.__name__)
         # exit(22)
-    else:
-        if not cliutils.is_verbose:
-            # cliutils.is_verbose=True
-            cliutils.verbose("--------------------------------------------------")
-            # pattern=os.path.join(os.getcwd(),cliutils.output_dirname,stager.last_stage_dir, "*.pdb")
-            # print (pattern)
-            dir_path = os.path.join(os.getcwd(), cliutils.output_dirname, stager.last_stage_dir)
+    elif not cliutils.is_verbose:
+        # 'C:\\tmp\\remark-350\\test\\output-xray-20200221-100638\\reliable_r_grades'
+        rule = re.compile(fnmatch.translate("*.pdb"), re.IGNORECASE)
+        has_pdbs = lambda d: len([name for name in os.listdir(d) if rule.match(name)]) > 0
+        dir_path = get_path(["others"], cliutils)
+        if os.path.isdir(dir_path):
+            delete_tmp_dirs([dir_path], cliutils)
 
-            rule = re.compile(fnmatch.translate("*.pdb"), re.IGNORECASE)
-            files = [name for name in os.listdir(dir_path) if rule.match(name)]
+        # dir_path = os.path.join(os.getcwd(), cliutils.output_dirname, "reliable_r_grades")
+        dir_path = get_path(["reliable_r_grades"], cliutils)
+        if os.path.isdir(dir_path):
+            dirs = [get_path([dir_path, dir_name], cliutils) for dir_name in os.listdir(dir_path) if
+                    has_pdbs(get_path([dir_path, dir_name], cliutils))]
+            copy_from_tmp_dir(dirs[-1], dir_path, cliutils)
+            delete_tmp_dirs(dirs, cliutils)
 
-            cliutils.copyfiles_to_dir(stager.last_stage_dir, cliutils.output_dirname, files)
-            # for dir_path in stager.stages_dirs_list:
-            for directory, data, copy_or_clean in sorted(informer.output_data_config):
-                dir_path = os.path.join(os.getcwd(), cliutils.output_dirname, directory)
-                if os.path.isdir(dir_path):
-                    cliutils.rmtree(dir_path)
-    cliutils.verbose("--------------------------------------------------")
+        dir_path = get_path(["reliable"], cliutils)
+        if os.path.isdir(dir_path):
+            dirs = [get_path([dir_path, dir_name], cliutils) for dir_name in os.listdir(dir_path) if
+                    has_pdbs(get_path([dir_path, dir_name], cliutils))]
+            copy_from_tmp_dir(dirs[-1], dir_path, cliutils)
+            delete_tmp_dirs(dirs, cliutils)
+
     cliutils.is_verbose = _is_verbose
 
+
+def copy_from_tmp_dir(tmp_dir_path, dest_dir, cliutils):
+    rule = re.compile(fnmatch.translate("*.pdb"), re.IGNORECASE)
+    files = [get_path([tmp_dir_path, name], cliutils) for name in os.listdir(tmp_dir_path) if rule.match(name)]
+    print("files:{}".format(files))
+    cliutils.copyfiles_to_dir(tmp_dir_path, dest_dir, files)
+    # for dir_path in stager.stages_dirs_list:
+
+    cliutils.verbose("--------------------------------------------------")
     return
+
+
+def delete_tmp_dirs(dirs, cliutils):
+    for dir in dirs:
+        if os.path.isdir(dir):
+            cliutils.rmtree(dir)
 
 
 def validate_options(parse_rem350, bio_molecule_chains, ptype, cliutils):
