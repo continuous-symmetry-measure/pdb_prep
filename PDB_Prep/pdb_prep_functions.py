@@ -58,41 +58,53 @@ def clean_tmp_data_dir_mode(stager: stages, pdb_dir, informer, cliutils):
         # exit(22)
     elif not cliutils.is_verbose:
         # 'C:\\tmp\\remark-350\\test\\output-xray-20200221-100638\\reliable_r_grades'
-        rule = re.compile(fnmatch.translate("*.pdb"), re.IGNORECASE)
-        has_pdbs = lambda d: len([name for name in os.listdir(d) if rule.match(name)]) > 0
         dir_path = get_path(["others"], cliutils)
         if os.path.isdir(dir_path):
             delete_tmp_dirs([dir_path], cliutils)
 
+        # cliutils.is_verbose = True
         # dir_path = os.path.join(os.getcwd(), cliutils.output_dirname, "reliable_r_grades")
         dir_path = get_path(["reliable_r_grades"], cliutils)
         if os.path.isdir(dir_path):
-            dirs = [get_path([dir_path, dir_name], cliutils) for dir_name in os.listdir(dir_path) if
-                    has_pdbs(get_path([dir_path, dir_name], cliutils))]
-            copy_from_tmp_dir(dirs[-1], dir_path, cliutils)
+            dirs = [get_path([dir_path, dir_name], cliutils) for dir_name in os.listdir(dir_path)]
+            copy_chosen_files(dir_path, stager, cliutils)
             delete_tmp_dirs(dirs, cliutils)
 
         dir_path = get_path(["reliable"], cliutils)
         if os.path.isdir(dir_path):
-            dirs = [get_path([dir_path, dir_name], cliutils) for dir_name in os.listdir(dir_path) if
-                    has_pdbs(get_path([dir_path, dir_name], cliutils))]
-            copy_from_tmp_dir(dirs[-1], dir_path, cliutils)
+            dirs = [get_path([dir_path, dir_name], cliutils) for dir_name in os.listdir(dir_path)]
+            copy_chosen_files(dir_path, stager, cliutils)
             delete_tmp_dirs(dirs, cliutils)
 
         dir_path = get_path(["NMR"], cliutils)
         if os.path.isdir(dir_path):
-            dirs = [get_path([dir_path, dir_name], cliutils) for dir_name in os.listdir(dir_path) if
-                    has_pdbs(get_path([dir_path, dir_name], cliutils))]
-            copy_from_tmp_dir(dirs[-1], dir_path, cliutils)
+            dirs = [get_path([dir_path, dir_name], cliutils) for dir_name in os.listdir(dir_path)]
+            copy_chosen_files(dir_path, stager, cliutils)
             delete_tmp_dirs(dirs, cliutils)
 
     cliutils.is_verbose = _is_verbose
 
 
+def copy_chosen_files(dir_path, stager, cliutils):
+    rule = re.compile(fnmatch.translate("*.pdb"), re.IGNORECASE)
+    has_pdbs = lambda d: len([name for name in os.listdir(d) if rule.match(name)]) > 0
+    #  heteromer
+    dir_name = " 04_missing_atoms_found_in_remarks"
+    curr_path = get_path([dir_path, dir_name], cliutils)
+    if not stager.is_homomer and has_pdbs(curr_path):
+        copy_from_tmp_dir(curr_path)
+
+    #  homomer
+    dir_name = "05_all_chains_has_same_number_of_atoms"
+    curr_path = get_path([dir_path, dir_name], cliutils)
+    if stager.is_homomer and has_pdbs(curr_path):
+        copy_from_tmp_dir(curr_path, dir_path, cliutils)
+
+
 def copy_from_tmp_dir(tmp_dir_path, dest_dir, cliutils):
     rule = re.compile(fnmatch.translate("*.pdb"), re.IGNORECASE)
     files = [get_path([tmp_dir_path, name], cliutils) for name in os.listdir(tmp_dir_path) if rule.match(name)]
-    print("files:{}".format(files))
+    cliutils.verbose("files:{}".format(files), caller=copy_from_tmp_dir.__name__)
     cliutils.copyfiles_to_dir(tmp_dir_path, dest_dir, files)
     # for dir_path in stager.stages_dirs_list:
 
