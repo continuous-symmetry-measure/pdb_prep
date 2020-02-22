@@ -79,6 +79,13 @@ def clean_tmp_data_dir_mode(stager: stages, pdb_dir, informer, cliutils):
             copy_from_tmp_dir(dirs[-1], dir_path, cliutils)
             delete_tmp_dirs(dirs, cliutils)
 
+        dir_path = get_path(["NMR"], cliutils)
+        if os.path.isdir(dir_path):
+            dirs = [get_path([dir_path, dir_name], cliutils) for dir_name in os.listdir(dir_path) if
+                    has_pdbs(get_path([dir_path, dir_name], cliutils))]
+            copy_from_tmp_dir(dirs[-1], dir_path, cliutils)
+            delete_tmp_dirs(dirs, cliutils)
+
     cliutils.is_verbose = _is_verbose
 
 
