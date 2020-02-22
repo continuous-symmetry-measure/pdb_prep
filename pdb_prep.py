@@ -1,17 +1,15 @@
 #!/usr/bin/env python
-import os
 # import sys
 # print(f"path: {sys.path}")
 import click
 
-from Utils.cli_utils import cli_utils as cu
 from Chemistry.PDB.pdb_utils import *
 from PDB_Prep.clean_stages import stages
 from PDB_Prep.pdb_prep_functions import copy_data_into_dir, clean_tmp_data_dir_mode, clean_tmp_data_file_mode, \
     finish_outputs, validate_options
 from PDB_Prep.pdb_prep_functions import xray_validate_params, nmr_validate_params
 from PDB_Prep.pdb_prep_inform import xray_inform, nmr_inform
-
+from Utils.cli_utils import cli_utils as cu
 from version import __VERSION__
 
 
@@ -70,6 +68,7 @@ def nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, bio_molecule_cha
 
 def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, bio_molecule_chains, output_dir,
              output_text, verbose):
+    caller = func_nmr.__name__
     report = ""
     is_homomer = True
     if ptype is None and bio_molecule_chains == 1:
@@ -100,9 +99,9 @@ def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, bio_molecul
         mode_file_or_dir = "dir"
         try:
             informer.process_complete_dir(pdb_dir, click)
-            cliutils.verbose("informer.process_complete_dir ended")
+            cliutils.verbose("informer.process_complete_dir ended", caller=caller)
         except IndexError as  e:
-            cliutils.error_msg("I did not find any PDB files in the input folder", caller=func_nmr.__name__)
+            cliutils.error_msg("I did not find any PDB files in the input folder", caller=caller)
             return 31
 
     # limit_r_free_grade_text = r_free_grade_values.from_value(limit_r_free_grade)
@@ -111,9 +110,10 @@ def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, bio_molecul
     stager = stages(cliutils, informer, is_homomer=is_homomer)
     for directory, data, copy_or_clean in sorted(informer.output_data_config):
         if len(data) == 0:
-            cliutils.verbose("{} - no items to process - I will continue".format(directory))
+            cliutils.verbose("{} - no items to process - I will continue".format(directory), caller=caller)
             continue
         dest_path = stager.set_dest_path(directory)
+        cliutils.verbose("creating: {} ".format(dest_path), caller=caller)
         rv = cliutils.mkdir(dirname=dest_path)
         if rv != 0:
             cliutils.exit(rv, 'ERROR', "could not mkdir {} retval is {} ".format(directory, rv))
@@ -204,6 +204,7 @@ def xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, 
 
 def func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype,
               parse_rem350, bio_molecule_chains, output_dir, output_text, verbose):
+    caller = func_xray.__name__
     report = ""
     is_homomer = True
     if ptype is None and bio_molecule_chains == 1:
@@ -232,9 +233,9 @@ def func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrog
         mode_file_or_dir = "dir"
         try:
             informer.process_complete_dir(pdb_dir, click)
-            cliutils.verbose("informer.process_complete_dir ended")
+            cliutils.verbose("informer.process_complete_dir ended", caller=caller)
         except IndexError as e:
-            cliutils.error_msg("I did not find any PDB files in the input folder", func_xray.__name__)
+            cliutils.error_msg("I did not find any PDB files in the input folder", caller=caller)
             return 31
 
     limit_r_free_grade_text = r_free_grade_values.from_value(limit_r_free_grade)
@@ -246,9 +247,10 @@ def func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrog
 
     for directory, data, copy_or_clean in informer.output_data_config:
         if len(data) == 0:
-            cliutils.verbose("{} - no items to process - I will continue".format(directory))
+            cliutils.verbose("{} - no items to process - I will continue".format(directory), caller=caller)
             continue
         dest_path = stager.set_dest_path(directory)
+        cliutils.verbose("creating: {}".format(dest_path), caller=caller)
         rv = cliutils.mkdir(dirname=dest_path)
         if rv != 0:
             cliutils.exit(rv, 'ERROR', "could not mkdir {} retval is {} ".format(directory, rv))

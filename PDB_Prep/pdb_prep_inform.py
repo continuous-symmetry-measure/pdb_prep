@@ -192,7 +192,7 @@ class nmr_inform(inform):
         """
         self.nmr_data, self.others_data = {}, {}
         self.output_data_config = [
-            ("NMR", self.nmr_data, "clean"),
+            ("nmr", self.nmr_data, "clean"),
             ("others", self.others_data, "copy"),
         ]
 

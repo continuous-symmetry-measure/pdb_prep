@@ -76,7 +76,7 @@ def clean_tmp_data_dir_mode(stager: stages, pdb_dir, informer, cliutils):
             copy_chosen_files(dir_path, stager, cliutils)
             delete_tmp_dirs(dirs, cliutils)
 
-        dir_path = get_path(["NMR"], cliutils)
+        dir_path = get_path(["nmr"], cliutils)
         if os.path.isdir(dir_path):
             dirs = [get_path([dir_path, dir_name], cliutils) for dir_name in os.listdir(dir_path)]
             copy_chosen_files(dir_path, stager, cliutils)
@@ -135,12 +135,13 @@ def validate_options(parse_rem350, bio_molecule_chains, ptype, cliutils):
 
 
 def validate_input_dir_or_file(pdb_dir, pdb_file, cliutils):
+    caller = validate_input_dir_or_file.__name__
     if pdb_dir:
-        cliutils.verbose("{:>20}={}".format("--pdb-dir", pdb_dir))
+        cliutils.verbose("{:>20}={}".format("--pdb-dir", pdb_dir), caller=caller)
         if not os.path.isdir(pdb_dir):
             cliutils.exit(exit_code=1, sevirity="ERROR", msg="This is not PDB dir: '{}'".format(pdb_dir))
     if pdb_file:
-        cliutils.verbose("{:>20}={}".format("--pdb_file", pdb_file))
+        cliutils.verbose("{:>20}={}".format("--pdb_file", pdb_file), caller=caller)
         if not os.path.isfile(pdb_file):
             cliutils.exit(exit_code=1, sevirity="ERROR", msg="No such file: '{}'".format(pdb_file))
 
@@ -150,11 +151,12 @@ def validate_input_dir_or_file(pdb_dir, pdb_file, cliutils):
 
 
 def xray_validate_params(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, output_dir, verbose):
+    caller = xray_validate_params.__name__
     cliutils = cu(click, is_verbose=verbose)
     validate_input_dir_or_file(pdb_dir, pdb_file, cliutils)
-    cliutils.verbose("{:>20}={}".format("--max-resolution", max_resolution))
-    cliutils.verbose("{:>20}={}".format("--limit-r-free-grade", limit_r_free_grade))
-    cliutils.verbose("{:>20}={}".format("--output-dir", output_dir))
+    cliutils.verbose("{:>20}={}".format("--max-resolution", max_resolution), caller=caller)
+    cliutils.verbose("{:>20}={}".format("--limit-r-free-grade", limit_r_free_grade), caller=caller)
+    cliutils.verbose("{:>20}={}".format("--output-dir", output_dir), caller=caller)
 
     _output_dir = output_dir
     if output_dir == 'output.{time}':
@@ -180,6 +182,7 @@ def nmr_validate_params(pdb_dir, pdb_file, output_dir, verbose):
 
 
 def finish_outputs(mode_file_or_dir, informer, cliutils, stager, report, output_type="text"):
+    caller = finish_outputs.__name__
     str_informer = str(informer)
     if mode_file_or_dir == "file":
         excluded_file = "excluded-{}.json".format(list(informer.data)[0])
@@ -218,6 +221,6 @@ def finish_outputs(mode_file_or_dir, informer, cliutils, stager, report, output_
     # if len(informer.excluded_files) > 0:
     #     cliutils.write_file(excluded_file_path, json.dumps(informer.excluded_files, sort_keys=True, indent=4))
 
-    cliutils.verbose("mode_file_or_dir={}".format(mode_file_or_dir))
-    cliutils.verbose("excluded_files:\n{}".format(informer.excluded_files))
+    cliutils.verbose("mode_file_or_dir={}".format(mode_file_or_dir), caller=caller)
+    cliutils.verbose("excluded_files:\n{}".format(informer.excluded_files), caller=caller)
     return
