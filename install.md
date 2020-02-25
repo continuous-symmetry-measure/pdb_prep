@@ -19,7 +19,7 @@ python3 -m venv pdb_prep_env
 ```
 ## installing ```pdb_prep```
 Click is a Python package for creating beautiful command line interfaces.
-if yo created virtualenv load it:
+if you created virtualenv load it:
 ``` bash 
 source     "$venv_dir/bin/activate" 
 ```

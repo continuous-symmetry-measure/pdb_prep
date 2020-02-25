@@ -55,39 +55,43 @@ Commands:
 ## NMR help:
 ```
 $ pdb_prep nmr  --help
+Usage: pdb_prep.py nmr [OPTIONS]
+
   This procedure prepares protein files in pdb format from NMR measurements for
   a CSM calculation according to the following stage:
-    1.  Removing non-coordinates lines from the atom section.
-    2.  Removing ligands and solvent lines at the end of peptides.
-        HETATOM lines in the middle of a peptide are retained.
-    3.  Cleaning gaps in the sequence according to REMARK 470 (missing residues)
-        and REMARK 465 (missing atoms):
+  1.  Removing non-coordinates lines from the atom section.
+  2.  Removing ligands and solvent lines at the end of peptides.
+      HETATOM lines in the middle of a peptide are retained.
+  3.  Cleaning gaps in the sequence according to REMARK 470 (missing residues)
+      and REMARK 465 (missing atoms):
         a.  If a backbone atom is missing - the whole amino acid is deleted.
         b.  If a side chain atom is missing – the side chain is removed.
         c.  For homomers – gap on one peptide causes the removal of the related
             atoms from all other peptides.
-    4.  Retaining the first location in cases of alternate location.
-    5.  Removing hydrogen atoms (optional).
-    6.  Ignoring pdb files for which the asymmetric unit does not represent a
+  4.  Retaining the first location in cases of alternate location.
+  5.  Removing hydrogen atoms (optional).
+  6.  Ignoring pdb files for which the asymmetric unit does not represent a
         biological structure (e.g., non unit matrix in REMARK 350).
     7.  For homomers, checking that all peptides are of the same length.
 
 Options:
-  --pdb-dir TEXT                  the input pdb directory containing PDB files
+  --pdb-dir TEXT                  The input pdb directory containing PDB files
                                   [default: .]
-  --pdb-file TEXT                 input pdb file (use this or the --pdb-dir
+  --pdb-file TEXT                 Input pdb file (use this or the --pdb-dir
                                   option!)
   --with-hydrogens / --no-hydrogens
-                                  sieve hydrogen atoms and hetatms from the
-                                  files  [default: False]
-  --is-homomer / --is-heteromer   process the file as homomer or heteromer
-                                  [default: True]
+                                  Leave hydrogen atoms and hetatms from the
+                                  files - default --no-hydrogens
+  --ptype [homomer|heteromer|monomer]
+                                  Protein stoichiometry (defualt: homomer)
   --parse-rem350 / --ignore-rem350
-                                  parse or ignore remark 350  [default: True]
-  --output-dir TEXT               output dir  [default: output.{time}]
-  --output-text / --output-json   output report in text or json  [default:
-                                  True]
-  --verbose                       verbose mode  [default: False]
+                                  Parse or ignore remark 350  - default
+                                  --parse-rem350
+  --bio-molecule-chains INTEGER   Number of peptides in remark 350
+  --output-dir TEXT               Output dir  [default: output.{time}]
+  --output-text / --output-json   Output report in text or json  - default
+                                  --output-text
+  --verbose                       Verbose mode  [default: False]
   --help                          Show this message and exit.
 ```
 
@@ -122,13 +126,13 @@ Usage: pdb_prep.py xray [OPTIONS]
       7.  For homomers, checking that all peptides are of the same length.
 
 Options:
-  --pdb-dir TEXT                  input pdb directory containing PDB files
+  --pdb-dir TEXT                  Input pdb directory containing PDB files
                                   [default: .]
-  --pdb-file TEXT                 input pdb file (use this or the --pdb-dir
+  --pdb-file TEXT                 Input pdb file (use this or the --pdb-dir
                                   option!)
-  --max-resolution FLOAT          maximum allowed resolution  [default: 2.0]
+  --max-resolution FLOAT          Maximum allowed resolution  [default: 2.0]
   --limit-r-free-grade [A|B|C|D|E]
-                                  limit for R_free_grade:
+                                  Limit for R_free_grade:
                                   A - MUCH BETTER THAN
                                   AVERAGE at this resolution
                                   B - BETTER THAN
@@ -139,16 +143,18 @@ Options:
                                   this resolution
                                   E - UNRELIABLE  [default: C]
   --with-hydrogens / --no-hydrogens
-                                  sieve hydrogen atoms and hetatms from the
-                                  files  [default: False]
-  --is-homomer / --is-heteromer   process the file as homomer or heteromer
-                                  [default: True]
+                                  Leave hydrogen atoms and hetatms from the
+                                  files - default --no-hydrogens
+  --ptype [homomer|heteromer|monomer]
+                                  Protein stoichiometry (defualt: homomer)
   --parse-rem350 / --ignore-rem350
-                                  parse or ignore remark 350  [default: True]
-  --output-dir TEXT               output dir  [default: output.{time}]
-  --output-text / --output-json   output report in text or json  [default:
-                                  True]
-  --verbose                       verbose mode  [default: False]
+                                  Parse or ignore remark 350  - default
+                                  --parse-rem350
+  --bio-molecule-chains INTEGER   Number of peptides in remark 350
+  --output-dir TEXT               Output dir  [default: output.{time}]
+  --output-text / --output-json   Output report in text or json  - default
+                                  --output-text
+  --verbose                       Verbose mode  [default: False]
   --help                          Show this message and exit.
 ```
 
