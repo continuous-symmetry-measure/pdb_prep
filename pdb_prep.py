@@ -114,7 +114,7 @@ def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, bio_molecul
             continue
         dest_path = stager.set_dest_path(directory)
         cliutils.verbose("creating: {} ".format(dest_path), caller=caller)
-        rv = cliutils.mkdir(dirname=dest_path)
+        rv = cliutils.mkdir(dirname=dest_path, raise_error_if_exists=False)
         if rv != 0:
             cliutils.exit(rv, 'ERROR', "could not mkdir {} retval is {} ".format(directory, rv))
         if copy_or_clean == 'copy':
@@ -251,7 +251,7 @@ def func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrog
             continue
         dest_path = stager.set_dest_path(directory)
         cliutils.verbose("creating: {}".format(dest_path), caller=caller)
-        rv = cliutils.mkdir(dirname=dest_path)
+        rv = cliutils.mkdir(dirname=dest_path, raise_error_if_exists=False)
         if rv != 0:
             cliutils.exit(rv, 'ERROR', "could not mkdir {} retval is {} ".format(directory, rv))
         if copy_or_clean == 'copy':

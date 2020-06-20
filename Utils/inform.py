@@ -83,13 +83,14 @@ class inform():
         return bios
 
     def _str_data(self, data, data_name="data", dont_include_files=[]):
-        format_string = "{0:<25} {1:<10} {2:<19} {3:<7} {4:7} {5:7} {6:<26} {7:}\n"
+        # format_string = "{0:<25}{1:<10} {2:<19} {3:<7} {4:7} {5:7} {6:<26} {7:}\n"
+        format_string = "{0:<25}{1:<10}{2:<10} {3:<19} {4:<7} {5:7} {6:7} {7:<26} {8:<100}\n"
         s = ""
         self.json_dict[data_name] = {}
         self.json_dict["pdb_prep Version"] = __VERSION__
-        #                          0       1             2                  3          4
-        s += format_string.format("File", "Resolution", "Resolution_Grade", "B_factor", "R_value",
-                                  #                          5        6                           7
+        #                          0       1            2             3                   4           5
+        s += format_string.format("File", "Included", "Resolution", "Resolution_Grade", "B_factor", "R_value",
+                                  #                          6                       7        8
                                   "R_free", "Forms_a_biomolecule", "R_free_grade")
         # t=(file,info)
         for file, info in sorted(data.items(), key=lambda t: t[0]):
@@ -97,10 +98,13 @@ class inform():
                 continue
             try:
                 bios = self._bios_value(info)
-                # 0     1                2                      3             4
-                s += format_string.format(file, info.Resolution, info.Resolution_Grade, info.B_factor, info.R_value,
-                                          #                          5           6     7
-                                          info.R_free, bios, info.R_free_grade)
+                included = 'Yes'
+                if file in self.excluded_files:
+                    included = 'No'
+                #                         0     1                2                      3              4
+                s += format_string.format(file, included, info.Resolution, info.Resolution_Grade, info.B_factor,
+                                          # 5            6             7     8
+                                          info.R_value, info.R_free, bios, str(info.R_free_grade))
                 if isinstance(info.R_free_grade, str):
                     r_free_grade = info.R_free_grade
                 else:
@@ -110,7 +114,8 @@ class inform():
                                                    "B_factor": info.B_factor,
                                                    "R_free": info.R_free,
                                                    "Forms_a_biomolecule": bios,
-                                                   "R_free_grade": r_free_grade
+                                                   "R_free_grade": r_free_grade,
+                                                   "Is_included": included
                                                    }
                 if info.warning_msg:
                     self.json_dict[data_name][file]["Warning"] = info.warning_msg
@@ -121,6 +126,7 @@ class inform():
             except Exception as e:
                 s += "{} - Exception{}\n".format(file, e)
                 self.json_dict[data_name][file] = None
+
         return s
 
     def _str_excluded(self, files):
@@ -133,8 +139,13 @@ class inform():
             return s
         format_string_ex = "{:<100}\n"
         # s += format_string_ex.format("reason")
-        for file, reason in ex.items():
-            if file not in files:
+
+        def is_exluded(file):
+            return True
+            return file not in files
+
+        for file, reason in sorted(ex.items()):
+            if is_exluded(file):
                 s += format_string_ex.format(reason)
                 self.json_dict[data_name][file] = reason
 

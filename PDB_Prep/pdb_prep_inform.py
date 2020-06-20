@@ -19,7 +19,8 @@ class xray_inform(inform):
 
         files = list(self.reliable_data.keys())
         files.extend(list(self.reliable_R_grade_data.keys()))
-        if len(set(self.excluded_files.keys()) - set(files)) >= 1:
+        self._str_excluded(files)
+        if len(set(self.excluded_files.keys())) >= 1:
             s += "\nExcluded_files:\n"
             s += self._str_excluded(files)
             files.extend(self.excluded_files.keys())

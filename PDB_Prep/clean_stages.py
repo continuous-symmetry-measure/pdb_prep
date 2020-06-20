@@ -353,9 +353,12 @@ class stages():
                             msg = "File: '{} - Is not a homomer - " \
                                   "Model No.: {}  = First chain length is {} and chain number {} length is {}"
                             _file_name = os.path.basename(_pdb.file_name)
-                            self.informer.excluded_files[_pdb.file_name] = msg.format(_file_name, mi + 1,
-                                                                                      first_chain_len, ci + 1,
-                                                                                      len(chain))
+                            # self.informer.excluded_files[_pdb.file_name] = msg.format(_file_name, mi + 1,
+                            msg_ex = msg.format(_file_name, mi + 0, first_chain_len, ci + 0, len(chain))
+                            self.informer.excluded_files[file_name] = msg_ex
+                            if file_name in self.informer.reliable_data:
+                                r = self.informer.reliable_data[file_name]
+                                print(r)
                             break
                     if is_ok:
                         continue

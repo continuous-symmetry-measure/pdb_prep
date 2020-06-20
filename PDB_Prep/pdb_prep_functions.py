@@ -36,9 +36,12 @@ def clean_tmp_data_file_mode(stager: stages, pdb_dir, short_file_name, informer,
         out_file_name = os.path.join(pdb_dir, tmp[0] + "-clean" + tmp[1])
 
         print("\nCleaned file is: '{}'".format(out_file_name))
+
         if os.path.isfile(last_stage_full_file_name):
             cliutils.copy_file(last_stage_full_file_name, out_file_name)
         else:
+            cliutils.error_msg("excluded_files:{}".format(informer.excluded_files),
+                               caller=clean_tmp_data_file_mode.__name__)
             cliutils.error_msg("File: '{}' is not valid. try verbose mode for more info.".format(short_file_name),
                                caller=clean_tmp_data_file_mode.__name__)
     if not cliutils.is_verbose and os.path.isdir(cliutils.output_dirname):
@@ -185,17 +188,18 @@ def finish_outputs(mode_file_or_dir, informer, cliutils, stager, report, output_
     caller = finish_outputs.__name__
     str_informer = str(informer)
     if mode_file_or_dir == "file":
-        excluded_file = "excluded-{}.json".format(list(informer.data)[0])
+        # excluded_file = "excluded-{}.json".format(list(informer.data)[0])
         print(str_informer)
-        excluded_file_path = os.path.join(excluded_file)
+        # excluded_file_path = os.path.join(excluded_file)
         report_file = "report-{}.{}".format(list(informer.data)[0], output_type)
         report_file = os.path.join(report_file)
         if output_type == 'text':
             output_str = str_informer
         else:
+            output_str = str(informer)
+            d = informer.json_dict
             output_str = json.dumps(informer.json_dict, indent=4, sort_keys=True)
         cliutils.write_file(report_file, output_str)
-        print("report file:{}".format(report_file))
         # print(output_str)
     #        if len(informer.excluded_files) > 0:
     #            excluded_file = "excluded-{}.json".format(list(informer.data)[0])
@@ -203,16 +207,15 @@ def finish_outputs(mode_file_or_dir, informer, cliutils, stager, report, output_
     #            cliutils.write_file(excluded_file, json.dumps(informer.excluded_files))
     #            print("excluded file:{}".format(excluded_file))
     elif mode_file_or_dir == 'dir':
-        excluded_file = "excluded.json".format(list(informer.data)[0])
+        # excluded_file = "excluded.json".format(list(informer.data)[0])
         print("\n")
         cliutils.msg("Output dir is: '{}'".format(cliutils.output_dirname))
         report_file = os.path.join(cliutils.output_dirname, "report.txt")
-        excluded_file_path = os.path.join(cliutils.output_dirname, excluded_file)
+        # excluded_file_path = os.path.join(cliutils.output_dirname, excluded_file)
         if output_type == 'text':
             output_str = str(informer)
         else:
             output_str = json.dumps(informer.json_dict, indent=4, sort_keys=True)
-        print(output_str)
         # print(informer.json_dict)
         # print(informer.excluded_files)
         # print (">>>>>>>>{}".format(report_file))
@@ -221,6 +224,7 @@ def finish_outputs(mode_file_or_dir, informer, cliutils, stager, report, output_
     # if len(informer.excluded_files) > 0:
     #     cliutils.write_file(excluded_file_path, json.dumps(informer.excluded_files, sort_keys=True, indent=4))
 
+    print(output_str)
     cliutils.verbose("mode_file_or_dir={}".format(mode_file_or_dir), caller=caller)
     cliutils.verbose("excluded_files:\n{}".format(informer.excluded_files), caller=caller)
     return
