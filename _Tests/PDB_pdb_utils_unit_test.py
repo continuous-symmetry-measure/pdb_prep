@@ -1,4 +1,3 @@
-import os
 import unittest
 
 from Chemistry.PDB.pdb_obj import pdb

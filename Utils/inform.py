@@ -138,6 +138,7 @@ class inform():
         if len(ex) == 0:
             return s
         format_string_ex = "{:<100}\n"
+
         # s += format_string_ex.format("reason")
 
         def is_exluded(file):

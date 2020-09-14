@@ -62,7 +62,8 @@ class xray_inform(inform):
             file, pdbinfo = k, self.data[k]
             try:
                 if test_is_homomer and pdbinfo.is_homomer(cliutils.is_verbose):
-                    self.cliutils.verbose("{} is homomer as expected".format(file))
+                    self.cliutils.verbose("{} is homomer as expected".format(file),
+                                          caller=xray_inform.__name__ + '.' + self.filter_data.__name__)
                     pass
                 elif test_is_homomer and not pdbinfo.is_homomer():
                     raise ValueError("Expected homomer but got heteromer")
@@ -201,7 +202,8 @@ class nmr_inform(inform):
             file, pdbinfo = k, self.data[k]
             try:
                 if test_is_homomer and pdbinfo.is_homomer():
-                    self.cliutils.verbose("{} is homomer as expected".format(file))
+                    self.cliutils.verbose("{} is homomer as expected".format(file),
+                                          caller=nmr_inform.__name__ + '.' + self.filter_data.__name__)
                     pass
                 elif test_is_homomer and not pdbinfo.is_homomer():
                     # self.cliutils.error_msg("{} is not homomer".format(file))
@@ -229,15 +231,21 @@ class nmr_inform(inform):
                             #    and  ignore_rem350
                             msg = "File: '{}' - The given peptides structure does not create a biomolecule. ({})"
                             msg = msg.format(file, pdbinfo.bio_struct_msg)
-                            self.cliutils.error_msg(msg, type(self).__name__)
-                            self.excluded_files[file] = msg
-                            self.others_data[file] = pdbinfo
+                            self.cliutils.warn_msg(msg, type(self).__name__)
+                            self.nmr_data[file] = pdbinfo
                         elif is_file_mode and not ignore_rem350:
                             msg = "File: '{}' - The given peptides structure does not create a biomolecule. ({})"
                             msg = msg.format(file, pdbinfo.bio_struct_msg)
                             self.cliutils.warn_msg(msg, caller=type(self).__name__)
                             pdbinfo.warning_msg = msg
                             self.nmr_data[file] = pdbinfo
+                        elif is_file_mode and ignore_rem350:
+                            msg = "File: '{}' - one file and ignore 350 remark. bio_struct_msg: ({})"
+                            msg = msg.format(file, pdbinfo.bio_struct_msg)
+                            self.cliutils.warn_msg(msg, caller=type(self).__name__)
+                            pdbinfo.warning_msg = msg
+                            self.nmr_data[file] = pdbinfo
+
                 else:
                     self.others_data[file] = pdbinfo
             except Exception as e:

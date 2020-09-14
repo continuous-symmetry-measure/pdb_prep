@@ -1,6 +1,7 @@
 from distutils.core import setup
 
 import setuptools
+
 from version import __VERSION__
 
 setup(

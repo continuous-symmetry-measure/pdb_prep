@@ -36,21 +36,14 @@ def clean_tmp_data_file_mode(stager: stages, pdb_dir, short_file_name, informer,
         out_file_name = os.path.join(pdb_dir, tmp[0] + "-clean" + tmp[1])
 
         print("\nCleaned file is: '{}'".format(out_file_name))
-
         if os.path.isfile(last_stage_full_file_name):
             cliutils.copy_file(last_stage_full_file_name, out_file_name)
         else:
-            cliutils.error_msg("excluded_files:{}".format(informer.excluded_files),
-                               caller=clean_tmp_data_file_mode.__name__)
             cliutils.error_msg("File: '{}' is not valid. try verbose mode for more info.".format(short_file_name),
                                caller=clean_tmp_data_file_mode.__name__)
     if not cliutils.is_verbose and os.path.isdir(cliutils.output_dirname):
         cliutils.rmtree(cliutils.output_dirname)
     return
-
-
-def get_path(lst, cliutils):
-    return os.path.join(os.getcwd(), cliutils.output_dirname, *lst)
 
 
 def clean_tmp_data_dir_mode(stager: stages, pdb_dir, informer, cliutils):
@@ -59,66 +52,27 @@ def clean_tmp_data_dir_mode(stager: stages, pdb_dir, informer, cliutils):
         # cliutils.error_msg("excluded_files:\n{}".format(informer.excluded_files))
         cliutils.error_msg("All files are not reliable or was excluded", caller=clean_tmp_data_dir_mode.__name__)
         # exit(22)
-    elif not cliutils.is_verbose:
-        # 'C:\\tmp\\remark-350\\test\\output-xray-20200221-100638\\reliable_r_grades'
-        dir_path = get_path(["others"], cliutils)
-        if os.path.isdir(dir_path):
-            delete_tmp_dirs([dir_path], cliutils)
+    else:
+        if not cliutils.is_verbose:
+            # cliutils.is_verbose=True
+            cliutils.verbose("--------------------------------------------------")
+            # pattern=os.path.join(os.getcwd(),cliutils.output_dirname,stager.last_stage_dir, "*.pdb")
+            # print (pattern)
+            dir_path = os.path.join(os.getcwd(), cliutils.output_dirname, stager.last_stage_dir)
 
-        # cliutils.is_verbose = True
-        # dir_path = os.path.join(os.getcwd(), cliutils.output_dirname, "reliable_r_grades")
-        dir_path = get_path(["reliable_r_grades"], cliutils)
-        if os.path.isdir(dir_path):
-            dirs = [get_path([dir_path, dir_name], cliutils) for dir_name in os.listdir(dir_path)]
-            copy_chosen_files(dir_path, stager, cliutils)
-            delete_tmp_dirs(dirs, cliutils)
+            rule = re.compile(fnmatch.translate("*.pdb"), re.IGNORECASE)
+            files = [name for name in os.listdir(dir_path) if rule.match(name)]
 
-        dir_path = get_path(["reliable"], cliutils)
-        if os.path.isdir(dir_path):
-            dirs = [get_path([dir_path, dir_name], cliutils) for dir_name in os.listdir(dir_path)]
-            copy_chosen_files(dir_path, stager, cliutils)
-            delete_tmp_dirs(dirs, cliutils)
-
-        dir_path = get_path(["nmr"], cliutils)
-        if os.path.isdir(dir_path):
-            dirs = [get_path([dir_path, dir_name], cliutils) for dir_name in os.listdir(dir_path)]
-            copy_chosen_files(dir_path, stager, cliutils)
-            delete_tmp_dirs(dirs, cliutils)
-
+            cliutils.copyfiles_to_dir(stager.last_stage_dir, cliutils.output_dirname, files)
+            # for dir_path in stager.stages_dirs_list:
+            for directory, data, copy_or_clean in sorted(informer.output_data_config):
+                dir_path = os.path.join(os.getcwd(), cliutils.output_dirname, directory)
+                if os.path.isdir(dir_path):
+                    cliutils.rmtree(dir_path)
+    cliutils.verbose("--------------------------------------------------")
     cliutils.is_verbose = _is_verbose
 
-
-def copy_chosen_files(dir_path, stager, cliutils):
-    rule = re.compile(fnmatch.translate("*.pdb"), re.IGNORECASE)
-    has_pdbs = lambda d: len([name for name in os.listdir(d) if rule.match(name)]) > 0
-    #  heteromer
-    dir_name = " 04_missing_atoms_found_in_remarks"
-    curr_path = get_path([dir_path, dir_name], cliutils)
-    if not stager.is_homomer and has_pdbs(curr_path):
-        copy_from_tmp_dir(curr_path)
-
-    #  homomer
-    dir_name = "05_all_chains_has_same_number_of_atoms"
-    curr_path = get_path([dir_path, dir_name], cliutils)
-    if stager.is_homomer and has_pdbs(curr_path):
-        copy_from_tmp_dir(curr_path, dir_path, cliutils)
-
-
-def copy_from_tmp_dir(tmp_dir_path, dest_dir, cliutils):
-    rule = re.compile(fnmatch.translate("*.pdb"), re.IGNORECASE)
-    files = [get_path([tmp_dir_path, name], cliutils) for name in os.listdir(tmp_dir_path) if rule.match(name)]
-    cliutils.verbose("files:{}".format(files), caller=copy_from_tmp_dir.__name__)
-    cliutils.copyfiles_to_dir(tmp_dir_path, dest_dir, files)
-    # for dir_path in stager.stages_dirs_list:
-
-    cliutils.verbose("--------------------------------------------------")
     return
-
-
-def delete_tmp_dirs(dirs, cliutils):
-    for dir in dirs:
-        if os.path.isdir(dir):
-            cliutils.rmtree(dir)
 
 
 def validate_options(parse_rem350, bio_molecule_chains, ptype, cliutils):
@@ -138,13 +92,12 @@ def validate_options(parse_rem350, bio_molecule_chains, ptype, cliutils):
 
 
 def validate_input_dir_or_file(pdb_dir, pdb_file, cliutils):
-    caller = validate_input_dir_or_file.__name__
     if pdb_dir:
-        cliutils.verbose("{:>20}={}".format("--pdb-dir", pdb_dir), caller=caller)
+        cliutils.verbose("{:>20}={}".format("--pdb-dir", pdb_dir))
         if not os.path.isdir(pdb_dir):
             cliutils.exit(exit_code=1, sevirity="ERROR", msg="This is not PDB dir: '{}'".format(pdb_dir))
     if pdb_file:
-        cliutils.verbose("{:>20}={}".format("--pdb_file", pdb_file), caller=caller)
+        cliutils.verbose("{:>20}={}".format("--pdb_file", pdb_file))
         if not os.path.isfile(pdb_file):
             cliutils.exit(exit_code=1, sevirity="ERROR", msg="No such file: '{}'".format(pdb_file))
 
@@ -154,12 +107,11 @@ def validate_input_dir_or_file(pdb_dir, pdb_file, cliutils):
 
 
 def xray_validate_params(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, output_dir, verbose):
-    caller = xray_validate_params.__name__
     cliutils = cu(click, is_verbose=verbose)
     validate_input_dir_or_file(pdb_dir, pdb_file, cliutils)
-    cliutils.verbose("{:>20}={}".format("--max-resolution", max_resolution), caller=caller)
-    cliutils.verbose("{:>20}={}".format("--limit-r-free-grade", limit_r_free_grade), caller=caller)
-    cliutils.verbose("{:>20}={}".format("--output-dir", output_dir), caller=caller)
+    cliutils.verbose("{:>20}={}".format("--max-resolution", max_resolution))
+    cliutils.verbose("{:>20}={}".format("--limit-r-free-grade", limit_r_free_grade))
+    cliutils.verbose("{:>20}={}".format("--output-dir", output_dir))
 
     _output_dir = output_dir
     if output_dir == 'output.{time}':
@@ -185,23 +137,19 @@ def nmr_validate_params(pdb_dir, pdb_file, output_dir, verbose):
 
 
 def finish_outputs(mode_file_or_dir, informer, cliutils, stager, report, output_type="text"):
-    caller = finish_outputs.__name__
     str_informer = str(informer)
     if mode_file_or_dir == "file":
-        # excluded_file = "excluded-{}.json".format(list(informer.data)[0])
+        excluded_file = "excluded-{}.json".format(list(informer.data)[0])
         print(str_informer)
-        # excluded_file_path = os.path.join(excluded_file)
-        lst = list(informer.data)
-        lst.append('no-data')
-        report_file = "report-{}.{}".format(lst[0], output_type)
+        excluded_file_path = os.path.join(excluded_file)
+        report_file = "report-{}.{}".format(list(informer.data)[0], output_type)
         report_file = os.path.join(report_file)
         if output_type == 'text':
             output_str = str_informer
         else:
-            output_str = str(informer)
-            d = informer.json_dict
             output_str = json.dumps(informer.json_dict, indent=4, sort_keys=True)
         cliutils.write_file(report_file, output_str)
+        print("report file:{}".format(report_file))
         # print(output_str)
     #        if len(informer.excluded_files) > 0:
     #            excluded_file = "excluded-{}.json".format(list(informer.data)[0])
@@ -209,15 +157,16 @@ def finish_outputs(mode_file_or_dir, informer, cliutils, stager, report, output_
     #            cliutils.write_file(excluded_file, json.dumps(informer.excluded_files))
     #            print("excluded file:{}".format(excluded_file))
     elif mode_file_or_dir == 'dir':
-        # excluded_file = "excluded.json".format(list(informer.data)[0])
+        excluded_file = "excluded.json".format(list(informer.data)[0])
         print("\n")
         cliutils.msg("Output dir is: '{}'".format(cliutils.output_dirname))
         report_file = os.path.join(cliutils.output_dirname, "report.txt")
-        # excluded_file_path = os.path.join(cliutils.output_dirname, excluded_file)
+        excluded_file_path = os.path.join(cliutils.output_dirname, excluded_file)
         if output_type == 'text':
             output_str = str(informer)
         else:
             output_str = json.dumps(informer.json_dict, indent=4, sort_keys=True)
+        print(output_str)
         # print(informer.json_dict)
         # print(informer.excluded_files)
         # print (">>>>>>>>{}".format(report_file))
@@ -226,7 +175,6 @@ def finish_outputs(mode_file_or_dir, informer, cliutils, stager, report, output_
     # if len(informer.excluded_files) > 0:
     #     cliutils.write_file(excluded_file_path, json.dumps(informer.excluded_files, sort_keys=True, indent=4))
 
-    print(output_str)
-    cliutils.verbose("mode_file_or_dir={}".format(mode_file_or_dir), caller=caller)
-    cliutils.verbose("excluded_files:\n{}".format(informer.excluded_files), caller=caller)
+    cliutils.verbose("mode_file_or_dir={}".format(mode_file_or_dir))
+    cliutils.verbose("excluded_files:\n{}".format(informer.excluded_files))
     return
