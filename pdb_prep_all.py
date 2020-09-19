@@ -71,10 +71,17 @@ def pdb_prep_all(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hyd
                     "File: '{}' - Experimental method {} is not supported".format(curr_pdb_file, exp_method))
         pdb_file = None
         if output_dir == 'output.{time}': output_dir = 'output'
-        func_xray(xray_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype,
-                  parse_rem350, bio_molecule_chains, output_dir + "-xray", output_text, verbose)
-        func_nmr(nmr_dir, pdb_file, with_hydrogens, ptype,
-                 parse_rem350, bio_molecule_chains, output_dir + "-nmr", output_text, verbose)
+        try:
+            func_xray(xray_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrogens, ptype,
+                      parse_rem350, bio_molecule_chains, output_dir + "-xray", output_text, verbose)
+            func_nmr(nmr_dir, pdb_file, with_hydrogens, ptype,
+                     parse_rem350, bio_molecule_chains, output_dir + "-nmr", output_text, verbose)
+        except Exception as e:
+            cliutils.rmtree(nmr_dir)
+            cliutils.rmtree(xray_dir)
+            cliutils.error_msg("Unexpected error: {}".format(e))
+            raise e
+
         cliutils.rmtree(nmr_dir)
         cliutils.rmtree(xray_dir)
 
