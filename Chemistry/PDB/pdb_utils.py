@@ -571,9 +571,11 @@ class pdb_info():
             return self._is_nmr
         _pdb = self._pdb
         strp_ends = lambda s, e: s.strip().endswith(e)
-        extdta_nmr = lambda s: strp_ends(s, 'NMR')
+        # expdta_nmr = lambda s: 'SOLUTION NMR' in s -- ask inbal if this is the correct way
+        expdta_nmr = lambda s: strp_ends(s, 'NMR') or 'NMR;' in s
         remark_2_nmr = lambda s: strp_ends(s, 'RESOLUTION. NOT APPLICABLE')
-        if len(list(filter(extdta_nmr, _pdb.extdta))) > 0:
+        pdb_expdta = _pdb.expdta
+        if len(list(filter(expdta_nmr, pdb_expdta))) > 0:
             return True
         # REMARK   2 RESOLUTION. NOT APPLICABLE
         elif 2 in _pdb.remarks and len(list(filter(remark_2_nmr, _pdb.remarks[2]))) > 0:

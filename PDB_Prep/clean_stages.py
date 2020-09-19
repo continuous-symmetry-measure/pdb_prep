@@ -107,7 +107,7 @@ class stages():
                 if not with_hydrogens:
                     _pdb = h_siever.sieve(_pdb)
                 _pdb.include_remarks_in__str__ = True
-                _pdb.include_extdta_in__str__ = True
+                _pdb.include_expdta_in__str__ = True
                 _pdb.include_seqres_in__str__ = True
                 files_to_write[full_path] = str(_pdb)
                 # cliutils.write_a_file(full_path, str(_pdb))
@@ -175,7 +175,7 @@ class stages():
 
                 _pdb = info._pdb
                 _pdb.include_remarks_in__str__ = True
-                _pdb.include_extdta_in__str__ = True
+                _pdb.include_expdta_in__str__ = True
                 _pdb.include_seqres_in__str__ = True
                 missing_residues_per_chain_id = self.get_02_missing_resseqs_per_chain_id(info)
                 s = str(_pdb)
@@ -186,9 +186,9 @@ class stages():
                 report += _pdb_info.info_report()
                 self.report[_caller] = _pdb_info.info_report()
 
-                s = str(_pdb)
+                # s = str(_pdb)
                 _pdb.include_remarks_in__str__ = True
-                _pdb.include_extdta_in__str__ = True
+                _pdb.include_expdta_in__str__ = True
                 _pdb.include_seqres_in__str__ = True
                 files_to_write[full_path] = str(_pdb)
                 _data[file_name] = _pdb_info
@@ -265,13 +265,13 @@ class stages():
 
                 _pdb = info._pdb
                 _pdb.include_remarks_in__str__ = True
-                _pdb.include_extdta_in__str__ = True
+                _pdb.include_expdta_in__str__ = True
                 _pdb.include_seqres_in__str__ = True
 
                 missing_atoms_per_chain_id = self.get_04_missing_atoms_per_chain_id(info)
                 if len(missing_atoms_per_chain_id) == 0:
                     _pdb.include_remarks_in__str__ = True
-                    _pdb.include_extdta_in__str__ = True
+                    _pdb.include_expdta_in__str__ = True
                     _pdb.include_seqres_in__str__ = True
                     files_to_write[full_path] = str(_pdb)
                     # cliutils.write_file(full_path, str(_pdb))
@@ -299,7 +299,7 @@ class stages():
                 self.report[_caller] = _pdb_info.info_report()
 
                 _pdb.include_remarks_in__str__ = True
-                _pdb.include_extdta_in__str__ = True
+                _pdb.include_expdta_in__str__ = True
                 _pdb.include_seqres_in__str__ = True
                 files_to_write[full_path] = str(_pdb)
                 _data[file_name] = _pdb_info
@@ -348,7 +348,7 @@ class stages():
 
                 _pdb = info._pdb
                 _pdb.include_remarks_in__str__ = True
-                _pdb.include_extdta_in__str__ = True
+                _pdb.include_expdta_in__str__ = True
                 _pdb.include_seqres_in__str__ = True
                 is_ok = True
                 for mi, model in enumerate(_pdb):
@@ -372,7 +372,7 @@ class stages():
                         break
                 if is_ok:
                     _pdb.include_remarks_in__str__ = True
-                    _pdb.include_extdta_in__str__ = True
+                    _pdb.include_expdta_in__str__ = True
                     _pdb.include_seqres_in__str__ = True
                     files_to_write[full_path] = str(_pdb)
                     # cliutils.write_file(full_path, str(_pdb))

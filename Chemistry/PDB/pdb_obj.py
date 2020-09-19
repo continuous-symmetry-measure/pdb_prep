@@ -132,29 +132,29 @@ class pdb(list):
             (model_number, pdb_model_lines) = parser.get_next_model_lines()
         # TODO prepare connects lines
         caveat_lines = parser.get_caveats_lines()
-        extdta_lines = parser.get_expdta_lines()
+        expdta_lines = parser.get_expdta_lines()
         seqreq_lines = parser.get_seqres_lines()
         if len(models) == 1:
             # we will not wrap MODEL 1 ... ENMMDL lines if the orig input  did not have them
             models[0].wrap_with_header_and_footer = parser.wrap_with_header_and_footer
-        return cls(models, remarks=remarks, caveats=caveat_lines, extdta=extdta_lines, seqres=seqreq_lines,
+        return cls(models, remarks=remarks, caveats=caveat_lines, expdta=expdta_lines, seqres=seqreq_lines,
                    include_hetatm=include_hetatm)
 
-    def __init__(self, pdb_models, remarks=None, caveats=None, extdta=None, seqres=None, **kwargs):
+    def __init__(self, pdb_models, remarks=None, caveats=None, expdta=None, seqres=None, **kwargs):
         super().__init__()
         if remarks is None:
             remarks = {}
         if caveats is None:
             caveats = {}
-        if extdta is None:
-            extdta = []
+        if expdta is None:
+            expdta = []
         self[0:len(pdb_models)] = list(pdb_models)
         self.remarks = remarks
         self.caveats = caveats
-        self.extdta = extdta
+        self.expdta = expdta
         self.seqres = seqres
         self.file_name = None
-        self.include_extdta_in__str__ = False
+        self.include_expdta_in__str__ = False
         self.include_remarks_in__str__ = False
         self.include_seqres_in__str__ = False
 
@@ -184,8 +184,8 @@ class pdb(list):
     def __str__(self):
         s = ""
         chomp = lambda s: s.rstrip('\n')
-        if self.include_extdta_in__str__:
-            s += "\n".join(map(chomp, self.extdta))
+        if self.include_expdta_in__str__:
+            s += "\n".join(map(chomp, self.expdta))
             s += "\n"
         if self.include_remarks_in__str__:
             s += str(self.remarks)
