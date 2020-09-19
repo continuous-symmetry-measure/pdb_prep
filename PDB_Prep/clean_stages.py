@@ -138,7 +138,7 @@ class stages():
                 chain_id = data["chain_id"]
                 resseq = data["resseq"]
                 missing_residues_per_chain_id.setdefault(chain_id, []).append(resseq)
-            self.cliutils.verbose("OK - parse remark 465 {}".format(data), caller=caller)
+            self.cliutils.verbose("OK - parse remark 465 {}".format(missing_residues_per_chain_id), caller=caller)
         except Exception as e:
             self.cliutils.verbose("could not parse remark 465: {}".format(e), caller=caller)
             pass
@@ -224,7 +224,7 @@ class stages():
                 # data = { "resname": resname,"chain_id": chian_id,"resseq": resseq, "atom_names": [atom_name,atom_name...]}
                 chain_id = data["chain_id"]
                 missing_atoms_per_chain_id.setdefault(chain_id, []).append(data)
-            self.cliutils.verbose("OK - parse remark 465 {}".format(data), caller=caller)
+            self.cliutils.verbose("OK - parse remark 465 {}".format(missing_atoms_per_chain_id), caller=caller)
         except Exception as e:
             self.cliutils.verbose("could not parse remark 470 {}".format(e), caller=caller)
             pass

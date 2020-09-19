@@ -494,7 +494,7 @@ class pdb_info():
         _pdb = self._pdb
         remarak_465 = _pdb.remarks[465]
         for i, line in enumerate(remarak_465):
-            if line == 'M RES C SSSEQI':
+            if 'RES C SSSEQI' in line:
                 i = i + 1
                 break
         for line in remarak_465[i:]:
@@ -505,6 +505,7 @@ class pdb_info():
                     "chain_id": chian_id.strip(),
                     "resseq": resseq.strip(),
                 })
+        return
 
     def parse_remark_470(self):
         """
