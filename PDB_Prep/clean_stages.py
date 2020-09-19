@@ -130,6 +130,7 @@ class stages():
         return _dest_path, data, report
 
     def get_02_missing_resseqs_per_chain_id(self, info):
+        caller = self.get_02_missing_resseqs_per_chain_id.__name__
         missing_residues_per_chain_id = {}
         try:
             info.parse_remark_465()
@@ -137,7 +138,9 @@ class stages():
                 chain_id = data["chain_id"]
                 resseq = data["resseq"]
                 missing_residues_per_chain_id.setdefault(chain_id, []).append(resseq)
+            self.cliutils.verbose("OK - parse remark 465 {}".format(data), caller=caller)
         except Exception as e:
+            self.cliutils.verbose("could not parse remark 465: {}".format(e), caller=caller)
             pass
 
         return missing_residues_per_chain_id
@@ -213,6 +216,7 @@ class stages():
         return _dest_path, _data
 
     def get_04_missing_atoms_per_chain_id(self, info):
+        caller = self.get_04_missing_atoms_per_chain_id.__name__
         missing_atoms_per_chain_id = {}
         try:
             info.parse_remark_470()
@@ -220,7 +224,9 @@ class stages():
                 # data = { "resname": resname,"chain_id": chian_id,"resseq": resseq, "atom_names": [atom_name,atom_name...]}
                 chain_id = data["chain_id"]
                 missing_atoms_per_chain_id.setdefault(chain_id, []).append(data)
+            self.cliutils.verbose("OK - parse remark 465 {}".format(data), caller=caller)
         except Exception as e:
+            self.cliutils.verbose("could not parse remark 470 {}".format(e), caller=caller)
             pass
         return missing_atoms_per_chain_id
 
