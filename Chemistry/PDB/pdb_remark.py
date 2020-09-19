@@ -48,7 +48,10 @@ class pdb_remark(list):
         return cls(remark_number[0], remark_texts)
 
     def __init__(self, remark_number, remark_texts):
-        self.remark_number = remark_number
+        _remark_number = remark_number
+        if remark_number is None or remark_number == '':
+            _remark_number = 0
+        self.remark_number = _remark_number
         self.extend(remark_texts)
 
     def __str__(self):
@@ -90,7 +93,10 @@ class pdb_remarks_dict(dict):
             is_remark_n = lambda r: is_r_number_eq_n(r, n)
             remark_lines = list(filter(is_remark_n, pdb_lines))
             remark = pdb_remark.from_lines(remark_lines)
-            remarks_dict[int(remark.remark_number)] = remark
+            _remark_number = remark.remark_number
+            if _remark_number is None or _remark_number == '':
+                _remark_number = 0
+            remarks_dict[int(_remark_number)] = remark
             remarks_order.append(int(remark.remark_number))
         return cls(remarks_dict, remarks_order)
 
