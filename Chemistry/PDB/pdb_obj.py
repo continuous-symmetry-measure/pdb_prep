@@ -215,6 +215,13 @@ class pdb(list):
                 chain_dict[c].extend(x)
         return chain_dict
 
+    def get_expdta_str(self):
+        text = self.expdta[0].strip()
+        prefix = 'EXPDTA'
+        if text.startswith(prefix):
+            text = text[len(prefix):].strip()
+        return text
+
 
 """
 

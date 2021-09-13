@@ -142,12 +142,12 @@ class xray_inform(inform):
 class nmr_inform(inform):
     def __init__(self, cliutils, is_verbose=True, include_hetatm=False, ignore_remarks=[], bio_molecule_chains=None):
         super().__init__(cliutils, is_verbose, include_hetatm, ignore_remarks, bio_molecule_chains)
-        self.exprimental_method = "NMR"
+        self.experimental_method = "NMR"
 
     def __str__(self):
         s = "pdb_prep Version: {}\n".format(__VERSION__)
         s += "\nnmr:\n"
-        s += self._str_data(self.nmr_data, "Reliable_data")
+        s += self._str_data(self.method_data, "Reliable_data")
         return s
 
     def _str_data(self, data, data_name="Reliable_data"):
@@ -164,7 +164,10 @@ class nmr_inform(inform):
                 # 0     1
                 s += format_string.format(file, bios)
                 self.json_dict[data_name][file] = {"Forms_a_biomolecule": bios,
-                                                   "Exprimental_method": self.exprimental_method}
+                                                   "Experimental_method": info._pdb.get_expdta_str(),
+                                                   "Resolution": info.Resolution,
+                                                   }
+
                 if info.warning_msg:
                     self.json_dict[data_name][file]["Warning"] = info.warning_msg
 
@@ -187,14 +190,50 @@ class nmr_inform(inform):
 
         return s
 
+    def filter_data_one_file(self, file, pdbinfo):
+        if pdbinfo.bio_struct_identical_to_the_asymmetric_unit:
+            self.method_data[file] = pdbinfo
+        else:
+            ignore_rem350 = 350 in self.ignore_remarks
+            is_file_mode = self.one_file_mode
+            is_dir_mode = not self.one_file_mode
+            if is_dir_mode and not ignore_rem350:
+                msg = "File: '{}' - The given peptides structure does not create a biomolecule. ({})"
+                msg = msg.format(file, pdbinfo.bio_struct_msg)
+                self.cliutils.error_msg(msg, type(self).__name__)
+                self.excluded_files[file] = msg
+                self.others_data[file] = pdbinfo
+                return file, pdbinfo, "continue"
+            elif is_dir_mode and ignore_rem350:
+                # if bio_struct_identical_to_the_asymmetric_unit=False
+                #    and  this is_dir_mode
+                #    and  ignore_rem350
+                msg = "File: '{}' - The given peptides structure does not create a biomolecule. ({})"
+                msg = msg.format(file, pdbinfo.bio_struct_msg)
+                self.cliutils.warn_msg(msg, type(self).__name__)
+                self.method_data[file] = pdbinfo
+            elif is_file_mode and not ignore_rem350:
+                msg = "File: '{}' - The given peptides structure does not create a biomolecule. ({})"
+                msg = msg.format(file, pdbinfo.bio_struct_msg)
+                self.cliutils.warn_msg(msg, caller=type(self).__name__)
+                pdbinfo.warning_msg = msg
+                self.method_data[file] = pdbinfo
+            elif is_file_mode and ignore_rem350:
+                msg = "File: '{}' - one file and ignore 350 remark. bio_struct_msg: ({})"
+                msg = msg.format(file, pdbinfo.bio_struct_msg)
+                self.cliutils.warn_msg(msg, caller=type(self).__name__)
+                pdbinfo.warning_msg = msg
+                self.method_data[file] = pdbinfo
+        return file, pdbinfo
+
     def filter_data(self, click=None, test_is_homomer=False):
         """
          for each file:
             if (is_nmr ) then                     file is nmr
         """
-        self.nmr_data, self.others_data = {}, {}
+        self.method_data, self.others_data = {}, {}
         self.output_data_config = [
-            ("nmr", self.nmr_data, "clean"),
+            ("nmr", self.method_data, "clean"),
             ("others", self.others_data, "copy"),
         ]
 
@@ -208,46 +247,52 @@ class nmr_inform(inform):
                 elif test_is_homomer and not pdbinfo.is_homomer():
                     # self.cliutils.error_msg("{} is not homomer".format(file))
                     raise ValueError("Expected homomer but got heteromer")
-                # cliutils.write_a_file(full_path, str(_pdb))
 
                 if pdbinfo.is_nmr():
                     self.verbose("'{}' - NMR")
-                    if pdbinfo.bio_struct_identical_to_the_asymmetric_unit:
-                        self.nmr_data[file] = pdbinfo
-                    else:
-                        ignore_rem350 = 350 in self.ignore_remarks
-                        is_file_mode = self.one_file_mode
-                        is_dir_mode = not self.one_file_mode
-                        if is_dir_mode and not ignore_rem350:
-                            msg = "File: '{}' - The given peptides structure does not create a biomolecule. ({})"
-                            msg = msg.format(file, pdbinfo.bio_struct_msg)
-                            self.cliutils.error_msg(msg, type(self).__name__)
-                            self.excluded_files[file] = msg
-                            self.others_data[file] = pdbinfo
-                            continue
-                        elif is_dir_mode and ignore_rem350:
-                            # if bio_struct_identical_to_the_asymmetric_unit=False
-                            #    and  this is_dir_mode
-                            #    and  ignore_rem350
-                            msg = "File: '{}' - The given peptides structure does not create a biomolecule. ({})"
-                            msg = msg.format(file, pdbinfo.bio_struct_msg)
-                            self.cliutils.warn_msg(msg, type(self).__name__)
-                            self.nmr_data[file] = pdbinfo
-                        elif is_file_mode and not ignore_rem350:
-                            msg = "File: '{}' - The given peptides structure does not create a biomolecule. ({})"
-                            msg = msg.format(file, pdbinfo.bio_struct_msg)
-                            self.cliutils.warn_msg(msg, caller=type(self).__name__)
-                            pdbinfo.warning_msg = msg
-                            self.nmr_data[file] = pdbinfo
-                        elif is_file_mode and ignore_rem350:
-                            msg = "File: '{}' - one file and ignore 350 remark. bio_struct_msg: ({})"
-                            msg = msg.format(file, pdbinfo.bio_struct_msg)
-                            self.cliutils.warn_msg(msg, caller=type(self).__name__)
-                            pdbinfo.warning_msg = msg
-                            self.nmr_data[file] = pdbinfo
+                    file, pdbinfo = self.filter_data_one_file(file, pdbinfo)
 
                 else:
+                    self.cliutils.warn_msg("file '{}' is not NMR file".format(file), type(self).__name__)
                     self.others_data[file] = pdbinfo
+            except Exception as e:
+                msg = "File: '{}' - {}".format(file, e)
+                self.cliutils.error_msg(msg, type(self).__name__)
+                self.excluded_files[file] = msg
+                self.others_data[file] = pdbinfo
+
+
+class other_methods_inform(nmr_inform):
+    def __str__(self):
+        s = "pdb_prep Version: {}\n".format(__VERSION__)
+        s += "\nother_methods:\n"
+        s += self._str_data(self.method_data, "Reliable_data")
+        return s
+
+    def filter_data(self, click=None, test_is_homomer=False):
+        """
+         for each file:
+            if (is_nmr ) then                     file is nmr
+        """
+        self.method_data, self.others_data = {}, {}
+        self.output_data_config = [
+            ("other_methods", self.method_data, "clean"),
+            ("others", self.others_data, "copy"),
+        ]
+
+        for fi, k in enumerate(self.data):
+            file, pdbinfo = k, self.data[k]
+            try:
+                if test_is_homomer and pdbinfo.is_homomer():
+                    self.cliutils.verbose("{} is homomer as expected".format(file),
+                                          caller=nmr_inform.__name__ + '.' + self.filter_data.__name__)
+                    pass
+                elif test_is_homomer and not pdbinfo.is_homomer():
+                    # self.cliutils.error_msg("{} is not homomer".format(file))
+                    raise ValueError("Expected homomer but got heteromer")
+
+                self.verbose("'{}' - OTHER METHODS - not NMR nor XRAY")
+                file, pdbinfo = self.filter_data_one_file(file, pdbinfo)
             except Exception as e:
                 msg = "File: '{}' - {}".format(file, e)
                 self.cliutils.error_msg(msg, type(self).__name__)

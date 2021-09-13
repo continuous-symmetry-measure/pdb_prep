@@ -5,7 +5,7 @@ import click
 from PDB_Prep.pdb_prep_functions import validate_input_dir_or_file
 from Utils.cli_utils import cli_utils as cu
 from Utils.inform import inform
-from pdb_prep import func_xray, func_nmr, get_experimental_method
+from pdb_prep import func_xray, func_nmr, func_others_methods, get_experimental_method
 
 
 @click.command()
@@ -48,11 +48,19 @@ def pdb_prep_all(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hyd
             func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, bio_molecule_chains,
                      output_dir, output_text, verbose)
         else:
-            cliutils.error_msg("File: '{}' - Experimental method {} is not supported".format(pdb_file, exp_method))
+            cliutils.warn_msg(
+                "File: '{}' - Experimental method {} is not fully supported - I will try to process it.".format(
+                    pdb_file, exp_method))
+            func_others_methods(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, bio_molecule_chains,
+                                output_dir, output_text, verbose)
+
     elif pdb_dir:
-        nmr_dir, xray_dir = os.path.join(pdb_dir, ".nmr.tmp"), os.path.join(pdb_dir, ".xray.tmp")
+        nmr_dir = os.path.join(pdb_dir, ".nmr.tmp")
+        xray_dir = os.path.join(pdb_dir, ".xray.tmp")
+        other_methods_dir = os.path.join(pdb_dir, ".other_methods.tmp")
         cliutils.mkdir(nmr_dir)
         cliutils.mkdir(xray_dir)
+        cliutils.mkdir(other_methods_dir)
         informer = inform(cliutils, verbose)
 
         files = informer.get_files_list(pdb_dir)
@@ -67,8 +75,11 @@ def pdb_prep_all(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hyd
                 cliutils.copy_file(curr_pdb_file, nmr_dir)
             else:
                 # print(">>>>>>>>>>{}-{}".format(curr_pdb_file, get_experimental_method(curr_pdb_file)))
-                cliutils.error_msg(
-                    "File: '{}' - Experimental method {} is not supported".format(curr_pdb_file, exp_method))
+                cliutils.warn_msg(
+                    "File: '{}' - Experimental method {} is not fully supported - I will try to process it.".format(
+                        curr_pdb_file, exp_method))
+                cliutils.copy_file(curr_pdb_file, other_methods_dir)
+
         pdb_file = None
         if output_dir == 'output.{time}': output_dir = 'output'
         try:
@@ -76,14 +87,19 @@ def pdb_prep_all(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hyd
                       parse_rem350, bio_molecule_chains, output_dir + "-xray", output_text, verbose)
             func_nmr(nmr_dir, pdb_file, with_hydrogens, ptype,
                      parse_rem350, bio_molecule_chains, output_dir + "-nmr", output_text, verbose)
+            func_others_methods(other_methods_dir, pdb_file, with_hydrogens, ptype,
+                                parse_rem350, bio_molecule_chains, output_dir + "-other_methods", output_text, verbose)
+
         except Exception as e:
             cliutils.rmtree(nmr_dir)
             cliutils.rmtree(xray_dir)
+            cliutils.rmtree(other_methods_dir)
             cliutils.error_msg("Unexpected error: {}".format(e))
             raise e
 
         cliutils.rmtree(nmr_dir)
         cliutils.rmtree(xray_dir)
+        cliutils.rmtree(other_methods_dir)
 
 
 if __name__ == '__main__':

@@ -85,6 +85,12 @@ def clean_tmp_data_dir_mode(stager: stages, pdb_dir, informer, cliutils):
             copy_chosen_files(dir_path, stager, cliutils)
             delete_tmp_dirs(dirs, cliutils)
 
+        dir_path = get_path(["other_methods"], cliutils)
+        if os.path.isdir(dir_path):
+            dirs = [get_path([dir_path, dir_name], cliutils) for dir_name in os.listdir(dir_path)]
+            copy_chosen_files(dir_path, stager, cliutils)
+            delete_tmp_dirs(dirs, cliutils)
+
     cliutils.is_verbose = _is_verbose
 
 
@@ -172,6 +178,10 @@ def xray_validate_params(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, 
 
 
 def nmr_validate_params(pdb_dir, pdb_file, output_dir, verbose):
+    return other_methods_validate_params(pdb_dir, pdb_file, output_dir, verbose)
+
+
+def other_methods_validate_params(pdb_dir, pdb_file, output_dir, verbose):
     cliutils = cu(click, is_verbose=verbose)
     validate_input_dir_or_file(pdb_dir, pdb_file, cliutils)
 

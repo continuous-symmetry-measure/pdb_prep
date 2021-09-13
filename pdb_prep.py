@@ -6,9 +6,9 @@ import click
 from Chemistry.PDB.pdb_utils import *
 from PDB_Prep.clean_stages import stages
 from PDB_Prep.pdb_prep_functions import copy_data_into_dir, clean_tmp_data_dir_mode, clean_tmp_data_file_mode, \
-    finish_outputs, validate_options
+    finish_outputs, validate_options, other_methods_validate_params
 from PDB_Prep.pdb_prep_functions import xray_validate_params, nmr_validate_params
-from PDB_Prep.pdb_prep_inform import xray_inform, nmr_inform
+from PDB_Prep.pdb_prep_inform import xray_inform, nmr_inform, other_methods_inform
 from Utils.cli_utils import cli_utils as cu
 from version import __VERSION__
 
@@ -69,7 +69,6 @@ def nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, bio_molecule_cha
 def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, bio_molecule_chains, output_dir,
              output_text, verbose):
     caller = func_nmr.__name__
-    report = ""
     is_homomer = True
     if ptype is None and bio_molecule_chains == 1:
         ptype = 'monomer'
@@ -84,8 +83,20 @@ def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, bio_molecul
     if not validate_options(parse_rem350, bio_molecule_chains, ptype, cliutils):
         return -1
 
+    cliutils.verbose("options are valid", caller=caller)
     informer = nmr_inform(cliutils, is_verbose=verbose, include_hetatm=True, ignore_remarks=ignore_remarks,
                           bio_molecule_chains=bio_molecule_chains)
+
+    return func_process_non_xray(pdb_dir, pdb_file, with_hydrogens, bio_molecule_chains, output_text, is_homomer,
+                                 ignore_remarks,
+                                 informer, cliutils, verbose)
+
+
+def func_process_non_xray(pdb_dir, pdb_file, with_hydrogens, bio_molecule_chains, output_text, is_homomer,
+                          ignore_remarks, informer, cliutils, verbose):
+    caller = func_nmr.__name__
+    report = ""
+    cliutils.verbose("Start", caller=caller)
     mode_file_or_dir = None
     short_file_name = None
     if pdb_file:
@@ -280,6 +291,31 @@ def func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrog
         output_type = "json"
     finish_outputs(mode_file_or_dir, informer, cliutils, stager, report, output_type)
     return 0
+
+
+def func_others_methods(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, bio_molecule_chains, output_dir,
+                        output_text, verbose):
+    caller = func_nmr.__name__
+    is_homomer = True
+    if ptype is None and bio_molecule_chains == 1:
+        ptype = 'monomer'
+        cu(click).msg("The option '--ptype' was set to monomer since you set '--bio-molecule-chains' to 1")
+
+    if ptype == 'heteromer':
+        is_homomer = False
+    ignore_remarks = []
+    if not parse_rem350:
+        ignore_remarks.append(350)
+    cliutils = other_methods_validate_params(pdb_dir=pdb_dir, pdb_file=pdb_file, output_dir=output_dir, verbose=verbose)
+    if not validate_options(parse_rem350, bio_molecule_chains, ptype, cliutils):
+        return -1
+
+    cliutils.verbose("options are valid", caller=caller)
+    informer = other_methods_inform(cliutils, is_verbose=verbose, include_hetatm=True, ignore_remarks=ignore_remarks,
+                                    bio_molecule_chains=bio_molecule_chains)
+
+    return func_process_non_xray(pdb_dir, pdb_file, with_hydrogens, bio_molecule_chains, output_text, is_homomer,
+                                 ignore_remarks, informer, cliutils, verbose)
 
 
 if __name__ == '__main__':

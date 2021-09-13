@@ -55,7 +55,7 @@ class inform():
         self.include_hetatm = include_hetatm
         self.ignore_remarks = ignore_remarks
         self.bio_molecule_chains = bio_molecule_chains
-        self.exprimental_method = None
+        self.experimental_method = None
         self.one_file_mode = False
         self.errors = {}
         self.excluded_files = {}
@@ -120,8 +120,8 @@ class inform():
                 if info.warning_msg:
                     self.json_dict[data_name][file]["Warning"] = info.warning_msg
 
-                if self.exprimental_method:
-                    self.json_dict[data_name][file]["Exprimental method"] = self.exprimental_method
+                if self.experimental_method:
+                    self.json_dict[data_name][file]["Experimental_method"] = info._pdb.get_expdta_str()
 
             except Exception as e:
                 s += "{} - Exception{}\n".format(file, e)
