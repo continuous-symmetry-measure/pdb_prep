@@ -116,7 +116,7 @@ class inform():
                     self.json_dict[data_name][file]["Warning"] = info.warning_msg
 
                 if self.exprimental_method:
-                    self.json_dict[data_name][file]["Exprimental method"] = self.exprimental_method
+                    self.json_dict[data_name][file]["Experimental_method"] = self.exprimental_method
 
             except Exception as e:
                 s += "{} - Exception{}\n".format(file, e)
