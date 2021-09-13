@@ -175,7 +175,7 @@ The code fails to process PDB files for which the residue sequence numbers of th
 
 
 # Project Owners 
-* Dr. Inbal Tuvi-Arad (https://www.openu.ac.il/en/personalsites/InbalTuviArad.aspx)
-* Sagiv Barhoom (https://github.com/sagivba)
+* [Prof. Inbal Tuvi-Arad](https://www.openu.ac.il/en/personalsites/InbalTuviArad.aspx)
+* [Sagiv Barhoom](https://github.com/sagivba)
 
 
