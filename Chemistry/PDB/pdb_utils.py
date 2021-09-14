@@ -535,13 +535,14 @@ class pdb_info():
                 i = i + 1
                 break
         for line in remarak_470[i:]:
-            tmp = line.split()
-            resname, chian_id, resseq = tmp[0:3]
-            atom_names = tmp[3:]
+            resname = line[0:3]
+            chain_id = line[3:5].strip()
+            resseq = line[5:9].strip()
+            atom_names = line[9:].split()
             self.missing_atoms.append(
                 {
                     "resname": resname.strip(),
-                    "chain_id": chian_id.strip(),
+                    "chain_id": chain_id.strip(),
                     "resseq": resseq.strip(),
                     "atom_names": atom_names
                 })

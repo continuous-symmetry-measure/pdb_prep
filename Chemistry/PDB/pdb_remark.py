@@ -64,7 +64,7 @@ class pdb_remark(list):
 
 class pdb_remarks_dict(dict):
     """
-    pdb_remarks_dict is a dict of pdb_remarks - the keys wre the remark_number
+    pdb_remarks_dict is a dict of pdb_remarks - the keys are the remark_number
     """
 
     @classmethod
