@@ -119,7 +119,10 @@ class inform():
                     self.json_dict[data_name][file]["Experimental_method"] = self.exprimental_method
 
             except Exception as e:
-                s += "{} - Exception{}\n".format(file, e)
+
+                msg = "{} - Exception{}\n".format(file, e)
+                s += msg
+                self.cliutils.error_msg(msg)
                 self.json_dict[data_name][file] = None
         return s
 

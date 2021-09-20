@@ -57,7 +57,7 @@ def clean_tmp_data_dir_mode(stager: stages, pdb_dir, informer, cliutils):
     _is_verbose = cliutils.is_verbose
     if stager.last_stage_dir is None:
         # cliutils.error_msg("excluded_files:\n{}".format(informer.excluded_files))
-        cliutils.error_msg("All files are not reliable or was excluded", caller=clean_tmp_data_dir_mode.__name__)
+        cliutils.error_msg("All files are not reliable or were excluded", caller=clean_tmp_data_dir_mode.__name__)
         # exit(22)
     elif not cliutils.is_verbose:
         # 'C:\\tmp\\remark-350\\test\\output-xray-20200221-100638\\reliable_r_grades'

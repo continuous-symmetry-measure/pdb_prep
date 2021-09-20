@@ -124,7 +124,9 @@ class inform():
                     self.json_dict[data_name][file]["Experimental_method"] = info._pdb.get_expdta_str()
 
             except Exception as e:
-                s += "{} - Exception{}\n".format(file, e)
+                msg = "{} - Exception{}\n".format(file, e)
+                s += msg
+                self.cliutils.warn_msg(msg)
                 self.json_dict[data_name][file] = None
 
         return s

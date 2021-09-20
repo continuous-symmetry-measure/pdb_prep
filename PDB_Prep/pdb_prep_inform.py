@@ -250,7 +250,8 @@ class nmr_inform(inform):
 
                 if pdbinfo.is_nmr():
                     self.verbose("'{}' - NMR")
-                    file, pdbinfo = self.filter_data_one_file(file, pdbinfo)
+                    file, pdbinfo, is_continue = self.filter_data_one_file(file, pdbinfo)
+                    if is_continue == "continue": continue
 
                 else:
                     self.cliutils.warn_msg("file '{}' is not NMR file".format(file), type(self).__name__)
@@ -292,7 +293,8 @@ class other_methods_inform(nmr_inform):
                     raise ValueError("Expected homomer but got heteromer")
 
                 self.verbose("'{}' - OTHER METHODS - not NMR nor XRAY")
-                file, pdbinfo = self.filter_data_one_file(file, pdbinfo)
+                file, pdbinfo, is_continue = self.filter_data_one_file(file, pdbinfo)
+                if is_continue == "continue": continue
             except Exception as e:
                 msg = "File: '{}' - {}".format(file, e)
                 self.cliutils.error_msg(msg, type(self).__name__)
