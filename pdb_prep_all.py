@@ -55,6 +55,7 @@ def pdb_prep_all(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hyd
                                 output_dir, output_text, verbose)
 
     elif pdb_dir:
+        os.chdir(pdb_dir)
         nmr_dir = os.path.join(pdb_dir, ".nmr.tmp")
         xray_dir = os.path.join(pdb_dir, ".xray.tmp")
         other_methods_dir = os.path.join(pdb_dir, ".other_methods.tmp")

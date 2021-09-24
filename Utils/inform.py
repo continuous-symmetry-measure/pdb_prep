@@ -201,7 +201,7 @@ class inform():
                 self.one_file(pdbinfo)
 
     def create_pdb_info(self, file, dir_path, output_type):
-        return create_pdb_info(file, dir_path, self.include_hetatm, output_type)
+        return create_pdb_info(file, dir_path, include_hetatm=self.include_hetatm, output_type=output_type)
 
     def one_file(self, pdbinfo):
         """
@@ -272,5 +272,11 @@ class chains_comapre():
         if is_verbose:
             print("\tfinish prepare diff data...", flush=True)
             print("\tdiff data to html...", flush=True)
+            print("\tchain_a length is: {} and chain_b length is:{} ".format(len(chain_a), len(chain_b)))
+            s, e, = 50, 200
+            diff = difflib.ndiff(a[s:e], b[s:e])
+            diff_list = list(diff)
+            print('\n'.join(diff_list))
+            exit()
         diff = difflib.HtmlDiff().make_file(a, b, chain_a.chain_id, chain_b.chain_id)
         return diff

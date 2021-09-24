@@ -91,7 +91,7 @@ def diff(pdb_file, out_file, chain_a, chain_b, model_a, model_b,
     chain_b = _pdb.get_chain(str(model_b), str(chain_b))
     _chains_comapre = chains_comapre()
     print("start diff...", flush=True)
-    diff = _chains_comapre.comapre_two_chains(chain_a, chain_b)
+    diff = _chains_comapre.comapre_two_chains(chain_a, chain_b, is_verbose=verbose)
     print("end diff...", flush=True)
     with open(out_file, "w") as htf:
         htf.write(diff)

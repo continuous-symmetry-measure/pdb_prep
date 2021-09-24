@@ -28,6 +28,10 @@ class Test_pdb_remark(unittest.TestCase):
             'REMARK   2',
             'REMARK   2 RESOLUTION.    1.04 ANGSTROMS.'
         ]
+        self.remark2_lines_2 = [
+            "REMARK   2                                                                      ",
+            "REMARK   2 RESOLUTION.    2.01 ANGSTROMS.                                       "
+        ]
 
     def test_from_lines(self):
         file = self.pdb_1xy1
@@ -39,3 +43,12 @@ class Test_pdb_remark(unittest.TestCase):
             remark_2 = remarks[2]
             self.assertIsInstance(remark_2, pdb_remark)
             self.assertEqual(int(remark_2.remark_number), 2)
+
+    def test_from_array(self):
+        remarks = pdb_remarks_dict.from_lines(self.remark2_lines)
+        self.assertIsInstance(remarks, dict)
+        remark_2 = remarks[2]
+        self.assertIsInstance(remark_2, pdb_remark)
+        remark_2 = remarks[2]
+        remarks = pdb_remarks_dict.from_lines(self.remark2_lines_2)
+        self.assertIsInstance(remark_2, pdb_remark)
