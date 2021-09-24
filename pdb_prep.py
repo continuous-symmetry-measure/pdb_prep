@@ -295,7 +295,7 @@ def func_xray(pdb_dir, pdb_file, max_resolution, limit_r_free_grade, with_hydrog
 
 def func_others_methods(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, bio_molecule_chains, output_dir,
                         output_text, verbose):
-    caller = func_nmr.__name__
+    caller = func_others_methods.__name__
     is_homomer = True
     if ptype is None and bio_molecule_chains == 1:
         ptype = 'monomer'
