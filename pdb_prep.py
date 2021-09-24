@@ -94,7 +94,7 @@ def func_nmr(pdb_dir, pdb_file, with_hydrogens, ptype, parse_rem350, bio_molecul
 
 def func_process_non_xray(pdb_dir, pdb_file, with_hydrogens, bio_molecule_chains, output_text, is_homomer,
                           ignore_remarks, informer, cliutils, verbose):
-    caller = func_nmr.__name__
+    caller = func_process_non_xray.__name__
     report = ""
     cliutils.verbose("Start", caller=caller)
     mode_file_or_dir = None
