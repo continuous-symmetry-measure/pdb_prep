@@ -7,7 +7,7 @@
 # General
 Symmetry of proteins, an important source of their elegant structures and unique functions, is not as perfect as it may seem.
 This program prepares protein files given in PDB format from either X-RAY or NMR measurements for a continuous symmetry measure (CSM) calculation. See http://wwpdb.org for more details on the PDB file format and the protein data bank. 
-See https://telem.openu.ac.il/csm/ for more information on the CSM methodology.
+See https://csm.ouproj.org.il/ for more information on the CSM methodology.
 
 
 Many PDB files contain inconsistent errors in the forms of missing residues or missing atoms. In addition, they may report on low resolution or low level Rfree values as well as extra data not required for the symmetry evaluation (e.g., ligands). Several steps are involved in the preparation procedure:  
