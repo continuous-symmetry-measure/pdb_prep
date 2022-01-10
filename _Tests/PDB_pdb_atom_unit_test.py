@@ -35,23 +35,23 @@ class Test_eqvivalent_atoms(unittest.TestCase):
     def setUp(self):
         self.test_dict = {
             (
-                'ATOM      1  N   GLY     1      -1.104  -0.267  -0.062  1.00  0.00',
-                'ATOM      1  N   GLY     1      -1.105  -0.257  -0.052  1.00  0.00',
+                'ATOM     42  OG1 THR A  20      -1.399  42.633 -13.704  1.00 17.85           O  ',
+                'ATOM     42  OG1 THR A  20      -1.399  42.633 -13.704  1.00 17.85           O  ',
 
             ): ('same atom', True),
             (
-                'ATOM      1  C   GLY     1      -1.104  -0.267  -0.062  1.00  0.00',
-                'ATOM      1  N   GLY     1      -1.105  -0.257  -0.052  1.00  0.00',
+                'ATOM     42  OG1 THR A  20      -1.399  42.633 -13.704  1.00 17.85           O ',
+                'ATOM     42  C   THR A  20      -1.399  42.633 -13.704  1.00 17.85           O  ',
 
             ): ('diffrent atom_name', False),
             (
-                'ATOM      1  N   GLY     1      -1.104  -0.267  -0.062  1.00  0.00',
-                'ATOM      1  N   ASU     1      -1.105  -0.257  -0.052  1.00  0.00'
+                'ATOM     42  OG1 THR A  20      -1.399  42.633 -13.704  1.00 17.85           O  ',
+                'ATOM     42  OG1 GLY A  20      -1.399  42.633 -13.704  1.00 17.85           O  '
 
             ): ('diffrent res_name', False),
             (
-                'ATOM      1  N   GLY     1      -1.104  -0.267  -0.062  1.00  0.00',
-                'ATOM      1  N   GLY     3      -1.105  -0.257  -0.052  1.00  0.00',
+                'ATOM     42  OG1 THR A  20      -1.399  42.633 -13.704  1.00 17.85           O  ',
+                'ATOM     42  OG1 THR A  2i      -1.399  42.633 -13.704  1.00 17.85           O  ',
             ): ('diffrent resseq', False),
         }
 
