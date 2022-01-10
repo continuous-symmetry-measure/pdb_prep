@@ -135,8 +135,6 @@ class pdb_atom():
             self.tempfactor = float(pdb_line[60:66].strip())  # standard deviation of temperature
             self.element_symbol = pdb_line[76:78].strip()  # element symbol
             self.charge = pdb_line[78:80].strip()  # charge on the atom
-            if self.chain_id.strip() is None or self.chain_id.strip()=='' :
-                raise ValueError("ChainId (position 21 in the atom line) is empty in line:'{}'".format(pdb_line))
         except Exception as e:
             print("line={}".format(pdb_atom_line))
             raise e

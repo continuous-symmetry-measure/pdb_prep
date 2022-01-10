@@ -29,18 +29,7 @@ class pdb_file_parser():
         self.include_hetatm = include_hetatm
         self.index = 0
         self.model_lines = []
-        self.prefix_lines=[]
         self.wrap_with_header_and_footer = True
-
-    def get_prefix_lines(self):
-        """ gets all lines till the first atom line"""
-        for line in self.lines:
-            if line.startswith("ATOM"):
-                break
-            if line.startswith("MODEL") or line.startswith("HETATM") or line.startswith("ANISOU"):
-                continue
-            self.prefix_lines.append(line)
-        return self.prefix_lines
 
     def get_caveats_lines(self):
         is_caveat = lambda ln: ln[0: 6].strip().startswith('CAVEAT')
@@ -130,7 +119,6 @@ class pdb(list):
         :return:
         """
         parser = pdb_file_parser(pdb_file_lines, include_hetatm)
-        prefix_lines=parser.get_prefix_lines()
         # prepare remarks
         remarks = parser.parse_remarks()
 
@@ -149,13 +137,11 @@ class pdb(list):
         if len(models) == 1:
             # we will not wrap MODEL 1 ... ENMMDL lines if the orig input  did not have them
             models[0].wrap_with_header_and_footer = parser.wrap_with_header_and_footer
-        return cls(models,prefix_lines=prefix_lines, remarks=remarks, caveats=caveat_lines, expdta=expdta_lines, seqres=seqreq_lines,
+        return cls(models, remarks=remarks, caveats=caveat_lines, expdta=expdta_lines, seqres=seqreq_lines,
                    include_hetatm=include_hetatm)
 
-    def __init__(self, pdb_models, prefix_lines=None, remarks=None, caveats=None, expdta=None, seqres=None, **kwargs):
+    def __init__(self, pdb_models, remarks=None, caveats=None, expdta=None, seqres=None, **kwargs):
         super().__init__()
-        if prefix_lines is None:
-            prefix_lines =[]
         if remarks is None:
             remarks = {}
         if caveats is None:
@@ -163,15 +149,14 @@ class pdb(list):
         if expdta is None:
             expdta = []
         self[0:len(pdb_models)] = list(pdb_models)
-        self.prefix_lines=prefix_lines
         self.remarks = remarks
         self.caveats = caveats
         self.expdta = expdta
         self.seqres = seqres
         self.file_name = None
-        # self.include_expdta_in__str__ = False
-        # self.include_remarks_in__str__ = False
-        # self.include_seqres_in__str__ = False
+        self.include_expdta_in__str__ = False
+        self.include_remarks_in__str__ = False
+        self.include_seqres_in__str__ = False
 
     def has_caveats(self):
         return len(self.caveats) > 1
@@ -199,15 +184,15 @@ class pdb(list):
     def __str__(self):
         s = ""
         chomp = lambda s: s.rstrip('\n')
-        # if self.include_expdta_in__str__:
-        #     s += "\n".join(map(chomp, self.expdta))
-        #     s += "\n"
-        # if self.include_remarks_in__str__:
-        #     s += str(self.remarks)
-        # if self.include_seqres_in__str__:
-        #     s += "\n".join(list(map(chomp, self.seqres)))
-        #     s += "\n"
-        s += "".join(self.prefix_lines)
+        if self.include_expdta_in__str__:
+            s += "\n".join(map(chomp, self.expdta))
+            s += "\n"
+        if self.include_remarks_in__str__:
+            s += str(self.remarks)
+        if self.include_seqres_in__str__:
+            s += "\n".join(list(map(chomp, self.seqres)))
+            s += "\n"
+
         s += "\n".join(map(str, self)) + "\n" + pdb_constants().END + "\n"
         return s
 
