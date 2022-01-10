@@ -38,11 +38,11 @@ class Test_pdb_file_parser(unittest.TestCase):
         model_lines = parser.get_models_lines()
         self.assertEqual(len(model_lines), 26)
         self.assertEqual(model_lines[0],
-                         'ATOM      1  N   GLY     1      -1.104  -0.267  -0.062  1.00  0.00           N1+')
+                         'ATOM      1  N   GLY A   1      -1.104  -0.267  -0.062  1.00  0.00           N1+')
         self.assertEqual(model_lines[23],
-                         'ATOM     24  HA3 GLY     3       7.191   1.300   1.088  1.00  0.00           H')
+                         'ATOM     24  HA3 GLY A   3       7.191   1.300   1.088  1.00  0.00           H')
         self.assertEqual(model_lines[24],
-                         'TER      25      GLY     3')
+                         'TER      25      GLY A   3')
         self.assertEqual(model_lines[25], 'END')
 
     def test_get_next_model_lines(self):
@@ -51,11 +51,11 @@ class Test_pdb_file_parser(unittest.TestCase):
         (model_number, model_lines) = parser.get_next_model_lines()
         self.assertEqual(model_number, '1')
         self.assertEqual(model_lines[0],
-                         'ATOM      1  N   GLY     1      -1.104  -0.267  -0.062  1.00  0.00           N1+')
+                         'ATOM      1  N   GLY A   1      -1.104  -0.267  -0.062  1.00  0.00           N1+')
         self.assertEqual(model_lines[23],
-                         'ATOM     24  HA3 GLY     3       7.191   1.300   1.088  1.00  0.00           H')
+                         'ATOM     24  HA3 GLY A   3       7.191   1.300   1.088  1.00  0.00           H')
         self.assertEqual(model_lines[24],
-                         'TER      25      GLY     3')
+                         'TER      25      GLY A   3')
         self.assertEqual(model_number, '1')
 
         # two_model_peptides
@@ -65,11 +65,11 @@ class Test_pdb_file_parser(unittest.TestCase):
         (model_number, model_lines) = parser.get_next_model_lines()
         self.assertEqual(model_number, '1')
         self.assertEqual(model_lines[1],
-                         'ATOM      2  CA  GLY     1       0.112   0.550   0.170  1.00  0.00           C')
+                         'ATOM      2  CA  GLY A   1       0.112   0.550   0.170  1.00  0.00           C')
         (model_number, pdb_model_lines) = parser.get_next_model_lines()
         self.assertEqual(model_number, '2')
         self.assertEqual(model_lines[1],
-                         'ATOM      2  CA  GLY     1       0.112   0.550   0.170  1.00  0.00           C')
+                         'ATOM      2  CA  GLY A   1       0.112   0.550   0.170  1.00  0.00           C')
 
         (model_number, pdb_model_lines) = parser.get_next_model_lines()
         self.assertEqual(model_number, None)

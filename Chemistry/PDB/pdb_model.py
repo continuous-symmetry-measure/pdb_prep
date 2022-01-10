@@ -19,6 +19,25 @@ from Chemistry.PDB.pdb_constants import pdb_constants
 
 
 class pdb_model(list):
+
+    @classmethod
+    def _is_end_of_chain(cls, current_chain_id, current_line, next_line, pdb_const_str):
+        if next_line is None:
+            return True
+        if current_chain_id != pdb_atom.parse_chain_id(current_line):
+            return True
+        if current_line.startswith(pdb_const_str.TER):
+            return True
+        return False
+
+    @classmethod
+    def _find_next_chain_id(cls, model_lines, current_index, current_chain_id):
+        if current_index == len(model_lines) - 1:
+            return None
+        for line in model_lines[current_index + 1:]:
+            if current_chain_id != pdb_atom.parse_chain_id(line):
+                return pdb_atom.parse_chain_id(line)
+
     @classmethod
     def from_pdb_model_lines(cls, pdb_model_lines, model_number='1', include_hetatm=False, pdb_file_name=""):
         if not model_number:
@@ -31,13 +50,32 @@ class pdb_model(list):
         pdb_const_str = pdb_constants()
         # flag=False
         used_chain_ids = ['NO_CHAIN']
+        chain_id = pdb_atom.parse_chain_id(pdb_model_lines[0])
+        ter_line = None
         for li, line in enumerate(pdb_model_lines):
+            if li < len(pdb_model_lines) - 1:
+                next_line = pdb_model_lines[li + 1]
+            else:
+                next_line = None
+
             if line.startswith(pdb_const_str.TER):
                 ter_line = line
+
+            if cls._is_end_of_chain(current_chain_id=chain_id, current_line=line, next_line=next_line,
+                                    pdb_const_str=pdb_const_str):
+                if len(pdb_atoms_lines) == 0:  # there are no atoms lines in this model
+                    chain_id = cls._find_next_chain_id(model_lines=pdb_model_lines, current_index=li,
+                                                       current_chain_id=chain_id)
+                    ter_line = None
+                    continue
+
                 chain = pdb_chain.from_pdb_atoms_lines(pdb_atoms_lines, ter_line)
                 pdb_chains.append(chain)
                 pdb_atoms_lines = []
                 used_chain_ids.append(chain.chain_id)
+                chain_id = cls._find_next_chain_id(model_lines=pdb_model_lines, current_index=li,
+                                                   current_chain_id=chain_id)
+                ter_line = None
                 continue
             record_name = pdb_atom.parse_record_name(line)
             current_chain_id = pdb_atom.parse_chain_id(line)
