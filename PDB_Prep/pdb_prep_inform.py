@@ -224,7 +224,7 @@ class nmr_inform(inform):
                 self.cliutils.warn_msg(msg, caller=type(self).__name__)
                 pdbinfo.warning_msg = msg
                 self.method_data[file] = pdbinfo
-        return file, pdbinfo
+        return file, pdbinfo , "continue"
 
     def filter_data(self, click=None, test_is_homomer=False):
         """
