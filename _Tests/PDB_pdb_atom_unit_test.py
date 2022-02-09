@@ -8,6 +8,7 @@ class Test_pdb_atom(unittest.TestCase):
         self.pdb_atom_line = 'ATOM    105  CD2ATYR A 405     -54.453  39.711 107.320  0.53 14.50           C'
         self.pdb_atom_line_nl = 'ATOM    105  CD2ATYR A 405     -54.453  39.711 107.320  0.53 14.50           C\n'
         self.pdb_atom_line_nl2 = 'ATOM    105  CD2ATYR A 405     -54.453  39.711 107.320  0.53 14.50           C\n\r'
+        self.pdb_atom_with_long_resseq='ATOM  15287  O   LEU B1024      10.643  -8.357 -25.347  1.00 51.11           O'
 
     def test_pdb_atom(self):
         pdb_line = self.pdb_atom_line
@@ -30,6 +31,12 @@ class Test_pdb_atom(unittest.TestCase):
         self.assertEqual(atom.tempfactor, 14.50, "_Tests tempfactor")
         self.assertEqual(str(atom).rstrip(), self.pdb_atom_line.rstrip())
 
+    def test_atom_with_long_resseq(self):
+        pdb_line = self.pdb_atom_with_long_resseq
+        atom = pdb_atom(pdb_line)
+        self.assertEqual(atom.x, 10.643, "_Tests x")
+        self.assertEqual(atom.resseq, '1024', "_Tests tempfactor")
+        self.assertEqual(str(atom).rstrip(), self.pdb_atom_with_long_resseq.rstrip())
 
 class Test_eqvivalent_atoms(unittest.TestCase):
     def setUp(self):
